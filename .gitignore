@@ -1,8 +1,11 @@
 cache/*.pkl
 cache/*.log
 cache/report.json
-cache/announcements.db
 site/
 export/
 __pycache__/
 *.pyc
+
+# 存档数据库【故意不排除】：公告只能取到最近5条、快照无法事后重建，
+# 而 GitHub Actions 缓存约7天不用就清空。必须提交进仓库才不会前功尽弃。
+!cache/announcements.db

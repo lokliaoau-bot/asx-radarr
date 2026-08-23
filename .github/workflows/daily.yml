@@ -8,7 +8,7 @@ on:
   workflow_dispatch:        # 手机上也能手动触发（GitHub 网页 Run workflow）
 
 permissions:
-  contents: read
+  contents: write        # 需要写权限把累积存档提交回仓库
   pages: write
   id-token: write
 
@@ -42,6 +42,20 @@ jobs:
 
       - name: 运行分析并生成站点
         run: python run.py --publish
+
+      # 把累积的存档写回仓库。Actions 缓存会过期，仓库不会——
+      # 公告只能取到最近5条，漏掉就永久丢失，所以这一步是"日积月累"的关键。
+      - name: 回写累积存档
+        run: |
+          git config user.name  "asx-radar-bot"
+          git config user.email "actions@github.com"
+          git add -f cache/announcements.db
+          if git diff --staged --quiet; then
+            echo "存档无变化，跳过提交"
+          else
+            git commit -m "存档更新 $(date -u +%Y-%m-%d)"
+            git push
+          fi
 
       - uses: actions/upload-pages-artifact@v3
         with:

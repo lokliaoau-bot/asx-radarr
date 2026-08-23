@@ -360,9 +360,22 @@ function announcementSection(r) {
       esc((x.headline || "").slice(0, 60)) + '</td></tr>';
   }).join("");
 
+  var ar = r.archive || {};
+  var prog = ar.progress_pct || 0;
+  var growth = '<div class="annbox" style="margin:12px 0;background:rgba(59,130,246,.07);' +
+    'border:1px solid rgba(59,130,246,.25);border-radius:9px;padding:11px 14px">' +
+    '📈 <b>累积进度</b>：每次更新系统都会把当天新数据存进档案，<b>越用越准</b>。' +
+    '<div style="margin:9px 0 6px;height:7px;background:var(--panel2);border-radius:4px;overflow:hidden">' +
+    '<i style="display:block;height:100%;width:' + prog + '%;background:linear-gradient(90deg,#2563eb,#22d3ee)"></i></div>' +
+    '<span style="font-family:var(--mono);font-size:11px">已存 <b>' + (ar.days || 0) + '</b> 个交易日快照' +
+    (ar.since ? '（自 ' + esc(ar.since) + '）' : '') + ' · 公告 <b>' + (ar.filings || 0) + '</b> 条 · ' +
+    '距离可做有效性检验还差 <b>' + Math.max(0, 60 - (ar.days || 0)) + '</b> 天（' + prog + '%）</span>' +
+    (ar.ready_for_validation ? '<br><b style="color:#4ade80">✅ 数据已够，可以检验这些信号到底有没有预测力了。</b>'
+      : '<br>攒够约60个交易日后，就能跑规格要求的检验，通过了才纳入评分。') + '</div>';
+
   return '<details class="sec" style="margin-bottom:22px"><summary>🏛️ 机构举牌与董事增减持（存档累积中，暂不参与打分）' +
-    '<span class="annpill">已收 ' + a.total + ' 条 · 采集 ' + a.days_collected + ' 天</span></summary>' +
-    '<div class="dbody"><div class="annbox" style="margin:12px 0">' +
+    '<span class="annpill">已收 ' + a.total + ' 条 · 快照 ' + (ar.days || 0) + ' 天</span></summary>' +
+    '<div class="dbody">' + growth + '<div class="annbox" style="margin:12px 0">' +
     '👉 <b>这是什么：</b>澳洲法律要求任何人持股跨过 5% 必须在 <b>2 个工作日内</b>公告（全球最快），' +
     '董事买卖自家股票也要在 5 天内申报。这是"大资金真的下手了"最硬的证据。<br>' +
     '<b>⚠️ 为什么现在不参与打分：</b>ASX 的公开接口<b>每家公司只能取到最近 5 条</b>，无法回溯历史。' +

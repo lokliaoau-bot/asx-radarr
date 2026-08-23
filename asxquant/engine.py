@@ -23,6 +23,7 @@ import numpy as np
 import pandas as pd
 
 from . import announcements as AN
+from . import archive as AR
 from . import datafeed as D
 from . import features as F
 from . import indicators as I
@@ -215,6 +216,7 @@ def run(force=False, log=print, progress=None):
         ann = AN.summary(ticker_to_sector(), {k: v["name"] for k, v in SECTORS.items()})
     except Exception:
         log("公告采集失败(不影响其余部分): %s" % traceback.format_exc().splitlines()[-1])
+    arch = {}
 
     step("正在做选股评分的横截面回测验证 ...", 34)
     try:
@@ -312,6 +314,7 @@ def run(force=False, log=print, progress=None):
         "sectors": sec_out,
         "money_flow": money_flow,
         "announcements": ann,
+        "archive": arch,
         "recommendation": rec,
         "validation": val,
         "most_shorted": [{k: r.get(k) for k in keep} for r in top_short_stocks],
@@ -332,6 +335,15 @@ def run(force=False, log=print, progress=None):
         },
         "runtime_sec": round(time.time() - t_all, 1),
     }
+    # Point-in-time archive: the only part of the system that improves by being run.
+    # Written after the report is assembled so a failure here cannot lose the report.
+    try:
+        AR.record(report, log=log)
+        report["archive"] = AR.stats()
+    except Exception:
+        log("每日存档失败(不影响本次结果): %s" % traceback.format_exc().splitlines()[-1])
+        report["archive"] = AR.stats()
+
     step("完成 (%.1fs)" % report["runtime_sec"], 100)
     return _clean(report)
 
