@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>澳股市场雷达 · ASX Market Radar</title>
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0a0d14">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="澳股雷达">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="hrow">
+      <div class="brand">
+        <h1>澳股市场雷达</h1>
+        <div class="sub" id="asof">载入中 ...</div>
+      </div>
+      <div class="quote" id="quote"></div>
+      <span id="live">
+        <button class="ghost" id="btnExport" title="导出为单文件HTML，可放入云盘在任何电脑打开">⬇ 导出云盘版</button>
+        <button class="ghost" id="btnHard" title="丢弃缓存，重新下载全部原始数据">强制重下</button>
+        <button class="refresh" id="btnRefresh">⟳ 更新全部指标</button>
+      </span>
+    </div>
+    <div class="prog" id="prog">
+      <div class="bar"><i id="progBar"></i></div>
+      <div class="msg" id="progMsg"></div>
+    </div>
+  </header>
+  <div id="app"><div class="empty">正在载入 ...</div></div>
+</div>
+<script src="app.js"></script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("sw.js").catch(function () {});
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+name: 每日更新澳股雷达
+
+on:
+  schedule:
+    # ASX 收盘约 UTC 06:00；ASIC 空头文件 T+4 上午发布。
+    # 取 UTC 08:30 = 悉尼 18:30/19:30，确保当天数据齐全。
+    - cron: "30 8 * * 1-5"
+  workflow_dispatch:        # 手机上也能手动触发（GitHub 网页 Run workflow）
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: 安装依赖
+        run: pip install -r requirements.txt
+
+      # 缓存行情/空头/模型，避免每天从零重训（首次运行会是空的，属正常）
+      - name: 取回缓存
+        uses: actions/cache@v4
+        with:
+          path: cache
+          key: asx-cache-${{ github.run_id }}
+          restore-keys: |
+            asx-cache-
+
+      - name: 运行分析并生成站点
+        run: python run.py --publish
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

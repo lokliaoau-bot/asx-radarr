@@ -1,0 +1,8 @@
+cache/*.pkl
+cache/*.log
+cache/report.json
+cache/announcements.db
+site/
+export/
+__pycache__/
+*.pyc
