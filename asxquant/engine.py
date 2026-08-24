@@ -32,7 +32,8 @@ from . import picks as PK
 from . import sectors as S
 from . import smartmoney as SM
 from . import validate as V
-from .config import BENCHMARK, MACRO, SECTORS, all_stock_tickers, ticker_to_sector
+from .config import (BENCHMARK, MACRO, MODEL_VERSION, SECTORS, all_stock_tickers,
+                     ticker_to_sector)
 
 MIN_TRAIN = 750
 FULL_SKILL_AUC = 0.62
@@ -195,11 +196,20 @@ def run(force=False, log=print, progress=None):
     step("正在计算板块资金流、热度与做空压力 ...", 26)
     panel = S.score_sectors(S.build_sector_panel(px, spct, ssha))
     stock_rows = PK.score_stocks(panel)
-    rec = PK.build_recommendations(panel, stock_rows, n=3)
+
+    # Volume-by-price: where the crowd's cost actually sits. Measurement only --
+    # it is attached to the cards and deliberately kept out of every score.
+    try:
+        profiles = SM.build_profiles(px, tickers)
+    except Exception:
+        log("成交量分布失败(不影响其余部分): %s" % traceback.format_exc().splitlines()[-1])
+        profiles = {}
+
+    rec = PK.build_recommendations(panel, stock_rows, n=3, profiles=profiles)
 
     step("正在定位资金流入/流出的具体股票 ...", 30)
     try:
-        money_flow = SM.build_money_flow_panel(panel, px)
+        money_flow = SM.build_money_flow_panel(panel, px, profiles=profiles)
         if money_flow:
             money_flow["as_of"] = str(asof.date())
     except Exception:
@@ -231,6 +241,11 @@ def run(force=False, log=print, progress=None):
 
     tgs = _targets(bd)
     mcache = D._load("models.pkl") or {}
+    if mcache.get("__ver") != MODEL_VERSION:
+        if mcache:
+            log("模型代码版本已变（%s -> %s），弃用旧的走向前缓存，本次全量重训"
+                % (mcache.get("__ver"), MODEL_VERSION))
+        mcache = {}
     step("正在做走向前样本外建模 (%d 个目标) ..." % len(tgs), 48)
     results, new_cache = [], {}
     with cf.ThreadPoolExecutor(max_workers=4) as ex:
@@ -248,6 +263,7 @@ def run(force=False, log=print, progress=None):
             except Exception:
                 log("目标建模失败 [%s]: %s" % (key, traceback.format_exc().splitlines()[-1]))
             step("建模进度 %d/%d" % (done, len(tgs)), 48 + int(32 * done / len(tgs)))
+    new_cache["__ver"] = MODEL_VERSION
     D._save("models.pkl", new_cache)
     order = {t["key"]: i for i, t in enumerate(tgs)}
     results.sort(key=lambda r: order.get(r["key"], 99))
@@ -332,6 +348,7 @@ def run(force=False, log=print, progress=None):
             "short_stocks": int(spct.iloc[-1].notna().sum()),
             "short_days": int(shorts["date"].nunique()) if len(shorts) else 0,
             "short_from": str(shorts["date"].min().date()) if len(shorts) else None,
+            "model_version": MODEL_VERSION,
         },
         "runtime_sec": round(time.time() - t_all, 1),
     }

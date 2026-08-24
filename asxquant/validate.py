@@ -6,7 +6,10 @@ signal. This module rebuilds the exact same score components as `picks.py`, but 
 full time series, then runs the standard cross-sectional factor tests:
 
   * Information Coefficient -- daily rank correlation between score and the forward
-    return, with a Newey-West style t-statistic on the IC series.
+    return. The forward return is measured over `horizon` days on EVERY trading day,
+    so consecutive observations overlap and the naive t-statistic is 3-5x oversized.
+    Every t reported here is Newey-West corrected (see `_overlap_stats`), with the
+    naive value kept alongside as `t_naive` purely so the two can be compared.
   * Quantile spread -- forward returns of the top vs bottom score quintile.
   * A long/short portfolio -- top-N long, top-N short, rebalanced, net of costs.
 
@@ -27,6 +30,91 @@ def _xz_frame(df, clip=3.0):
     mu = df.mean(axis=1)
     sd = df.std(axis=1, ddof=0).replace(0, np.nan)
     return df.sub(mu, axis=0).div(sd, axis=0).clip(-clip, clip).fillna(0.0)
+
+
+def _nw_variance(x, lag):
+    """Newey-West long-run variance of a mean estimator (Bartlett kernel)."""
+    x = np.asarray(x, dtype=float)
+    x = x[np.isfinite(x)] 
+    n = len(x)
+    if n < 2:
+        return np.nan, np.nan
+    d = x - x.mean()
+    g0 = float((d * d).sum() / n)
+    if g0 <= 0:
+        return np.nan, np.nan
+    s = g0
+    for k in range(1, min(lag, n - 1) + 1):
+        s += 2.0 * (1.0 - k / (lag + 1.0)) * float((d[k:] * d[:-k]).sum() / n)
+    s = max(s, g0 * 1e-6)          # a negative kernel sum is a small-sample artefact
+    return s, float(np.sqrt(s / g0))
+
+
+def _overlap_stats(series, horizon):
+    """Honest inference for a daily statistic built on OVERLAPPING forward returns.
+
+    This project measures a `horizon`-day forward return on EVERY trading day, so
+    consecutive observations share (horizon-1)/horizon of their return window. The
+    textbook t = mean / (sd / sqrt(n)) assumes independent draws and is therefore
+    badly oversized here: measured lag-1 autocorrelation of the daily IC series runs
+    around +0.9, and the naive standard error comes out 3-5x too small.
+
+    Returns the naive t alongside a Newey-West t (Bartlett kernel, lag = horizon-1)
+    and a second, assumption-free cross-check: split the series into `horizon`
+    interleaved subsamples, each of which IS non-overlapping, and report the spread
+    of their t-statistics. Read the Newey-West number, not the naive one.
+    """
+    s = pd.Series(series).dropna()
+    n = len(s)
+    if n < 60:
+        return None
+    m, sd = float(s.mean()), float(s.std(ddof=0))
+    naive = m / (sd / np.sqrt(n)) if sd > 0 else np.nan
+    lrv, infl = _nw_variance(s.values, max(1, horizon - 1))
+    nw = m / np.sqrt(lrv / n) if np.isfinite(lrv) and lrv > 0 else np.nan
+
+    sub = []
+    for i in range(horizon):
+        w = s.iloc[i::horizon]
+        if len(w) > 30 and w.std(ddof=0) > 0:
+            sub.append(float(w.mean() / (w.std(ddof=0) / np.sqrt(len(w)))))
+
+    def _r(x, d=2):
+        return round(float(x), d) if x is not None and np.isfinite(x) else None
+
+    return {
+        "mean": round(m, 5), "sd": round(sd, 5), "n_days": int(n),
+        "t_naive": _r(naive), "t_stat": _r(nw),      # t_stat IS the Newey-West one
+        "se_inflation": _r(infl, 1),
+        "autocorr_1": _r(s.autocorr(1) if n > 2 else np.nan),
+        "t_nonoverlap_median": _r(np.median(sub)) if sub else None,
+        "t_nonoverlap_lo": _r(min(sub)) if sub else None,
+        "t_nonoverlap_hi": _r(max(sub)) if sub else None,
+        "verdict": _verdict(nw),
+    }
+
+
+def _verdict(t):
+    """One label for a corrected t. Deliberately conservative at the boundary."""
+    if t is None or not np.isfinite(t):
+        return "insufficient"
+    a = abs(t)
+    if a >= 3.0:
+        return "strong"
+    if a >= 2.0:
+        return "marginal"
+    if a >= 1.6:
+        return "weak"
+    return "none"
+
+
+VERDICT_CN = {
+    "strong": "统计显著",
+    "marginal": "勉强达标（边缘显著）",
+    "weak": "微弱，达不到常规门槛",
+    "none": "无统计显著性",
+    "insufficient": "样本不足",
+}
 
 
 def build_factor_panel(px, short_pct, tickers, sector_map):
@@ -155,13 +243,14 @@ def run_validation(px, short_pct, tickers, sector_map, horizon=20,
     ic_l, ic_s = _ic(L, FW), _ic(S, FW)
 
     def _ic_stats(ic):
-        if len(ic) < 60:
+        st = _overlap_stats(ic, horizon)
+        if st is None:
             return None
-        m, sd = float(ic.mean()), float(ic.std(ddof=0))
-        t = m / (sd / np.sqrt(len(ic))) if sd > 0 else np.nan
-        return {"mean_ic": round(m, 4), "ic_std": round(sd, 4),
-                "t_stat": round(float(t), 2) if np.isfinite(t) else None,
-                "hit_rate": round(float((ic > 0).mean()), 3), "n_days": int(len(ic))}
+        st["mean_ic"] = st.pop("mean")
+        st["ic_std"] = st.pop("sd")
+        st["hit_rate"] = round(float((ic > 0).mean()), 3)
+        st["verdict_cn"] = VERDICT_CN.get(st["verdict"], st["verdict"])
+        return st
 
     # quintile spread on the long score
     def _quintile(score):
@@ -171,9 +260,14 @@ def run_validation(px, short_pct, tickers, sector_map, horizon=20,
         d = pd.concat([top.rename("top"), bot.rename("bot")], axis=1).dropna()
         if len(d) < 60:
             return None
+        # the daily spread series overlaps exactly like the IC series does
+        st = _overlap_stats(d["top"] - d["bot"], horizon) or {}
         return {"top": round(float(d["top"].mean()), 5),
                 "bottom": round(float(d["bot"].mean()), 5),
                 "spread": round(float((d["top"] - d["bot"]).mean()), 5),
+                "t_stat": st.get("t_stat"), "t_naive": st.get("t_naive"),
+                "verdict": st.get("verdict"),
+                "verdict_cn": VERDICT_CN.get(st.get("verdict"), None),
                 "n": int(len(d))}
 
     # ---- portfolios, rebalanced every `horizon` days -------------------

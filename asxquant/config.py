@@ -120,3 +120,9 @@ MIN_TRAIN = 750
 EMBARGO_EXTRA = 5
 SHORT_YEARS = 5              # how many ASIC year-to-date files to pull
 CACHE_DIR = "cache"
+
+# Stamped into models.pkl. The walk-forward cache reuses predictions computed by an
+# EARLIER version of the modelling code, so changing that code without bumping this
+# would silently mix old and new predictions in one series forever. Bump on any change
+# to model.py's fitting, calibration or ensembling.
+MODEL_VERSION = "v2"

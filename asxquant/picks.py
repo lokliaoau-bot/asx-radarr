@@ -169,7 +169,7 @@ def _short_reasons(r):
     return out[:5]
 
 
-def build_recommendations(panel, stocks, n=3):
+def build_recommendations(panel, stocks, n=3, profiles=None):
     """Pick one sector to be long and one to be short, then n names inside each."""
     if not panel or not stocks:
         return None
@@ -213,6 +213,7 @@ def build_recommendations(panel, stocks, n=3):
             "dist_ma50": r["dist_ma50"], "dist_ma200": r["dist_ma200"],
             "adv_aud": r["adv_aud"], "vol20": r["vol20"], "atr_pct": r["atr_pct"],
             "extension": r["extension"],
+            "profile": (profiles or {}).get(r["ticker"]),
             "reasons": _long_reasons(r) if side == "long" else _short_reasons(r),
             "parts": r["long_parts"] if side == "long" else r["short_parts"],
             "stop_hint": _stop(r, side),

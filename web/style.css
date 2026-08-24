@@ -289,3 +289,18 @@ details.sec > summary:hover{background:rgba(255,255,255,.026)}
   .term{border-bottom-style:solid;border-bottom-color:rgba(135,144,165,.45)}
   tbody tr.clk td{padding-top:11px;padding-bottom:11px}
 }
+
+/* ---- 成本地图（成交量分布） ---- */
+.cmap{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)}
+.cmh{font-size:11px;color:var(--mut);display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;margin-bottom:4px}
+.cmsub{color:var(--dim);font-size:10px}
+.cmsvg{display:block;width:100%;height:52px}
+.cmax{display:flex;justify-content:space-between;font-size:10px;color:var(--dim);font-family:var(--mono);margin-top:1px}
+.cmax .cmnow{color:var(--tx)}
+.cmleg{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:10.5px;color:var(--mut);margin-top:5px}
+.cmleg b{color:var(--tx);font-family:var(--mono)}
+.cmleg .sw{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.cmleg .sw.blu{background:var(--blu);opacity:.6}
+.cmleg .sw.amb{background:var(--amb);opacity:.7}
+.cmleg .sw.vio{background:var(--vio);opacity:.85}
+.pill.marginal{background:rgba(245,158,11,.17);color:#fbbf24}

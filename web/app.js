@@ -51,7 +51,11 @@ var GLOSSARY = {
   "AUC": "预测准不准的评分：0.5=和抛硬币一样瞎猜，越接近1越准。",
   "Brier": "衡量给出的概率靠不靠谱：大于0才算比无脑猜历史平均值更好。",
   "止损": "如果买了跌破/空了涨过某个价，就认赔离场，不硬扛，防止小亏拖成大亏。",
-  "日均成交": "这只股票每天平均成交多少钱，反映能不能大额买卖不影响价格（流动性）。"
+  "日均成交": "这只股票每天平均成交多少钱，反映能不能大额买卖不影响价格（流动性）。",
+  "成本地图": "把过去3个月的成交量按价位摊开，看大家的筹码主要堆在哪个价格附近。柱子越高＝那个价位换手越多。这是对已发生成交的测量，不是预测，也不参与任何评分。",
+  "套牢盘": "在比现价更高的价位买入、目前还浮亏的那部分成交量占比。占比高，意味着股价往上走时会不断遇到解套卖出的人。",
+  "价值区": "成交量最集中的那一段价格区间（约占七成成交量）。价格待在里面通常代表买卖双方对价格有共识，冲出去则代表共识被打破。",
+  "重叠样本": "本系统每天都要算一次「未来20天涨多少」，相邻两天的那20天几乎完全重合，所以这些数字并不是互相独立的。若当成独立来算统计显著性，会把 t 值放大3到5倍。本表已用 Newey-West 方法修正。"
 };
 var _glossaryKeys = Object.keys(GLOSSARY).sort(function (a, b) { return b.length - a.length; });
 function annotate(text) {
@@ -236,6 +240,65 @@ function renderQuote(b) {
     '<div class="q"><span class="lbl">20日波动率</span><span class="val sm">' + pct(b.rv20) + '</span></div>';
 }
 
+/* ============ 成本地图：过去3个月成交量分布（测量，不参与任何打分） ============ */
+function apx(v) { return "A$" + (Math.abs(v) < 1 ? Number(v).toFixed(3) : Number(v).toFixed(2)); }
+
+function costMap(p, px) {
+  if (!p || !p.hist || !p.hist.length || px == null || isNaN(px)) return "";
+  if (p.lo == null || p.hi == null || !(p.hi > p.lo)) return "";
+  var W = 260, H = 52, FLOOR = 46, n = p.hist.length;
+  var lo = p.lo, hi = p.hi, span = (hi - lo) || 1, step = span / n;
+  var mx = Math.max.apply(null, p.hist) || 1;
+  function X(v) { return Math.max(0, Math.min(W, (v - lo) / span * W)); }
+  function seg(x0, x1, bh, over) {
+    if (x1 - x0 <= 0) return "";
+    return '<rect x="' + x0.toFixed(1) + '" y="' + (FLOOR - bh).toFixed(1) +
+      '" width="' + (x1 - x0).toFixed(1) + '" height="' + bh.toFixed(1) +
+      '" fill="' + (over ? "var(--amb)" : "var(--blu)") + '" opacity="' + (over ? ".62" : ".5") + '"/>';
+  }
+  var bars = "";
+  for (var i = 0; i < n; i++) {
+    // edges 不再随报告传输，这里按 lo/hi 还原（等距，和后端 linspace 完全一致）
+    var e0 = lo + i * step, e1 = lo + (i + 1) * step;
+    var bh = Math.max(1, p.hist[i] / mx * (FLOOR - 4));
+    var x0 = X(e0), x1 = Math.max(X(e0) + 0.8, X(e1) - 0.4);
+    if (px > e0 && px < e1) {
+      // 现价落在这一箱内部：就地劈开，橙色面积才等于图例上写的百分比
+      var xc = Math.min(Math.max(X(px), x0), x1);
+      bars += seg(x0, xc, bh, false) + seg(xc, x1, bh, true);
+    } else {
+      bars += seg(x0, x1, bh, e0 >= px);
+    }
+  }
+  var cx = X(px), pocx = X(p.poc), v0 = X(p.va_low), v1 = X(p.va_high);
+  var svg = '<svg class="cmsvg" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" aria-hidden="true">' +
+    '<rect x="' + v0.toFixed(1) + '" y="1" width="' + Math.max(0, v1 - v0).toFixed(1) +
+      '" height="' + (FLOOR - 1) + '" fill="var(--tx)" opacity=".055"/>' +
+    bars +
+    '<line x1="' + pocx.toFixed(1) + '" y1="1" x2="' + pocx.toFixed(1) + '" y2="' + FLOOR +
+      '" stroke="var(--vio)" stroke-width="1" stroke-dasharray="3 2"/>' +
+    '<line x1="' + cx.toFixed(1) + '" y1="0" x2="' + cx.toFixed(1) + '" y2="' + (FLOOR + 4) +
+      '" stroke="var(--tx)" stroke-width="1.6"/>' +
+    '<line x1="0" y1="' + FLOOR + '" x2="' + W + '" y2="' + FLOOR + '" stroke="var(--line)" stroke-width="1"/>' +
+    '</svg>';
+
+  var ov = p.overhead;
+  return '<div class="cmap">' +
+    '<div class="cmh">' + term("成本地图", GLOSSARY["成本地图"]) +
+      '<span class="cmsub">过去 ' + p.days + ' 个交易日每个价位成交了多少</span></div>' +
+    svg +
+    '<div class="cmax"><span>' + apx(p.lo) + '</span>' +
+      '<span class="cmnow">现价 ' + apx(px) + '</span>' +
+      '<span>' + apx(p.hi) + '</span></div>' +
+    '<div class="cmleg">' +
+      '<span><i class="sw blu"></i>现价以下的成交</span>' +
+      '<span><i class="sw amb"></i>' + term("上方套牢", GLOSSARY["套牢盘"]) + ' <b>' +
+        (ov == null ? "—" : (ov * 100).toFixed(0) + "%") + '</b></span>' +
+      '<span><i class="sw vio"></i>最密集价位 <b>' + apx(p.poc) + '</b></span>' +
+      '<span>' + term("价值区", GLOSSARY["价值区"]) + ' <b>' + apx(p.va_low) + '–' + apx(p.va_high) + '</b></span>' +
+    '</div></div>';
+}
+
 function verdictSection(r) {
   var rec = r.recommendation;
   if (!rec) return "";
@@ -263,7 +326,7 @@ function verdictSection(r) {
       (p.short_chg_20d >= 0 ? "增" : "减") + ' ' + num(Math.abs(p.short_chg_20d || 0), 2) + 'pp）</span>' +
       '<span>' + term("回补天数", GLOSSARY["回补天数"]) + ' <b>' + num(p.days_to_cover, 1) + '</b>天</span>' +
       '<span>' + term("日均成交", GLOSSARY["日均成交"]) + ' <b>A$' + money(p.adv_aud) + '</b></span>' +
-      stopTxt + '</div></div>';
+      stopTxt + '</div>' + costMap(p.profile, p.px) + '</div>';
   }
 
   var L = rec.long, S = rec.short;
@@ -286,13 +349,22 @@ function verdictSection(r) {
     '<div class="vstage">越来越多机构在赌它跌，同时资金在撤（' + sgn(S.flow_score, 2) +
     '），板块近20天 ' + spct(S.ret_20d) + '</div>' +
     '<div class="vnote">' + annotate(S.stage_note) +
-    '<br><b style="color:#4ade80">✅ 可信度：强。</b>系统这套<b>挑"该躲哪只"的方法，过去4年半是站得住脚的</b>' +
-    '（统计上不是碰运气）。历史上它点名看空的那批股票，确实明显<b>跑输</b>了大盘。' +
-    '<br><b style="color:#fbbf24">但有两点务必记住：</b>①"跑输大盘"<b>不等于"一定下跌"</b>——' +
+    '<br><b style="color:#fbbf24">⚠️ 可信度：' + esc(icS.verdict_cn || "—") + '。</b>' +
+    '系统这套<b>挑"该躲哪只"的方法，在4年半样本里站得住，但只是勉强站住</b>。' +
+    '之前报的 t 值 ' + num(icS.t_naive, 1) + ' 是把' + term("重叠样本", GLOSSARY["重叠样本"]) +
+    '当成互相独立算出来的，虚高约 ' + num(icS.se_inflation, 1) + ' 倍；' +
+    '按规矩修正后是 <b>' + num(icS.t_stat, 2) + '</b>（常规门槛 2）。' +
+    '不过<b>"空头篮子确实跑输大盘"这条事实不受影响</b>——那是每' + (v.horizon || 20) +
+    '天换一次仓算出来的，本来就没有重叠问题。' +
+    '<br><b style="color:#fbbf24">三点务必记住：</b>①"跑输大盘"<b>不等于"一定下跌"</b>——' +
     '历史上这批股票整体其实还涨了 ' + spct((legs.short_basket || {}).cagr) +
     '/年（同期大盘 ' + spct((legs.market || {}).cagr) + '）。真要' +
-    term("做空", GLOSSARY["做空"]) + '，你还得自己判断大盘方向，否则更适合"少配一点"或用来对冲你的多头。' +
-    '②这种信号<b>大约每月就会失效一次，名单要经常刷新</b>，拿着不动一两个月反而可能被' +
+    term("做空", GLOSSARY["做空"]) + '，你还得自己判断大盘方向。' +
+    '②<b>真照它做一多一空的中性组合，扣掉手续费后一年只剩 ' +
+    spct((legs.long_short_net || {}).cagr) + '（' + term("夏普", GLOSSARY["夏普"]) + ' ' +
+    num((legs.long_short_net || {}).sharpe, 2) + '），一年要换 ' + num(v.turnover_pa, 0) +
+    ' 批仓</b>。所以它的正确用法是<b>"回避 / 少配一点"，不是"靠它做空赚钱"</b>。' +
+    '③这种信号<b>大约每月就会失效一次，名单要经常刷新</b>，拿着不动一两个月反而可能被' +
     term("轧空", GLOSSARY["轧空"]) + '。</div>' +
     S.picks.map(function (p) { return pickHtml(p, "short"); }).join("") + '</div></div>';
 }
@@ -318,7 +390,7 @@ function moneyFlowPanel(r) {
         cls(side === "in" ? k.net_flow_20d_m : -k.net_flow_20d_m) + '">A$' + aud(Math.abs(k.net_flow_20d_m)) + '</b></span>' : "") +
       (k.short_pct != null ? '<span>' + term("被做空", GLOSSARY["空头持仓"]) + ' <b>' + num(k.short_pct, 2) + '%</b>' +
         (k.short_chg_20d != null ? '（20天' + (k.short_chg_20d >= 0 ? "增" : "减") + num(Math.abs(k.short_chg_20d), 2) + '）' : "") + '</span>' : "") +
-      '</div></div></div>';
+      '</div>' + costMap(k.profile, k.px) + '</div></div>';
   }
   function sec(s, side) {
     return '<div class="msec"><div class="sh"><span class="sn">' + esc(s.name) + '</span>' +
@@ -562,11 +634,12 @@ function validationSection(r) {
   }
   function icRow(nm, s, want) {
     if (!s) return "";
-    var good = want === "neg" ? (s.mean_ic < 0 && Math.abs(s.t_stat) > 2) : (s.mean_ic > 0 && s.t_stat > 2);
+    var good = want === "neg" ? (s.mean_ic < 0 && Math.abs(s.t_stat) >= 2) : (s.mean_ic > 0 && s.t_stat >= 2);
     return '<tr><td class="name">' + nm + '</td><td class="' + (good ? "up" : "mut") + '">' + num(s.mean_ic, 4) + '</td>' +
-      '<td class="' + (good ? "up" : "mut") + '">' + num(s.t_stat, 2) + '</td><td>' + pct(s.hit_rate, 1) + '</td>' +
-      '<td class="mut">' + s.n_days + '</td><td>' + (good ? '<span class="pill strong">显著</span>' :
-        '<span class="pill none">不显著</span>') + '</td></tr>';
+      '<td class="' + (good ? "up" : "mut") + '"><b>' + num(s.t_stat, 2) + '</b></td>' +
+      '<td class="mut">' + num(s.t_naive, 2) + '</td><td>' + pct(s.hit_rate, 1) + '</td>' +
+      '<td class="mut">' + s.n_days + '</td><td><span class="pill ' + esc(s.verdict || "none") + '">' +
+      esc(s.verdict_cn || "—") + '</span></td></tr>';
   }
   return '<div class="grid" style="grid-template-columns:1.5fr 1fr">' +
     '<div class="chartbox"><h3>如果一直照系统信号操作，历史上会怎样 · ' + v.start + ' 至 ' + v.end + '</h3>' +
@@ -582,10 +655,13 @@ function validationSection(r) {
     legRow("long_short_gross") + legRow("long_short_net") + '</tbody></table>' +
     '<div style="height:14px"></div>' +
     '<table><thead><tr><th>这套打分</th><th class="term" title="' + GLOSSARY["IC"] + '">吻合度(IC)</th>' +
-    '<th class="term" title="' + GLOSSARY["t值"] + '">是不是运气(t)</th><th>每日猜对率</th><th>用了多少天</th><th>结论</th></tr></thead>' +
+    '<th class="term" title="' + GLOSSARY["t值"] + '">是不是运气(t)</th>' +
+    '<th class="term" title="' + GLOSSARY["重叠样本"] + '">未修正的t</th>' +
+    '<th>每日猜对率</th><th>用了多少天</th><th>结论</th></tr></thead>' +
     '<tbody>' + icRow("挑该买的（看多分）", v.ic_long, "pos") + icRow("挑该躲的（看空分，越负越好）", v.ic_short, "neg") + '</tbody></table>' +
     '<div class="foot-note" style="margin-top:12px">一年换 <b>' + num(v.turnover_pa, 1) + '</b> 批，已扣手续费。可选股票约 ' + v.universe_median + ' 只。' +
-    '<b>看空分显著（结论：有效），看多分不显著（结论：和运气差不多）——这就是为什么上面说"看空建议靠谱、看多建议只作参考"。</b></div></div></div>';
+    '<b>"未修正的t"是把' + term("重叠样本", GLOSSARY["重叠样本"]) + '当成互相独立算出来的，会虚高 3–5 倍；请看加粗那一列。</b>' +
+    '修正后：看空分勉强达标，看多分依旧和运气差不多——这就是为什么上面说"看空名单可参考、看多名单只作研究线索"。</div></div></div>';
 }
 
 function forecastTable(r) {
@@ -707,7 +783,8 @@ function methodology(r) {
   '· <b>做多评分未通过显著性检验</b>（IC t=' + num((v.ic_long || {}).t_stat, 2) +
   '）。做多篮子年化 ' + spct(((v.legs || {}).long || {}).cagr) + ' vs 等权市场 ' +
   spct(((v.legs || {}).market || {}).cagr) + '，超额接近零且波动更高<br>' +
-  '· <b>做空评分显著（t=' + num((v.ic_short || {}).t_stat, 2) + '），但衡量的是「跑输」而非「下跌」。</b>' +
+  '· <b>做空评分只是边缘显著</b>（修正重叠样本后 t=' + num((v.ic_short || {}).t_stat, 2) +
+  '，未修正时看起来是 ' + num((v.ic_short || {}).t_naive, 2) + '），<b>且衡量的是「跑输」而非「下跌」。</b>' +
   '样本期内空头篮子自身仍上涨 ' + spct(((v.legs || {}).short_basket || {}).cagr) +
   '/年。裸空需要额外的大盘方向判断<br>' +
   '· <b>空头信号衰减很快</b>：实测 20 日再平衡时空头篮子跑输约 10pp/年，40 日降到约 6pp，' +
@@ -885,7 +962,19 @@ function load() {
       if (!x.ok) throw new Error("no report");
       return x.json();
     });
-  }).then(render).catch(function () {
+  }).then(function (d) {
+    try {
+      render(d);
+    } catch (err) {
+      // 数据明明取到了、却渲染不出来，几乎总是「浏览器缓存里的旧 app.js 碰上新格式的
+      // report.json」。以前这里会把它伪装成"尚无数据"，让人以为是没数据，白等半天。
+      el("app").innerHTML = '<div class="empty">页面脚本和数据对不上，通常是浏览器缓存了旧版本。' +
+        '<br><br><b>请强制刷新一次</b>（手机：关掉再打开；电脑：Ctrl+F5）。' +
+        '<br><br><span style="font-size:12px;color:var(--dim)">技术细节：' + esc(String(err && err.message || err)) + '</span></div>';
+      throw err;
+    }
+  }).catch(function (e) {
+    if (el("app").innerHTML.indexOf("对不上") >= 0) return;   // 上面已经报过了
     el("app").innerHTML = '<div class="empty">尚无数据。<br><br>点击右上角 <b>更新全部指标</b> 开始。' +
       '<br><span style="font-size:12px">首次运行需下载12年行情与5年ASIC空头数据并训练模型，约 3–5 分钟；之后每次约数秒。</span></div>';
   });

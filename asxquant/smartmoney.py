@@ -4,9 +4,16 @@
 Built to the two specs in D:\\Download, with their own judgment gates actually run
 rather than assumed. What survived those gates, measured on this data set:
 
-  S4 accumulation signature   IC +0.0138, t=6.93, 60d quintile spread +0.72%
-                              vs sector  -> PASSES the spec's "no positive
-                              expectancy => no weight" rule, so it carries weight.
+  S4 accumulation signature   RETESTED 2026-08-24 and DEMOTED. The original verdict
+                              (IC +0.0138, t=6.93) used a naive t-statistic on daily
+                              observations of an OVERLAPPING 60-day forward return.
+                              Newey-West corrected, the same test gives t = +1.07 for
+                              raw S4 and t = +0.45 for the rolling-z form this module
+                              actually uses -- and the 2022+ subsample is negative.
+                              It therefore FAILS the spec's "no positive expectancy
+                              => no weight" rule and now carries NO weight in the
+                              panel ranking. It is still computed and still shown on
+                              the card, as a description of the price-volume shape.
 
   F2 sector short-interest    Lead-lag peak lands at lag +4 weeks, not a negative
       as a sector timer       lag. Short changes FOLLOW sector price rather than
@@ -80,6 +87,50 @@ def _xz(vals, clip=3.0):
 
 
 # ----------------------------------------------------------------------
+def build_profiles(px, tickers, win=60):
+    """Volume-by-price for every name, keyed by ticker. Cheap: ~40 bins x 60 days each.
+
+    Kept out of every score on purpose. The cross-sectional test on overhead supply
+    first looked strong (60-day IC t = +7.7), but that was the naive t-statistic on
+    daily observations of an overlapping 60-day forward return. Newey-West corrected
+    it is t = +1.6, and the non-overlapping cross-check gives +1.2 -- no demonstrated
+    expectancy at all. Under this project's own rule that earns a place on the card
+    as a measurement of where the crowd's cost sits, and no place in any score.
+    """
+    closes, highs, lows, vols = px["close"], px["high"], px["low"], px["volume"]
+    adj = px.get("adjclose", closes)
+    out = {}
+    for t in tickers:
+        if t not in closes.columns or t not in adj.columns:
+            continue
+        try:
+            r = ind.volume_profile(highs[t], lows[t], vols[t], closes[t], adj[t], win=win)
+        except Exception:
+            r = None
+        if r:
+            out[t] = r
+    return out
+
+
+def _px(v):
+    """Penny stocks need three decimals; everything else reads better with two."""
+    return ("A$%.3f" if abs(v) < 1 else "A$%.2f") % v
+
+
+def profile_note(p):
+    """One plain-language clause about the crowd's cost. Describes, never predicts."""
+    if not p:
+        return None
+    vs = p.get("vs_cost")
+    if vs is None:
+        return None
+    # Only the cost comparison belongs here. The overhead percentage is already on
+    # the cost map's own legend directly below this line -- saying it twice just
+    # makes the card longer on a phone.
+    return "现价比过去3个月大家的平均成本%s %.1f%%（那个价位约 %s）" % (
+        "低" if vs < 0 else "高", abs(vs * 100), _px(p["cost"]))
+
+
 def _stock_flow_rows(panel, px, s4_last, s4_z_last):
     """Flatten every constituent with the numbers the panel needs."""
     rows = []
@@ -108,7 +159,7 @@ def _net_dollar_flow(close, high, low, volume, days=20):
     return (clv.fillna(0) * volume * close).tail(days).sum()
 
 
-def build_money_flow_panel(panel, px, top_sectors=3, top_stocks=4):
+def build_money_flow_panel(panel, px, top_sectors=3, top_stocks=4, profiles=None):
     """The headline panel: where money is arriving, where it is leaving, by name.
 
     Deliberately framed as MEASUREMENT. The sector lead-lag test failed, so this
@@ -128,7 +179,7 @@ def build_money_flow_panel(panel, px, top_sectors=3, top_stocks=4):
     if not rows:
         return None
 
-    # per-stock 20d net dollar flow (AUD)
+    # per-stock 20d net dollar flow (AUD) and volume-by-price
     for r in rows:
         t = r["ticker"]
         try:
@@ -136,15 +187,20 @@ def build_money_flow_panel(panel, px, top_sectors=3, top_stocks=4):
                 closes[t], highs[t], lows[t], vols[t], 20))
         except Exception:
             r["net_flow_20d"] = np.nan
+        r["profile"] = (profiles or {}).get(t)
 
     g = lambda f: [r.get(f) for r in rows]                      # noqa: E731
     caps = np.array([(r.get("adv_aud") or 0) for r in rows], dtype=float)
     flow_scaled = np.array([r["net_flow_20d"] for r in rows], dtype=float) / np.where(caps > 0, caps, np.nan)
 
-    z_in = (0.30 * _xz(g("s4_z")) + 0.24 * _xz(flow_scaled) + 0.18 * _xz(g("cmf20")) +
-            0.14 * _xz(g("dollar_vol_z")) - 0.14 * _xz(g("short_chg_20d")))
-    z_out = (-0.26 * _xz(g("cmf20")) + 0.24 * _xz(g("short_chg_20d")) -
-             0.20 * _xz(flow_scaled) - 0.16 * _xz(g("s4_z")) - 0.14 * _xz(g("ret_20d")))
+    # S4 was dropped from both rankings on 2026-08-24 -- see the module docstring.
+    # The surviving terms are all DIRECT measurements (signed dollar flow, Chaikin
+    # money flow, turnover, disclosed short changes, realised return); their original
+    # weights are simply renormalised to sum to 1, so no new judgment is introduced.
+    z_in = (0.343 * _xz(flow_scaled) + 0.257 * _xz(g("cmf20")) +
+            0.200 * _xz(g("dollar_vol_z")) - 0.200 * _xz(g("short_chg_20d")))
+    z_out = (-0.310 * _xz(g("cmf20")) + 0.286 * _xz(g("short_chg_20d")) -
+             0.238 * _xz(flow_scaled) - 0.167 * _xz(g("ret_20d")))
     sd_in, sd_out = (np.std(z_in) or 1.0), (np.std(z_out) or 1.0)
 
     for i, r in enumerate(rows):
@@ -202,6 +258,7 @@ def _pack_stock(r, side):
         "days_to_cover": r["days_to_cover"], "adv_aud": r["adv_aud"],
         "s4": round(float(r["s4"]), 3) if np.isfinite(r.get("s4", np.nan)) else None,
         "s4_z": round(float(r["s4_z"]), 2) if np.isfinite(r.get("s4_z", np.nan)) else None,
+        "profile": r.get("profile"),
         "why": _why(r, side),
     }
 
@@ -245,4 +302,8 @@ def _why(r, side):
             out.append("放量下跌，像是在出货")
         if np.isfinite(r.get("ret_20d") or np.nan) and r["ret_20d"] < 0:
             out.append("近20天已经跌了 %.1f%%" % (abs(r["ret_20d"]) * 100))
-    return out[:3]
+    out = out[:3]
+    note = profile_note(r.get("profile"))
+    if note:
+        out.append(note)
+    return out
