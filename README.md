@@ -265,6 +265,7 @@ asx-quant/
     engine.py           编排，产出 JSON 报告
     smartmoney.py       S4吸筹信号(仅展示) + 顶部资金流入/流出面板 + 成本地图组装
     shortcost.py        空头建仓成本估算(FIFO存货法) + 轧空压力，仅展示不打分
+    tools/merge_archive.py  存档数据库的并集合并驱动（见 .gitattributes）
     announcements.py    ASX 举牌/董事公告采集与PDF解析（存档累积中）
     export.py           单文件 HTML 导出（云盘用）
     publish.py          静态站点生成（手机/云端用）
