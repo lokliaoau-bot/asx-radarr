@@ -58,6 +58,7 @@ var GLOSSARY = {
   "IC": "这套挑股方法的打分和之后股票实际涨跌的吻合程度。数值离0越远、越稳定，说明方法越有效。",
   "t值": "统计上判断一个结果是真本事还是碰运气的指标。绝对值大于2，一般就认为不是运气。",
   "AUC": "预测准不准的评分：0.5=和抛硬币一样瞎猜，越接近1越准。",
+  "朴素基线": "完全不用模型、只用一行最土的算术能拿到的准确度。比如「现在波动率低不低」本身就很能预测波动率会不会上升（波动率会均值回归）。模型必须赢过这一列才算有价值——赢不过就说明那套复杂机器还不如一行算术，系统会直接改报历史平均值。这是 Welch & Goyal (2008) 的标准检验。",
   "Brier": "衡量给出的概率靠不靠谱：大于0才算比无脑猜历史平均值更好。",
   "止损": "如果买了跌破/空了涨过某个价，就认赔离场，不硬扛，防止小亏拖成大亏。",
   "日均成交": "这只股票每天平均成交多少钱，反映能不能大额买卖不影响价格（流动性）。",
@@ -685,6 +686,9 @@ function forecastTable(r) {
       '<td class="' + cls(edge) + '">' + (Math.abs(edge) < .002 ? "0.0" : sgn(edge * 100, 1)) + 'pp</td>' +
       '<td class="mut">' + pct(f.base_rate) + '</td><td>' + num(f.shrink_lambda, 2) + '</td>' +
       '<td>' + num(m.auc, 3) + '</td>' +
+      '<td class="' + (f.beats_naive === false ? "dn" : "mut") + '"' +
+        (f.naive_name ? ' title="' + esc(f.naive_name) + '"' : "") + '>' +
+        (f.naive_auc == null ? "—" : num(f.naive_auc, 3)) + '</td>' +
       '<td class="' + ((m.brier_skill_score || 0) > 0 ? "up" : "mut") + '">' + sgn(m.brier_skill_score, 4) + '</td>' +
       '<td class="mut">' + num(mr.auc, 3) + '</td><td class="mut">' + (m.n || "—") + '</td>' +
       '<td><span class="pill ' + esc(f.skill) + '">' + esc(f.skill_cn) + '</span></td></tr>';
@@ -695,6 +699,7 @@ function forecastTable(r) {
     '<th class="term" title="' + GLOSSARY["基准率"] + '">历史平均</th>' +
     '<th class="term" title="系统对这条预测有多信任：0=实测没优势，直接用历史平均值">信任度</th>' +
     '<th class="term" title="' + GLOSSARY["AUC"] + '">准不准(AUC)</th>' +
+    '<th class="term" title="' + GLOSSARY["朴素基线"] + '">不用模型能到多少</th>' +
     '<th class="term" title="' + GLOSSARY["Brier"] + '">靠不靠谱(BSS)</th>' +
     '<th title="最近3年的准确度，看这条优势现在是不是还在">近3年准不准</th><th>用了多少历史</th><th>总评</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
 }

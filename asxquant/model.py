@@ -187,6 +187,33 @@ def calibrate_expanding(p: pd.Series, y: pd.Series, horizon: int,
     return pd.Series(out, index=idx)
 
 
+
+def naive_auc(naive, y, on_index):
+    """Discrimination of a no-model benchmark, scored on the SAME rows as the model.
+
+    Welch & Goyal (2008) -- already in this project's reference list -- showed that
+    elaborate return predictors routinely fail to beat a trivial benchmark out of
+    sample, and that comparing only against the base rate hides it. This project was
+    doing exactly that: every forecast was judged against a coin flip, never against
+    the obvious one-line alternative.
+
+    It matters. Measured on this data, the 43-factor ensemble for "volatility rises"
+    scores AUC 0.713 while `-realised_vol` alone -- literally "is volatility low right
+    now" -- scores 0.775, and the naive version wins in every sub-period. A model that
+    loses to one line of arithmetic should be labelled as such, not as "strongest in
+    the system".
+    """
+    if naive is None:
+        return None
+    d = pd.concat([pd.Series(naive).rename("s"), pd.Series(y).rename("y")], axis=1)
+    d = d.reindex(on_index).dropna()
+    if len(d) < 60 or d["y"].nunique() < 2:
+        return None
+    try:
+        return round(float(roc_auc_score(d["y"].values.astype(int), d["s"].values)), 4)
+    except Exception:
+        return None
+
 def evaluate(p: pd.Series, y: pd.Series):
     """Out-of-sample scorecard for a probability forecast of a binary outcome."""
     d = pd.concat([p.rename("p"), y.rename("y")], axis=1).dropna()
@@ -221,9 +248,18 @@ def _high_conf_hit(pv, yv, band=0.05):
             "accuracy": round(float(((pv[m] > 0.5).astype(int) == yv[m]).mean()), 4)}
 
 
-def shrink_to_base(p_last, base_rate, auc, full_skill_auc=0.60):
-    """Shrink the raw probability toward the base rate by measured discrimination."""
+def shrink_to_base(p_last, base_rate, auc, full_skill_auc=0.60, naive_auc=None):
+    """Shrink the raw probability toward the base rate by measured discrimination.
+
+    `naive_auc` collapses the weight entirely when the model cannot beat the no-model
+    benchmark. Discriminating better than a coin flip is not the bar: if "volatility is
+    low right now" separates the outcome better than the ensemble does, then quoting a
+    model probability actively misinforms, however far its AUC sits above 0.5. Falling
+    back to the base rate at least says nothing rather than something worse than free.
+    """
     if auc is None or not np.isfinite(auc):
+        return base_rate, 0.0
+    if naive_auc is not None and np.isfinite(naive_auc) and auc <= naive_auc:
         return base_rate, 0.0
     lam = float(np.clip((auc - 0.5) / (full_skill_auc - 0.5), 0.0, 1.0))
     return base_rate + lam * (p_last - base_rate), lam

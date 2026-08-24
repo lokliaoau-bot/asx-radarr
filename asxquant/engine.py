@@ -50,22 +50,32 @@ def _targets(bench):
                     "y": (fwd > 0).astype(float).where(fwd.notna()), "fwd": fwd})
     rv = I.realized_vol(bench, 20)
     frv = rv.shift(-20)
+    # `naive` is the no-model alternative each target must beat to be worth anything
+    # (Welch & Goyal 2008). Volatility mean-reverts, so "vol is low now" already
+    # predicts "vol rises"; high vol likewise precedes drawdowns. Direction has no
+    # comparable free lunch, so its benchmark stays the base rate.
     out.append({"key": "vol_up_20d", "group": "risk", "horizon": 20,
                 "name": "未来20日波动率上升", "short": "波动率上行",
-                "y": (frv > rv).astype(float).where(frv.notna()), "fwd": frv / rv - 1.0})
+                "y": (frv > rv).astype(float).where(frv.notna()), "fwd": frv / rv - 1.0,
+                "naive": -rv, "naive_name": "只看「现在波动率低不低」"})
     for h, thr in ((10, -0.04), (20, -0.05), (20, -0.08)):
         fmin = bench[::-1].rolling(h, min_periods=h).min()[::-1].shift(-1)
         dd = fmin / bench - 1.0
         out.append({"key": "dd_%d_%dd" % (int(abs(thr) * 100), h), "group": "risk", "horizon": h,
                     "name": "未来%d日内最大回撤超过%d%%" % (h, int(abs(thr) * 100)),
                     "short": "%d日回撤>%d%%" % (h, int(abs(thr) * 100)),
-                    "y": (dd < thr).astype(float).where(dd.notna()), "fwd": dd})
+                    "y": (dd < thr).astype(float).where(dd.notna()), "fwd": dd,
+                    "naive": rv, "naive_name": "只看「现在波动率高不高」"})
     return out
 
 
-def _skill_verdict(auc, bss, n):
+def _skill_verdict(auc, bss, n, naive_auc=None):
+    """A model that loses to the no-model benchmark has no skill worth the name,
+    however good its AUC looks against a coin flip (Welch & Goyal 2008)."""
     if auc is None or n is None or n < 200:
         return "insufficient", "样本不足"
+    if naive_auc is not None and auc <= naive_auc:
+        return "none", "跑输不用模型的简单基线"
     if auc >= 0.60 and (bss or 0) > 0:
         return "strong", "显著预测力"
     if auc >= 0.55 and (bss or 0) > -0.01:
@@ -96,12 +106,14 @@ def _fit_target(tg, Xf, cache=None, log=print):
 
     p_model = float(s.iloc[-1])
     base = metrics["base_rate"] if metrics else 0.5
+    # Score the no-model benchmark on exactly the rows the model was scored on.
+    naive_auc = M.naive_auc(tg.get("naive"), ya, s.index)
     aucs = [a for a in [(metrics or {}).get("auc"), (m_recent or {}).get("auc")] if a is not None]
     p_final, lam = M.shrink_to_base(p_model, base, min(aucs) if aucs else None,
-                                    full_skill_auc=FULL_SKILL_AUC)
+                                    full_skill_auc=FULL_SKILL_AUC, naive_auc=naive_auc)
     lvl, lvl_cn = _skill_verdict((metrics or {}).get("auc"),
                                  (metrics or {}).get("brier_skill_score"),
-                                 (metrics or {}).get("n"))
+                                 (metrics or {}).get("n"), naive_auc)
     hist = s.tail(260)
     payload = {
         "key": tg["key"], "group": tg["group"], "name": tg["name"], "short": tg["short"],
@@ -110,6 +122,9 @@ def _fit_target(tg, Xf, cache=None, log=print):
         "base_rate": round(float(base), 4), "shrink_lambda": round(float(lam), 3),
         "edge_pp": round(float((p_final - base) * 100), 2),
         "metrics": metrics, "metrics_recent": m_recent,
+        "naive_auc": naive_auc, "naive_name": tg.get("naive_name"),
+        "beats_naive": (None if (naive_auc is None or not (metrics or {}).get("auc"))
+                        else bool(metrics["auc"] > naive_auc)),
         "skill": lvl, "skill_cn": lvl_cn,
         "conditional": M.conditional_outcomes(series, tg["fwd"].reindex(series.index), p_model),
         "history": {"dates": [str(x.date()) for x in hist.index],
