@@ -43,7 +43,9 @@
 window.addEventListener("error", function (e) { window.__BOOT_ERR__ = e && e.message; });
 setTimeout(function () {
   var app = document.getElementById("app");
-  if (!app || app.innerHTML.indexOf("正在载入") < 0) return;   // 已经渲染出来了
+  if (!app) return;
+  var idle = app.innerHTML.length < 200 || app.innerHTML.indexOf("正在载入") >= 0;
+  if (!idle) return;                                          // 已经渲染出来了
   var why = (typeof render === "undefined")
     ? "app.js 没能加载或解析（脚本报错，整份脚本都没执行）"
     : "脚本已加载，但数据一直没回来";
