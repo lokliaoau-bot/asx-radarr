@@ -1,0 +1,5 @@
+# 存档数据库两边都可能有对方没有的行，必须并集合并，不能整边取舍。
+# 启用一次（每个 clone 都要，git 不会自动信任仓库里的驱动定义）：
+#   git config merge.archivedb.name "union-merge the announcements archive"
+#   git config merge.archivedb.driver "python tools/merge_archive.py %O %A %B"
+cache/announcements.db merge=archivedb
