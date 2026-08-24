@@ -73,7 +73,21 @@ jobs:
             echo "存档无变化，跳过提交"
           else
             git commit -m "存档更新 $(date -u +%Y-%m-%d) [skip ci]"
-            git push
+            # 构建要跑一两分钟，期间完全可能有人往 main 推了代码。那样这里的 push
+            # 会因为非快进被拒，这一步失败、整个构建标红，而且这次的存档就丢了——
+            # 存档是唯一无法事后重建的东西（公告只能取最近几条），不能这么丢。
+            # 所以：被拒就把本地这一条 commit 变基到最新远端再推，最多试三次。
+            for i in 1 2 3; do
+              if git push; then
+                echo "存档已回写"
+                break
+              fi
+              echo "推送被拒（远端有新提交），变基后重试 $i/3"
+              git pull --rebase --autostash origin main || {
+                echo "变基失败，放弃回写（不让整个构建失败）"
+                break
+              }
+            done
           fi
 
       - uses: actions/upload-pages-artifact@v3
