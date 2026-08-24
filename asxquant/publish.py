@@ -7,6 +7,8 @@ covers both the local server and the static host with no build-time branching.
 """
 from __future__ import annotations
 
+import datetime as dt
+import io
 import json
 import os
 import shutil
@@ -23,10 +25,22 @@ def build(report, out_dir=None, log=print):
     out_dir = out_dir or SITE
     os.makedirs(out_dir, exist_ok=True)
 
+    stamp = dt.datetime.now().strftime("%Y-%m-%d %H:%M")
     for name in ASSETS:
         src = os.path.join(WEB, name)
-        if os.path.exists(src):
-            shutil.copy2(src, os.path.join(out_dir, name))
+        if not os.path.exists(src):
+            continue
+        dst = os.path.join(out_dir, name)
+        if name == "app.js":
+            # Stamp the build time into the shipped script. The header then shows which
+            # BUILD of the interface is on screen, not just how fresh the DATA is --
+            # a phone with a stale cached app.js would otherwise show a brand-new
+            # "生成于" timestamp on top of last week's layout.
+            txt = io.open(src, encoding="utf-8").read().replace("@@BUILD@@", stamp)
+            with io.open(dst, "w", encoding="utf-8") as f:
+                f.write(txt)
+        else:
+            shutil.copy2(src, dst)
 
     with open(os.path.join(out_dir, "report.json"), "w", encoding="utf-8") as f:
         json.dump(report, f, ensure_ascii=False, separators=(",", ":"))

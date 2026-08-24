@@ -5,6 +5,19 @@ on:
     # ASX 收盘约 UTC 06:00；ASIC 空头文件 T+4 上午发布。
     # 取 UTC 08:30 = 悉尼 18:30/19:30，确保当天数据齐全。
     - cron: "30 8 * * 1-5"
+
+  # 代码一推上来就重新部署，手机上不用再手动点 Run workflow。
+  #
+  # ⚠️ 这个 workflow 自己会把 cache/announcements.db 推回仓库。若不排除该路径，
+  # 那次回写会再触发一轮构建、再回写……变成无限循环，把 Actions 额度烧光。
+  # 双重保险：这里排除 cache/**，回写那步的提交信息里也带 [skip ci]。
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'cache/**'
+      - '**.md'
+      - '.gitignore'
+
   workflow_dispatch:        # 手机上也能手动触发（GitHub 网页 Run workflow）
 
 permissions:
@@ -53,7 +66,7 @@ jobs:
           if git diff --staged --quiet; then
             echo "存档无变化，跳过提交"
           else
-            git commit -m "存档更新 $(date -u +%Y-%m-%d)"
+            git commit -m "存档更新 $(date -u +%Y-%m-%d) [skip ci]"
             git push
           fi
 

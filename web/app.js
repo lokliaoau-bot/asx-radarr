@@ -13,6 +13,15 @@ function esc(s) {
     return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
   });
 }
+/* 由 publish.py / export.py 在构建时替换。本地直接跑 server.py 时保持原样，
+   于是本地显示"本地开发版"，云端显示真正的构建时间——用来一眼看出
+   手机上打开的到底是不是最新那版界面（数据新不代表界面新：装成 App 后
+   Service Worker 可能还留着上一版的 app.js）。 */
+var BUILD_STAMP = "@@BUILD@@";
+function buildLabel() {
+  return BUILD_STAMP.charAt(0) === "@" ? "本地开发版" : BUILD_STAMP;
+}
+
 function num(v, d) { return (v === null || v === undefined || isNaN(v)) ? "—" : Number(v).toFixed(d === undefined ? 2 : d); }
 function pct(v, d) { return (v === null || v === undefined || isNaN(v)) ? "—" : (v * 100).toFixed(d === undefined ? 1 : d) + "%"; }
 function spct(v, d) {
@@ -877,7 +886,8 @@ function render(r) {
   }
   renderQuote(r.benchmark);
   el("asof").textContent = "行情截至 " + r.as_of + " · ASIC空头截至 " + (r.short_as_of || "—") +
-    " · 生成于 " + r.generated_at + (SNAPSHOT ? " · 云盘快照（只读）" : " · 耗时 " + r.runtime_sec + "s");
+    " · 生成于 " + r.generated_at + " · 界面 " + buildLabel() +
+    (SNAPSHOT ? " · 云盘快照（只读）" : " · 耗时 " + r.runtime_sec + "s");
 
   var idx = bigLineChart({
     dates: r.benchmark.history.dates, h: 200,

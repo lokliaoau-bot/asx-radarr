@@ -38,7 +38,8 @@ def export(report, out_dir=None, filename=None):
     os.makedirs(out_dir, exist_ok=True)
 
     css = _read(os.path.join(WEB, "style.css"))
-    js = _read(os.path.join(WEB, "app.js"))
+    js = _read(os.path.join(WEB, "app.js")).replace(
+        "@@BUILD@@", dt.datetime.now().strftime("%Y-%m-%d %H:%M"))
     stamp = report.get("as_of", "")
     gen = dt.datetime.now().strftime("%Y-%m-%d %H:%M")
 
