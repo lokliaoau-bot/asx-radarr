@@ -55,6 +55,8 @@ var GLOSSARY = {
   "成本地图": "把过去3个月的成交量按价位摊开，看大家的筹码主要堆在哪个价格附近。柱子越高＝那个价位换手越多。这是对已发生成交的测量，不是预测，也不参与任何评分。",
   "套牢盘": "在比现价更高的价位买入、目前还浮亏的那部分成交量占比。占比高，意味着股价往上走时会不断遇到解套卖出的人。",
   "价值区": "成交量最集中的那一段价格区间（约占七成成交量）。价格待在里面通常代表买卖双方对价格有共识，冲出去则代表共识被打破。",
+  "空头成本": "把全市场每天公开的空头总仓位当成一个仓库记账：仓位增加＝有人在当天价位新开空单，减少＝最早的空单被平掉。据此倒推出目前还没平掉的空单平均建在什么价。这是全体空头的平均数，不是某一家机构；澳洲不公开做空者身份。",
+  "可追溯": "当前空头仓位中，有多大比例能追溯到具体建仓价。ASIC 数据从2022年才有，更早就存在的老仓位无法定价。低于80%时该股的成本估算要打折看。",
   "重叠样本": "本系统每天都要算一次「未来20天涨多少」，相邻两天的那20天几乎完全重合，所以这些数字并不是互相独立的。若当成独立来算统计显著性，会把 t 值放大3到5倍。本表已用 Newey-West 方法修正。"
 };
 var _glossaryKeys = Object.keys(GLOSSARY).sort(function (a, b) { return b.length - a.length; });
@@ -815,6 +817,56 @@ function methodology(r) {
 }
 
 /* ---------------- master render ---------------- */
+/* ============ 轧空压力榜：空头建在哪个价位、现在是赚是亏 ============ */
+function squeezeSection(r) {
+  var rows = r.short_cost || [];
+  var dh = r.data_health || {};
+  var halted = (dh.halted || []).map(function (h) {
+    return esc(h.code) + '（最后成交 ' + esc(h.last_trade) + '，已停 ' + h.stale_days + ' 天）';
+  }).join("、");
+  var haltNote = halted
+    ? '<div class="foot-note" style="margin-top:10px">🚫 <b>已停止成交、已从所有名单中剔除：</b>' + halted +
+      '。停牌或退市的股票会永远停在最后一个价位上，若不剔除，系统会把一个死掉的价格当成今天的价格。</div>'
+    : "";
+  if (!rows.length) return haltNote ? '<section>' + haltNote + '</section>' : "";
+
+  function row(k) {
+    var loss = k.pnl < 0;
+    var thin = k.coverage < 0.8;
+    return '<tr><td class="name"><b>' + esc(k.code) + '</b></td>' +
+      '<td>' + num(k.short_pct, 2) + '%</td>' +
+      '<td>A$' + num(k.px, 2) + '</td>' +
+      '<td>A$' + num(k.cost, 2) + '</td>' +
+      '<td class="' + (loss ? "dn" : "up") + '"><b>' + (k.pnl >= 0 ? "+" : "") + num(k.pnl * 100, 1) + '%</b></td>' +
+      '<td class="' + (thin ? "amb" : "mut") + '">' + num(k.coverage * 100, 0) + '%</td>' +
+      '<td class="mut">' + esc(k.since || "—") + '</td>' +
+      '<td>' + (loss
+        ? '<span class="pill strong-out">浮亏 · 有轧空压力</span>'
+        : '<span class="pill neutral">浮盈 · 无平仓压力</span>') + '</td></tr>';
+  }
+
+  return '<section><h2>赌它跌的机构，建仓在什么价位 <span class="tag meas">测量</span></h2>' +
+    '<p class="lead">👉 澳洲每天公开全市场的空头总仓位。把它当成一个仓库来记账——' +
+    '哪天仓位增加就是<b>有人在那天的价位新开了空单</b>，哪天减少就是<b>最早的空单被平掉</b>——' +
+    '就能倒推出<b>目前还没平的空单，平均建在什么价</b>。' +
+    '空头<b>亏钱</b>时最危险：他们越亏越可能被迫买回股票止损，把价格越推越高（' +
+    term("轧空", GLOSSARY["轧空"]) + '）。</p>' +
+    '<div class="panel"><table><thead><tr><th>代码</th>' +
+    '<th class="term" title="' + GLOSSARY["空头持仓"] + '">空头占股本</th>' +
+    '<th>现价</th><th class="term" title="' + GLOSSARY["空头成本"] + '">估算建仓均价</th>' +
+    '<th>空头盈亏</th><th class="term" title="' + GLOSSARY["可追溯"] + '">可追溯</th>' +
+    '<th>最早未平仓</th><th>状态</th></tr></thead><tbody>' +
+    rows.map(row).join("") + '</tbody></table>' +
+    '<div class="foot-note" style="margin-top:12px">' +
+    '⚠️ <b>三件必须知道的事：</b>①这是<b>全市场空头的平均数，不是某一家机构</b>——' +
+    '<b>澳洲不公开谁在做空</b>（欧盟和英国会公布超过0.5%的持有人姓名，澳洲不会），' +
+    '所以"哪家基金、他的成本多少"在澳洲无法得知，这里给的是所有空头合起来的平均建仓价。' +
+    '②当天新开的空单按<b>当天均价</b>估算，真实成交价散布在全天，做不到更细。' +
+    '③ASIC 是 <b>T+4</b> 公布，最新一天的数据是4个交易日前的。' +
+    '"可追溯"低于80%说明有一批2022年前就存在的老仓位查不到建仓价，该股估算要打折看。' +
+    '<b>本表只是测量，不参与任何评分。</b></div>' + haltNote + '</div></section>';
+}
+
 function render(r) {
   R = r;
   if (STATIC_MODE) {
@@ -854,6 +906,8 @@ function render(r) {
     '<b>务必先看每张卡里的"可信度"那一行——看空的建议靠谱，看多的建议只是参考，两边差别很大。</b>' +
     '数字都算过过去 ' + ((r.validation || {}).years || "—") + ' 年的实际表现。</p>' +
     verdictSection(r) + '</section>' +
+
+    squeezeSection(r) +
 
     '<section>' + headCards(r) + '</section>' +
 

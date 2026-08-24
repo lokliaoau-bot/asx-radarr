@@ -111,6 +111,41 @@ def fetch_prices(force=False, log=print):
     return out
 
 
+
+def trading_status(px, tickers):
+    """Names that have stopped printing trades: halts, suspensions, delistings.
+
+    A static universe rots silently. A suspended or delisted stock keeps its last
+    close forever, and every downstream indicator then presents a stale price as if
+    it were today's. QUB was carried this way for four sessions -- delisted, still
+    quoted at its final price, still eligible for the pick lists -- before this
+    check existed.
+
+    Cheap and assumption-free: compare each name's last printed close against the
+    market's own latest session. No announcement parsing, so it catches suspensions,
+    delistings and plain data outages alike.
+    """
+    closes = px["close"]
+    idx = closes.index
+    out = {}
+    for t in tickers:
+        if t not in closes.columns:
+            out[t] = {"last_trade": None, "stale_days": 10 ** 4}
+            continue
+        s = closes[t].dropna()
+        if not len(s):
+            out[t] = {"last_trade": None, "stale_days": 10 ** 4}
+            continue
+        out[t] = {"last_trade": str(s.index[-1].date()),
+                  "stale_days": int((idx > s.index[-1]).sum())}
+    return out
+
+
+def halted_tickers(px, tickers, min_stale_days=1):
+    """The subset of `tickers` not currently trading."""
+    st = trading_status(px, tickers)
+    return {t for t, v in st.items() if v["stale_days"] >= min_stale_days}
+
 # --------------------------------------------------------------------------
 # ASIC short positions
 # --------------------------------------------------------------------------

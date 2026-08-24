@@ -159,7 +159,8 @@ def _net_dollar_flow(close, high, low, volume, days=20):
     return (clv.fillna(0) * volume * close).tail(days).sum()
 
 
-def build_money_flow_panel(panel, px, top_sectors=3, top_stocks=4, profiles=None):
+def build_money_flow_panel(panel, px, top_sectors=3, top_stocks=4, profiles=None,
+                           halted=None, short_cost=None):
     """The headline panel: where money is arriving, where it is leaving, by name.
 
     Deliberately framed as MEASUREMENT. The sector lead-lag test failed, so this
@@ -188,6 +189,7 @@ def build_money_flow_panel(panel, px, top_sectors=3, top_stocks=4, profiles=None
         except Exception:
             r["net_flow_20d"] = np.nan
         r["profile"] = (profiles or {}).get(t)
+        r["short_cost"] = (short_cost or {}).get(r["code"])
 
     g = lambda f: [r.get(f) for r in rows]                      # noqa: E731
     caps = np.array([(r.get("adv_aud") or 0) for r in rows], dtype=float)
@@ -207,7 +209,11 @@ def build_money_flow_panel(panel, px, top_sectors=3, top_stocks=4, profiles=None
         r["in_score"] = round(float(z_in[i] / sd_in), 3)
         r["out_score"] = round(float(z_out[i] / sd_out), 3)
 
-    liq = [r for r in rows if (r.get("adv_aud") or 0) >= 1_000_000]
+    # A suspended name cannot be receiving or losing money today, whatever its
+    # frozen indicators say, so it never appears on this panel.
+    _halted = halted or set()
+    liq = [r for r in rows if (r.get("adv_aud") or 0) >= 1_000_000
+           and r["ticker"] not in _halted]
     by_sector = {}
     for r in liq:
         by_sector.setdefault(r["sector"], []).append(r)
@@ -259,6 +265,7 @@ def _pack_stock(r, side):
         "s4": round(float(r["s4"]), 3) if np.isfinite(r.get("s4", np.nan)) else None,
         "s4_z": round(float(r["s4_z"]), 2) if np.isfinite(r.get("s4_z", np.nan)) else None,
         "profile": r.get("profile"),
+        "short_cost": r.get("short_cost"),
         "why": _why(r, side),
     }
 
@@ -306,4 +313,10 @@ def _why(r, side):
     note = profile_note(r.get("profile"))
     if note:
         out.append(note)
+    sc = r.get("short_cost")
+    if side == "out" and sc:
+        from .shortcost import note as _sc_note
+        n2 = _sc_note(sc)
+        if n2:
+            out.append(n2.replace("**", ""))
     return out

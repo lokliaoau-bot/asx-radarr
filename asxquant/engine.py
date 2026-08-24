@@ -30,6 +30,7 @@ from . import indicators as I
 from . import model as M
 from . import picks as PK
 from . import sectors as S
+from . import shortcost as SC
 from . import smartmoney as SM
 from . import validate as V
 from .config import (BENCHMARK, MACRO, MODEL_VERSION, SECTORS, all_stock_tickers,
@@ -193,9 +194,24 @@ def run(force=False, log=print, progress=None):
     tickers = [t for t in all_stock_tickers() if t in px["close"].columns]
     spct, ssha = D.shorts_panel(shorts, tickers, px["close"].index)
 
+    # Suspended / delisted names keep their last close forever. Yahoo already NaNs
+    # them out (so the backtest masks them correctly), but the live cards read the
+    # last VALID close and would quote a dead price as today's. Detect and gate.
+    halted = D.halted_tickers(px, tickers)
+    if halted:
+        log("停牌/退市检测: %s 已停止成交，已排除出所有名单"
+            % ", ".join(sorted(t.replace(".AX", "") for t in halted)))
+
     step("正在计算板块资金流、热度与做空压力 ...", 26)
     panel = S.score_sectors(S.build_sector_panel(px, spct, ssha))
-    stock_rows = PK.score_stocks(panel)
+    stock_rows = PK.score_stocks(panel, halted=halted)
+
+    # Where the short sellers got in, and whether they are under water.
+    try:
+        scost = SC.build(shorts, px, [t.replace(".AX", "") for t in tickers])
+    except Exception:
+        log("空头成本估算失败(不影响其余部分): %s" % traceback.format_exc().splitlines()[-1])
+        scost = {}
 
     # Volume-by-price: where the crowd's cost actually sits. Measurement only --
     # it is attached to the cards and deliberately kept out of every score.
@@ -205,11 +221,13 @@ def run(force=False, log=print, progress=None):
         log("成交量分布失败(不影响其余部分): %s" % traceback.format_exc().splitlines()[-1])
         profiles = {}
 
-    rec = PK.build_recommendations(panel, stock_rows, n=3, profiles=profiles)
+    rec = PK.build_recommendations(panel, stock_rows, n=3, profiles=profiles,
+                                   short_cost=scost)
 
     step("正在定位资金流入/流出的具体股票 ...", 30)
     try:
-        money_flow = SM.build_money_flow_panel(panel, px, profiles=profiles)
+        money_flow = SM.build_money_flow_panel(panel, px, profiles=profiles,
+                                              halted=halted, short_cost=scost)
         if money_flow:
             money_flow["as_of"] = str(asof.date())
     except Exception:
@@ -329,6 +347,12 @@ def run(force=False, log=print, progress=None):
         "forecasts": results,
         "sectors": sec_out,
         "money_flow": money_flow,
+        "short_cost": sorted(scost.values(), key=lambda r: r["pnl"])[:12],
+        "data_health": {
+            "halted": [{"code": t.replace(".AX", ""), **D.trading_status(px, [t])[t]}
+                       for t in sorted(halted)],
+            "universe": len(tickers),
+        },
         "announcements": ann,
         "archive": arch,
         "recommendation": rec,

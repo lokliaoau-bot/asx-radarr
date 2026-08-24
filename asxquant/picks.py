@@ -61,8 +61,14 @@ def _xz(vals, clip=3.0):
     return np.clip(z, -clip, clip)
 
 
-def score_stocks(panel):
-    """Attach long_score / short_score to every constituent; return the flat list."""
+def score_stocks(panel, halted=None):
+    """Attach long_score / short_score to every constituent; return the flat list.
+
+    `halted` names fail both liquidity gates outright: a suspended or delisted stock
+    cannot be bought or sold, so it has no business in a recommendation list however
+    well it scores.
+    """
+    halted = halted or set()
     rows = []
     for k, p in panel.items():
         for s in p["stocks"]:
@@ -118,8 +124,11 @@ def score_stocks(panel):
         r["short_score"] = round(float(ss[i]), 3)
         r["long_parts"] = {n: round(float(LONG_WEIGHTS[n] * lc[n][i]), 3) for n in LONG_WEIGHTS}
         r["short_parts"] = {n: round(float(SHORT_WEIGHTS[n] * sc[n][i]), 3) for n in SHORT_WEIGHTS}
-        r["liquid_long"] = bool(adv >= MIN_ADV_LONG)
-        r["liquid_short"] = bool(adv >= MIN_ADV_SHORT and r.get("short_pct") is not None
+        tradable = r["ticker"] not in halted
+        r["halted"] = not tradable
+        r["liquid_long"] = bool(tradable and adv >= MIN_ADV_LONG)
+        r["liquid_short"] = bool(tradable and adv >= MIN_ADV_SHORT
+                                 and r.get("short_pct") is not None
                                  and np.isfinite(r.get("short_pct") or np.nan))
     return rows
 
@@ -169,7 +178,7 @@ def _short_reasons(r):
     return out[:5]
 
 
-def build_recommendations(panel, stocks, n=3, profiles=None):
+def build_recommendations(panel, stocks, n=3, profiles=None, short_cost=None):
     """Pick one sector to be long and one to be short, then n names inside each."""
     if not panel or not stocks:
         return None
@@ -214,6 +223,7 @@ def build_recommendations(panel, stocks, n=3, profiles=None):
             "adv_aud": r["adv_aud"], "vol20": r["vol20"], "atr_pct": r["atr_pct"],
             "extension": r["extension"],
             "profile": (profiles or {}).get(r["ticker"]),
+            "short_cost": (short_cost or {}).get(r["code"]),
             "reasons": _long_reasons(r) if side == "long" else _short_reasons(r),
             "parts": r["long_parts"] if side == "long" else r["short_parts"],
             "stop_hint": _stop(r, side),
