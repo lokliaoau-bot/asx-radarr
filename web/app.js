@@ -65,6 +65,7 @@ var GLOSSARY = {
   "套牢盘": "在比现价更高的价位买入、目前还浮亏的那部分成交量占比。占比高，意味着股价往上走时会不断遇到解套卖出的人。",
   "价值区": "成交量最集中的那一段价格区间（约占七成成交量）。价格待在里面通常代表买卖双方对价格有共识，冲出去则代表共识被打破。",
   "空头成本": "把全市场每天公开的空头总仓位当成一个仓库记账：仓位增加＝有人在当天价位新开空单，减少＝最早的空单被平掉。据此倒推出目前还没平掉的空单平均建在什么价。这是全体空头的平均数，不是某一家机构；澳洲不公开做空者身份。",
+  "空头盈亏": "相对建仓本金算的。在 A$10 做空、股价跌到 A$5 就是赚 50%；涨到 A$20 就是亏 100%。注意做空的亏损没有上限——做多最多亏光本金，做空理论上可以亏更多，所以空头亏得越狠，被迫买回股票止损的压力越大。",
   "可追溯": "当前空头仓位中，有多大比例能追溯到具体建仓价。ASIC 数据从2022年才有，更早就存在的老仓位无法定价。低于80%时该股的成本估算要打折看。",
   "重叠样本": "本系统每天都要算一次「未来20天涨多少」，相邻两天的那20天几乎完全重合，所以这些数字并不是互相独立的。若当成独立来算统计显著性，会把 t 值放大3到5倍。本表已用 Newey-West 方法修正。"
 };
@@ -842,12 +843,24 @@ function squeezeSection(r) {
   function row(k) {
     var loss = k.pnl < 0;
     var thin = k.coverage < 0.8;
+    var adds = k.adds || [];
+    var big = adds[0];
+    var addTxt = "—", addTip = "";
+    if (big) {
+      addTxt = esc(big.date) + ' @ A$' + num(big.px, 2);
+      addTip = adds.map(function (a) {
+        return a.date + " 加空 " + (a.shares / 1e4).toFixed(0) + "万股（占现仓位 " +
+          (a.pct_of_pos * 100).toFixed(1) + "%），当天价 A$" + Number(a.px).toFixed(2);
+      }).join(String.fromCharCode(10));
+    }
     return '<tr><td class="name"><b>' + esc(k.code) + '</b></td>' +
       '<td>' + num(k.short_pct, 2) + '%</td>' +
       '<td>A$' + num(k.px, 2) + '</td>' +
       '<td>A$' + num(k.cost, 2) + '</td>' +
       '<td class="' + (loss ? "dn" : "up") + '"><b>' + (k.pnl >= 0 ? "+" : "") + num(k.pnl * 100, 1) + '%</b></td>' +
       '<td class="' + (thin ? "amb" : "mut") + '">' + num(k.coverage * 100, 0) + '%</td>' +
+      '<td class="mut"' + (addTip ? ' title="' + esc(addTip) + '"' : "") + '>' + addTxt +
+        (big ? ' <span class="mut">(' + num(big.pct_of_pos * 100, 0) + '%)</span>' : "") + '</td>' +
       '<td class="mut">' + esc(k.since || "—") + '</td>' +
       '<td>' + (loss
         ? '<span class="pill strong-out">浮亏 · 有轧空压力</span>'
@@ -863,7 +876,9 @@ function squeezeSection(r) {
     '<div class="panel"><table><thead><tr><th>代码</th>' +
     '<th class="term" title="' + GLOSSARY["空头持仓"] + '">空头占股本</th>' +
     '<th>现价</th><th class="term" title="' + GLOSSARY["空头成本"] + '">估算建仓均价</th>' +
-    '<th>空头盈亏</th><th class="term" title="' + GLOSSARY["可追溯"] + '">可追溯</th>' +
+    '<th class="term" title="' + GLOSSARY["空头盈亏"] + '">空头盈亏</th>' +
+    '<th class="term" title="' + GLOSSARY["可追溯"] + '">可追溯</th>' +
+    '<th class="term" title="近120个交易日里空头加仓最猛的一天：日期与当天均价。鼠标停上去看前三笔。">最大一笔加空</th>' +
     '<th>最早未平仓</th><th>状态</th></tr></thead><tbody>' +
     rows.map(row).join("") + '</tbody></table>' +
     '<div class="foot-note" style="margin-top:12px">' +
@@ -871,6 +886,8 @@ function squeezeSection(r) {
     '<b>澳洲不公开谁在做空</b>（欧盟和英国会公布超过0.5%的持有人姓名，澳洲不会），' +
     '所以"哪家基金、他的成本多少"在澳洲无法得知，这里给的是所有空头合起来的平均建仓价。' +
     '②当天新开的空单按<b>当天均价</b>估算，真实成交价散布在全天，做不到更细。' +
+    '<b>「空头盈亏」是相对建仓本金算的</b>：在 A$10 做空、股价涨到 A$20，就是亏掉 100% 本金——' +
+    '做空的亏损<b>没有上限</b>，可以超过 100%（做多最多亏光，做空不是）。' +
     '③ASIC 是 <b>T+4</b> 公布，最新一天的数据是4个交易日前的。' +
     '"可追溯"低于80%说明有一批2022年前就存在的老仓位查不到建仓价，该股估算要打折看。' +
     '<b>本表只是测量，不参与任何评分。</b></div>' + haltNote + '</div></section>';

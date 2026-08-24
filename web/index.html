@@ -37,6 +37,24 @@
 </div>
 <script src="app.js"></script>
 <script>
+/* 看门狗：app.js 若有语法错误，整个脚本一行都不会执行——app.js 内部的 try/catch
+   救不了自己，页面就永远停在"正在载入 ..."，看起来像卡住或没数据。这段独立的内联
+   脚本不受 app.js 解析失败影响，超时后把真实原因显示出来。 */
+window.addEventListener("error", function (e) { window.__BOOT_ERR__ = e && e.message; });
+setTimeout(function () {
+  var app = document.getElementById("app");
+  if (!app || app.innerHTML.indexOf("正在载入") < 0) return;   // 已经渲染出来了
+  var why = (typeof render === "undefined")
+    ? "app.js 没能加载或解析（脚本报错，整份脚本都没执行）"
+    : "脚本已加载，但数据一直没回来";
+  app.innerHTML = '<div class="empty">页面没能载入。<br><br><b>' + why + '</b>' +
+    '<br><br>先<b>强制刷新一次</b>（手机：关掉 App 再打开；电脑：Ctrl+F5）。' +
+    (window.__BOOT_ERR__
+      ? '<br><br><span style="font-size:12px;color:#5d6478">技术细节：' +
+        String(window.__BOOT_ERR__).replace(/[<>&]/g, "") + '</span>'
+      : "") + '</div>';
+}, 12000);
+
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function () {
     navigator.serviceWorker.register("sw.js").catch(function () {});

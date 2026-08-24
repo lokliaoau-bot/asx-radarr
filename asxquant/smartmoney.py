@@ -318,5 +318,5 @@ def _why(r, side):
         from .shortcost import note as _sc_note
         n2 = _sc_note(sc)
         if n2:
-            out.append(n2.replace("**", ""))
+            out.append(n2)
     return out

@@ -48,6 +48,9 @@ import numpy as np
 import pandas as pd
 
 MIN_DAYS = 60
+# One lot per trading day at most, and ASIC's file starts in 2022, so real data tops
+# out around 1,200 lots. This cap only exists so a pathological input cannot grow the
+# list without bound; the merge branch it guards is dead code on this universe.
 MAX_LOTS = 6000
 
 
@@ -118,8 +121,13 @@ def short_cost(code, shorts, px, lookback_adds=120, n_adds=3, group=None):
     if not (np.isfinite(cost_adj) and cost_adj > 0):
         return None
 
-    # A short seller gains when price falls below entry.
-    pnl = float(cost_adj / px_now - 1.0)
+    # Return on the notional the position was OPENED at: (P0 - P1) / P0.
+    # NOT cost/px - 1, which measures against the CURRENT price and understates
+    # losses badly -- a short at 10 now trading at 20 has lost 100% of its notional,
+    # but cost/px-1 reports only -50%. Understating losses is the wrong direction
+    # for this feature: the whole point is spotting shorts under enough pain to be
+    # forced to cover. Losses on a short are unbounded and can pass -100%.
+    pnl = float(1.0 - px_now / cost_adj)
 
     d = qty_s.diff().tail(lookback_adds)
     ups = d[d > 0].sort_values(ascending=False).head(n_adds)
@@ -169,7 +177,7 @@ def note(r):
         return None
     who = "赌它跌的机构"
     if r["pnl"] < -0.05:
-        tail = "现在**亏着** %.0f%%——他们越亏，越可能被迫买回股票止损（轧空）" % abs(r["pnl"] * 100)
+        tail = "现在亏着 %.0f%%——他们越亏，越可能被迫买回股票止损（轧空）" % abs(r["pnl"] * 100)
     elif r["pnl"] > 0.05:
         tail = "现在赚着 %.0f%%，还没有平仓压力" % (r["pnl"] * 100)
     else:
