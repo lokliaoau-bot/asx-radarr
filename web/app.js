@@ -691,7 +691,10 @@ function forecastTable(r) {
         (f.naive_auc == null ? "—" : num(f.naive_auc, 3)) + '</td>' +
       '<td class="' + ((m.brier_skill_score || 0) > 0 ? "up" : "mut") + '">' + sgn(m.brier_skill_score, 4) + '</td>' +
       '<td class="mut">' + num(mr.auc, 3) + '</td><td class="mut">' + (m.n || "—") + '</td>' +
-      '<td><span class="pill ' + esc(f.skill) + '">' + esc(f.skill_cn) + '</span></td></tr>';
+      '<td><span class="pill ' + esc(f.skill) + '">' + esc(f.skill_cn) + '</span>' +
+      (f.source && f.source !== "model"
+        ? '<div class="mut" style="font-size:10px;margin-top:3px" title="43因子模型在同样本上输给了这个简单方法，按 Welch-Goyal 规则由它接管。表中 AUC/BSS 即它的实测成绩。">已改用：' + esc(f.source_cn || f.source) + '</div>'
+        : "") + '</td></tr>';
   }).join("");
   return '<div class="panel scroll"><table><thead><tr><th>预测什么</th>' +
     '<th style="text-align:center">系统给的概率（灰线=历史平均）</th>' +

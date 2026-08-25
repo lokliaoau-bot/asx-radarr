@@ -54,18 +54,31 @@ def _targets(bench):
     # (Welch & Goyal 2008). Volatility mean-reverts, so "vol is low now" already
     # predicts "vol rises"; high vol likewise precedes drawdowns. Direction has no
     # comparable free lunch, so its benchmark stays the base rate.
+    #
+    # `candidates` are challenger scores that _fit_target calibrates leak-free and
+    # promotes over the ensemble when they win on the same rows. Tested 2026-08-25
+    # for vol_up_20d, same-sample AUC: bare -rv 0.775 · HAR-RV 0.766 · ensemble
+    # retrained WITH level features 0.731 · shipped ensemble 0.713. The bare level
+    # won every sub-period, so HAR and the feature retrain were not adopted.
     out.append({"key": "vol_up_20d", "group": "risk", "horizon": 20,
                 "name": "未来20日波动率上升", "short": "波动率上行",
                 "y": (frv > rv).astype(float).where(frv.notna()), "fwd": frv / rv - 1.0,
-                "naive": -rv, "naive_name": "只看「现在波动率低不低」"})
+                "naive": -rv, "naive_name": "只看「现在波动率低不低」",
+                "candidates": [("rv_level", "当前波动率水平（无泄漏校准）", -rv)]})
     for h, thr in ((10, -0.04), (20, -0.05), (20, -0.08)):
         fmin = bench[::-1].rolling(h, min_periods=h).min()[::-1].shift(-1)
         dd = fmin / bench - 1.0
+        # Drawdown candidates are offered but expected to fail their BSS gate:
+        # measured 2026-08-25, even the strongest signal (current vol, raw AUC ~0.62)
+        # yields NEGATIVE Brier skill once calibrated leak-free -- ~74 positives in
+        # 4 crisis clusters is too sparse to price. Reporting the base rate is the
+        # honest output; the candidates field records that the alternative was tried.
         out.append({"key": "dd_%d_%dd" % (int(abs(thr) * 100), h), "group": "risk", "horizon": h,
                     "name": "未来%d日内最大回撤超过%d%%" % (h, int(abs(thr) * 100)),
                     "short": "%d日回撤>%d%%" % (h, int(abs(thr) * 100)),
                     "y": (dd < thr).astype(float).where(dd.notna()), "fwd": dd,
-                    "naive": rv, "naive_name": "只看「现在波动率高不高」"})
+                    "naive": rv, "naive_name": "只看「现在波动率高不高」",
+                    "candidates": [("rv_level", "当前波动率水平（无泄漏校准）", rv)]})
     return out
 
 
@@ -104,16 +117,51 @@ def _fit_target(tg, Xf, cache=None, log=print):
     cutoff = s.index.max() - pd.Timedelta(days=365 * RECENT_YEARS)
     m_recent = M.evaluate(series[series.index >= cutoff], ya[ya.index >= cutoff])
 
-    p_model = float(s.iloc[-1])
-    base = metrics["base_rate"] if metrics else 0.5
     # Score the no-model benchmark on exactly the rows the model was scored on.
     naive_auc = M.naive_auc(tg.get("naive"), ya, s.index)
+
+    # ---- challengers: calibrated naive scores competing for p_final ------------
+    # A challenger takes over only if BOTH hold on the model's own evaluation rows:
+    #   1. its calibrated probabilities carry positive Brier skill (beat climatology
+    #      outright -- rules out the drawdown case, where even a discriminating
+    #      score prices so badly that the base rate is the better statement), and
+    #   2. its AUC beats the ensemble's.
+    # This is the enforcement arm of the Welch-Goyal check: when one line of
+    # arithmetic wins, ship the arithmetic, calibrated, instead of the model.
+    cand_report, best = [], None
+    for ck, clabel, cscore in tg.get("candidates", []):
+        p_c = M.score_to_prob_expanding(pd.Series(cscore).reindex(ya.index), ya, h)
+        m_c = M.evaluate(p_c.reindex(s.index), ya)
+        if m_c is None:
+            continue
+        cand_report.append({"key": ck, "label": clabel, "auc": m_c["auc"],
+                            "bss": m_c["brier_skill_score"],
+                            "auc_raw": M.naive_auc(cscore, ya, s.index)})
+        if (m_c["brier_skill_score"] or 0) <= 0 or not m_c["auc"]:
+            continue
+        if best is None or m_c["auc"] > best[1]["auc"]:
+            best = (ck, m_c, p_c, clabel)
+
+    source, source_cn = "model", "43因子集成"
+    if best is not None and (best[1]["auc"] or 0) > ((metrics or {}).get("auc") or 0):
+        source, source_cn = best[0], best[3]
+        series = best[2]
+        s = series.dropna()
+        metrics = M.evaluate(series, ya)
+        cutoff = s.index.max() - pd.Timedelta(days=365 * RECENT_YEARS)
+        m_recent = M.evaluate(series[series.index >= cutoff], ya[ya.index >= cutoff])
+        naive_gate = None            # the winner IS the calibrated naive; no self-gate
+    else:
+        naive_gate = naive_auc
+
+    p_model = float(s.iloc[-1])
+    base = metrics["base_rate"] if metrics else 0.5
     aucs = [a for a in [(metrics or {}).get("auc"), (m_recent or {}).get("auc")] if a is not None]
     p_final, lam = M.shrink_to_base(p_model, base, min(aucs) if aucs else None,
-                                    full_skill_auc=FULL_SKILL_AUC, naive_auc=naive_auc)
+                                    full_skill_auc=FULL_SKILL_AUC, naive_auc=naive_gate)
     lvl, lvl_cn = _skill_verdict((metrics or {}).get("auc"),
                                  (metrics or {}).get("brier_skill_score"),
-                                 (metrics or {}).get("n"), naive_auc)
+                                 (metrics or {}).get("n"), naive_gate)
     hist = s.tail(260)
     payload = {
         "key": tg["key"], "group": tg["group"], "name": tg["name"], "short": tg["short"],
@@ -123,8 +171,11 @@ def _fit_target(tg, Xf, cache=None, log=print):
         "edge_pp": round(float((p_final - base) * 100), 2),
         "metrics": metrics, "metrics_recent": m_recent,
         "naive_auc": naive_auc, "naive_name": tg.get("naive_name"),
-        "beats_naive": (None if (naive_auc is None or not (metrics or {}).get("auc"))
+        "beats_naive": (None if (source != "model" or naive_auc is None
+                                 or not (metrics or {}).get("auc"))
                         else bool(metrics["auc"] > naive_auc)),
+        "source": source, "source_cn": source_cn,
+        "candidates": cand_report,
         "skill": lvl, "skill_cn": lvl_cn,
         "conditional": M.conditional_outcomes(series, tg["fwd"].reindex(series.index), p_model),
         "history": {"dates": [str(x.date()) for x in hist.index],

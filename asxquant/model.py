@@ -248,6 +248,54 @@ def _high_conf_hit(pv, yv, band=0.05):
             "accuracy": round(float(((pv[m] > 0.5).astype(int) == yv[m]).mean()), 4)}
 
 
+def score_to_prob_expanding(score: pd.Series, y: pd.Series, horizon: int,
+                            burn=252, refit=21):
+    """Turn a raw monotone score into leak-free probabilities.
+
+    Purged expanding logistic regression on the standardised score -- the same
+    embargo discipline as `walk_forward` and `calibrate_expanding`, for signals
+    that are not model outputs (e.g. "current realised volatility").
+
+    Exists because of the Welch-Goyal finding in this project: the volatility
+    ensemble (AUC 0.713) loses to the bare vol level (0.775) in every sub-period,
+    and both HAR-RV (0.766) and a level-augmented ensemble (0.731) were tried and
+    also lost. When one line of arithmetic is the best predictor available, the
+    honest move is to ship THAT, calibrated -- which needs this function.
+    """
+    s = pd.Series(score)
+    idx = s.index
+    sv = s.values.astype(float)
+    yv = pd.Series(y).reindex(idx).values.astype(float)
+    out = np.full(len(idx), np.nan)
+    emb = horizon + EMBARGO_EXTRA
+
+    fin = np.isfinite(sv)
+    if not fin.any():
+        return pd.Series(out, index=idx)
+    first = int(np.argmax(fin))
+
+    for st in range(first + burn, len(idx), refit):
+        e = min(st + refit, len(idx))
+        te = st - emb
+        m = np.isfinite(sv[:te]) & np.isfinite(yv[:te])
+        if m.sum() < 150 or len(np.unique(yv[:te][m])) < 2:
+            continue
+        mu = sv[:te][m].mean()
+        sd = sv[:te][m].std() or 1.0
+        try:
+            lr = LogisticRegression(C=1.0, solver="lbfgs", max_iter=1000)
+            lr.fit(((sv[:te][m] - mu) / sd).reshape(-1, 1), yv[:te][m])
+            blk = sv[st:e]
+            ok = np.isfinite(blk)
+            if ok.any():
+                res = np.full(blk.shape, np.nan)
+                res[ok] = lr.predict_proba(((blk[ok] - mu) / sd).reshape(-1, 1))[:, 1]
+                out[st:e] = res
+        except Exception:
+            continue
+    return pd.Series(out, index=idx)
+
+
 def shrink_to_base(p_last, base_rate, auc, full_skill_auc=0.60, naive_auc=None):
     """Shrink the raw probability toward the base rate by measured discrimination.
 
