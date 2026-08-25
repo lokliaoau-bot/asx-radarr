@@ -128,31 +128,57 @@ def _fit_target(tg, Xf, cache=None, log=print):
     #   2. its AUC beats the ensemble's.
     # This is the enforcement arm of the Welch-Goyal check: when one line of
     # arithmetic wins, ship the arithmetic, calibrated, instead of the model.
+    # Two samples matter and they are NOT the same set of rows, which is where this
+    # went wrong once already: since calibration may leave blocks empty, the model's
+    # surviving rows (`s.index`) can be a small, unrepresentative slice. Judging a
+    # challenger there and then SCORING it on its own much larger sample let
+    # dd_4_10d promote a candidate that carried BSS -0.039 on the sample it was then
+    # reported against. So:
+    #   * the Brier-skill gate runs on the challenger's OWN full sample -- the same
+    #     rows its published metrics will come from;
+    #   * the AUC comparison runs on rows BOTH cover, so it is a like-for-like race.
     cand_report, best = [], None
     for ck, clabel, cscore in tg.get("candidates", []):
         p_c = M.score_to_prob_expanding(pd.Series(cscore).reindex(ya.index), ya, h)
-        m_c = M.evaluate(p_c.reindex(s.index), ya)
-        if m_c is None:
+        m_full = M.evaluate(p_c, ya)
+        if m_full is None:
             continue
-        cand_report.append({"key": ck, "label": clabel, "auc": m_c["auc"],
-                            "bss": m_c["brier_skill_score"],
+        common = s.index.intersection(p_c.dropna().index)
+        m_common = M.evaluate(p_c.reindex(common), ya)
+        m_model_common = M.evaluate(series.reindex(common), ya)
+        cand_report.append({"key": ck, "label": clabel,
+                            "auc": m_full["auc"], "bss": m_full["brier_skill_score"],
+                            "auc_common": (m_common or {}).get("auc"),
+                            "auc_model_common": (m_model_common or {}).get("auc"),
+                            "n_common": len(common),
                             "auc_raw": M.naive_auc(cscore, ya, s.index)})
-        if (m_c["brier_skill_score"] or 0) <= 0 or not m_c["auc"]:
+        if (m_full["brier_skill_score"] or 0) <= 0 or not (m_common or {}).get("auc"):
             continue
-        if best is None or m_c["auc"] > best[1]["auc"]:
-            best = (ck, m_c, p_c, clabel)
+        if (m_common["auc"] or 0) <= ((m_model_common or {}).get("auc") or 0):
+            continue
+        if best is None or (m_common["auc"] or 0) > (best[1]["auc"] or 0):
+            best = (ck, m_common, p_c, clabel, m_full)
 
     source, source_cn = "model", "43因子集成"
-    if best is not None and (best[1]["auc"] or 0) > ((metrics or {}).get("auc") or 0):
+    if best is not None:
         source, source_cn = best[0], best[3]
         series = best[2]
         s = series.dropna()
-        metrics = M.evaluate(series, ya)
+        metrics = best[4]
         cutoff = s.index.max() - pd.Timedelta(days=365 * RECENT_YEARS)
         m_recent = M.evaluate(series[series.index >= cutoff], ya[ya.index >= cutoff])
         naive_gate = None            # the winner IS the calibrated naive; no self-gate
     else:
         naive_gate = naive_auc
+
+    # `s` drops empty rows, so its last value can predate today: calibration now
+    # leaves a block empty when it cannot build a monotone map, and a target in that
+    # state has no current forecast at all. Quoting the last surviving value would
+    # present a months-old probability as today's.
+    # "Current" means the newest row the whole series covers, not the newest row this
+    # target happens to have survived on.
+    last_row = series.index.max()
+    has_current = bool(len(s) and s.index.max() == last_row)
 
     p_model = float(s.iloc[-1])
     base = metrics["base_rate"] if metrics else 0.5
@@ -162,6 +188,9 @@ def _fit_target(tg, Xf, cache=None, log=print):
     lvl, lvl_cn = _skill_verdict((metrics or {}).get("auc"),
                                  (metrics or {}).get("brier_skill_score"),
                                  (metrics or {}).get("n"), naive_gate)
+    if not has_current:
+        p_final, lam = base, 0.0
+        lvl, lvl_cn = "none", "当前无有效预测（校准器建不出单调映射）"
     hist = s.tail(260)
     payload = {
         "key": tg["key"], "group": tg["group"], "name": tg["name"], "short": tg["short"],
@@ -176,7 +205,7 @@ def _fit_target(tg, Xf, cache=None, log=print):
                         else bool(metrics["auc"] > naive_auc)),
         "source": source, "source_cn": source_cn,
         "candidates": cand_report,
-        "skill": lvl, "skill_cn": lvl_cn,
+        "skill": lvl, "skill_cn": lvl_cn, "has_current": has_current,
         "conditional": M.conditional_outcomes(series, tg["fwd"].reindex(series.index), p_model),
         "history": {"dates": [str(x.date()) for x in hist.index],
                     "p": [round(float(v), 4) for v in hist.values]},

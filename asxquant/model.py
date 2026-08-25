@@ -178,10 +178,33 @@ def calibrate_expanding(p: pd.Series, y: pd.Series, horizon: int,
             cal.fit(_logit(pv[:te][m]).reshape(-1, 1), yv[:te][m])
             blk = pv[s:e]
             ok = np.isfinite(blk)
-            if ok.any():
-                res = np.full(blk.shape, np.nan)
-                res[ok] = cal.predict_proba(_logit(blk[ok]).reshape(-1, 1))[:, 1]
-                out[s:e] = res
+            if not ok.any():
+                continue
+            # A NEGATIVE Platt slope means the fit decided the model is
+            # anti-predictive and quietly started serving its output upside down.
+            # That is model selection, not calibration: Platt scaling is defined as a
+            # monotone-INCREASING map from score to probability, and once the ordering
+            # is reversed a "calibrated probability" no longer means what the model
+            # asserted. Leave the block EMPTY -- no prediction is the honest state,
+            # and `evaluate` then scores only genuinely calibrated rows.
+            #
+            # Measured 2026-08-25, none of this is hypothetical:
+            #   * All three drawdown targets fitted negative slopes in 91-100% of
+            #     blocks. dd_4_10d went from a raw ensemble AUC of 0.502 (honestly
+            #     useless) to a calibrated 0.314 -- confidently wrong, with a block
+            #     bootstrap CI that excludes 0.5. The in-sample sign of a coin-flip
+            #     model is noise; flipping on it manufactures conviction from nothing.
+            #   * Substituting the expanding base rate here was tried and was WORSE
+            #     than leaving it empty: that "constant" drifts as history piles up,
+            #     drawdowns cluster in time, and the drift alone scored AUC 0.24-0.38.
+            #     A placeholder that varies is not a placeholder, it is a new signal.
+            # Genuinely reversing a signal must be earned out of sample -- that is what
+            # the challenger mechanism in engine.py is for.
+            if float(cal.coef_[0][0]) <= 0.0:
+                continue
+            res = np.full(blk.shape, np.nan)
+            res[ok] = cal.predict_proba(_logit(blk[ok]).reshape(-1, 1))[:, 1]
+            out[s:e] = res
         except Exception:
             continue
     return pd.Series(out, index=idx)

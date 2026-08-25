@@ -125,4 +125,7 @@ CACHE_DIR = "cache"
 # EARLIER version of the modelling code, so changing that code without bumping this
 # would silently mix old and new predictions in one series forever. Bump on any change
 # to model.py's fitting, calibration or ensembling.
-MODEL_VERSION = "v2"
+# v4 (2026-08-25): calibration rejects a negative Platt slope and now leaves such a
+# block EMPTY (v3 briefly wrote the base rate there, which drifted and became a signal
+# of its own). Cached `cal` blocks from v2/v3 are stale and must be recomputed.
+MODEL_VERSION = "v4"
