@@ -30,6 +30,7 @@ PRIOR_SIGN = {
     "mom_5": +1, "mom_20": +1, "mom_60": +1, "mom_tsmom": +1, "mom_rsi14": +1,
     "rev_z20": -1, "rev_rsi2": -1, "rev_ret5": -1,
     "vol_rv20_z": -1, "vol_expansion": -1, "vol_axvi_z": -1, "vol_axvi_chg": -1,
+    "vol_rv20_level": -1, "vol_rv20_pctile": -1, "vol_rv_ratio": -1,
     "vol_park_z": -1, "vol_dd": +1, "vol_vix_z": -1,
     "brd_ma50": +1, "brd_ma200": +1, "brd_mcclellan": +1, "brd_adratio": +1,
     "brd_nhnl": +1, "brd_updownvol": +1, "brd_corr": -1,
@@ -56,6 +57,8 @@ FEATURE_LABEL = {
     "mom_tsmom": "时序动量(12-1月)", "mom_rsi14": "RSI(14)",
     "rev_z20": "20日价格Z分(反转)", "rev_rsi2": "RSI(2)超买超卖", "rev_ret5": "5日反转",
     "vol_rv20_z": "20日已实现波动率Z分", "vol_expansion": "波动率扩张(20/60)",
+    "vol_rv20_level": "波动率绝对水平(对数)", "vol_rv20_pctile": "波动率历史百分位(扩张窗)",
+    "vol_rv_ratio": "短期/中期波动率比(5/20)",
     "vol_axvi_z": "ASX波动率指数Z分", "vol_axvi_chg": "ASX波动率指数5日变化",
     "vol_park_z": "Parkinson波动率Z分", "vol_dd": "距252日高点回撤", "vol_vix_z": "美股VIX Z分",
     "brd_ma50": "50日线上方个股占比", "brd_ma200": "200日线上方个股占比",
@@ -114,6 +117,15 @@ def build_market_features(px, short_pct):
     rv20, rv60 = ind.realized_vol(bench, 20), ind.realized_vol(bench, 60)
     f["vol_rv20_z"] = ind.zscore(rv20, 252)
     f["vol_expansion"] = rv20 / rv60.replace(0, np.nan) - 1.0
+
+    # Volatility LEVEL, not just its 252-day z-score. Everything above is relative to
+    # a rolling window, so the model could never see "vol is low in absolute terms" --
+    # which is precisely the one-line predictor that beats the whole ensemble on
+    # vol_up_20d (AUC 0.775 vs 0.713). The percentile uses an EXPANDING window so it
+    # stays a level statistic instead of collapsing back into a relative one.
+    f["vol_rv20_level"] = np.log(rv20.clip(lower=1e-4))
+    f["vol_rv20_pctile"] = rv20.expanding(min_periods=252).rank(pct=True)
+    f["vol_rv_ratio"] = ind.realized_vol(bench, 5) / rv20.replace(0, np.nan)
     f["vol_park_z"] = ind.zscore(ind.parkinson_vol(bh, bl, 20), 252)
     f["vol_dd"] = ind.max_drawdown(bench, 252)
 

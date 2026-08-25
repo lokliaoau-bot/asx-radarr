@@ -128,4 +128,6 @@ CACHE_DIR = "cache"
 # v4 (2026-08-25): calibration rejects a negative Platt slope and now leaves such a
 # block EMPTY (v3 briefly wrote the base rate there, which drifted and became a signal
 # of its own). Cached `cal` blocks from v2/v3 are stale and must be recomputed.
-MODEL_VERSION = "v4"
+# v5 (2026-08-25): three volatility LEVEL features added, so the feature matrix
+# itself changed -- every cached walk-forward prediction is stale.
+MODEL_VERSION = "v5"

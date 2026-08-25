@@ -319,6 +319,118 @@ def score_to_prob_expanding(score: pd.Series, y: pd.Series, horizon: int,
     return pd.Series(out, index=idx)
 
 
+def har_forecast(close: pd.Series, horizon=20, min_train=750, refit=21):
+    """HAR-RV (Corsi 2009): forecast realised volatility from its own daily, weekly
+    and monthly components. Returns log(RV_predicted / RV_current) -- positive means
+    "volatility is heading up", so it plugs straight in as a challenger score.
+
+    Cited in this project's reference list since v1 but never actually implemented.
+    Now it is, and it is measured rather than assumed: on vol_up_20d, same-sample AUC
+    came out 0.766 against 0.775 for the bare volatility level, so it is registered as
+    a CANDIDATE and the challenger gate in engine.py decides each run. If the market
+    regime ever shifts in HAR's favour it takes over automatically; today it does not.
+
+    Expanding-window OLS in log space, with the same purge/embargo as `walk_forward`
+    so no fitted coefficient ever sees a return window it is being asked to predict.
+    """
+    c = pd.Series(close, dtype=float).dropna()
+    if len(c) < min_train + horizon:
+        return pd.Series(dtype=float)
+
+    ret = c.pct_change()
+    ann = np.sqrt(252.0)
+    rv_d = (ret.abs() * ann).clip(lower=1e-4)
+    rv_w = _rolling_rv(ret, 5)
+    rv_m = _rolling_rv(ret, 22)
+    rv_h = _rolling_rv(ret, horizon)
+
+    X = pd.DataFrame({"d": np.log(rv_d), "w": np.log(rv_w), "m": np.log(rv_m)}).dropna()
+    ylog = np.log(rv_h.shift(-horizon).clip(lower=1e-4)).reindex(X.index)
+
+    idx = X.index
+    Xv, yv = X.values, ylog.values
+    out = np.full(len(idx), np.nan)
+    emb = horizon + EMBARGO_EXTRA
+    beta = None
+    for s in range(min_train, len(idx), refit):
+        e = min(s + refit, len(idx))
+        te = s - emb
+        m = np.isfinite(yv[:te]) & np.isfinite(Xv[:te]).all(axis=1)
+        if m.sum() >= 200:
+            A = np.column_stack([np.ones(int(m.sum())), Xv[:te][m]])
+            try:
+                beta = np.linalg.lstsq(A, yv[:te][m], rcond=None)[0]
+            except Exception:
+                pass
+        if beta is None:
+            continue
+        blk = Xv[s:e]
+        ok = np.isfinite(blk).all(axis=1)
+        if ok.any():
+            pred = np.full(e - s, np.nan)
+            pred[ok] = np.column_stack([np.ones(int(ok.sum())), blk[ok]]) @ beta
+            out[s:e] = pred
+
+    # score = predicted level relative to where volatility sits right now
+    return pd.Series(out, index=idx) - np.log(rv_h.reindex(idx).clip(lower=1e-4))
+
+
+def _rolling_rv(ret: pd.Series, n: int):
+    return (ret.rolling(n, min_periods=max(2, n // 2)).std(ddof=0) * np.sqrt(252.0)).clip(lower=1e-4)
+
+
+def conditional_climatology(score: pd.Series, y: pd.Series, horizon: int,
+                            nq=5, burn=504, refit=21, min_train=300):
+    """P(event | which quantile bucket the score currently sits in), estimated on an
+    expanding, purged window. A non-parametric alternative to Platt scaling for rare
+    events, where a logistic fit has too few positives to shape a curve.
+
+    Registered as a drawdown candidate. Measured 2026-08-25 it does NOT pass the gate
+    (Brier skill -0.018 to -0.071 across the three drawdown targets), which is the
+    third estimator to fail there -- but it fails visibly in the report now instead of
+    never having been tried.
+
+    Note a subtlety this exposed: re-estimating bucket edges every `refit` days means
+    the output is not a globally monotone transform of the score, so its AUC (0.41-0.53)
+    lands well below the raw score's (0.62). A mapping that changes over time degrades
+    any across-time ranking metric -- the same trap as substituting a drifting base rate.
+    """
+    s = pd.Series(score)
+    idx = s.index
+    sv = s.values.astype(float)
+    yv = pd.Series(y).reindex(idx).values.astype(float)
+    out = np.full(len(idx), np.nan)
+    emb = horizon + EMBARGO_EXTRA
+
+    fin = np.isfinite(sv)
+    if not fin.any():
+        return pd.Series(out, index=idx)
+    first = int(np.argmax(fin))
+
+    for st in range(first + burn, len(idx), refit):
+        e = min(st + refit, len(idx))
+        te = st - emb
+        m = np.isfinite(sv[:te]) & np.isfinite(yv[:te])
+        if m.sum() < min_train or len(np.unique(yv[:te][m])) < 2:
+            continue
+        xs, ys = sv[:te][m], yv[:te][m]
+        edges = np.quantile(xs, np.linspace(0.0, 1.0, nq + 1))
+        edges[0], edges[-1] = -np.inf, np.inf
+        overall = float(ys.mean())
+        rates = []
+        for i in range(nq):
+            sel = (xs > edges[i]) & (xs <= edges[i + 1])
+            rates.append(float(ys[sel].mean()) if sel.sum() >= 20 else overall)
+        blk = sv[st:e]
+        ok = np.isfinite(blk)
+        if ok.any():
+            bins = np.clip(np.searchsorted(edges[1:-1], blk[ok], side="left"), 0, nq - 1)
+            res = np.full(blk.shape, np.nan)
+            res[ok] = np.asarray(rates)[bins]
+            out[st:e] = res
+    return pd.Series(out, index=idx)
+
+
 def published_skill(series: pd.Series, y: pd.Series, lam: float, base_rate: float):
     """Brier skill of the probability actually PUBLISHED, i.e. after shrinkage.
 

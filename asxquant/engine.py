@@ -60,11 +60,19 @@ def _targets(bench):
     # for vol_up_20d, same-sample AUC: bare -rv 0.775 · HAR-RV 0.766 · ensemble
     # retrained WITH level features 0.731 · shipped ensemble 0.713. The bare level
     # won every sub-period, so HAR and the feature retrain were not adopted.
+    # A candidate is ("key", "label", kind, payload):
+    #   kind "score"   -- a raw monotone score; _fit_target calibrates it leak-free
+    #   kind "prob_fn" -- callable(y, horizon) returning probabilities directly, for
+    #                     estimators that are not a score plus a link function
     out.append({"key": "vol_up_20d", "group": "risk", "horizon": 20,
                 "name": "未来20日波动率上升", "short": "波动率上行",
                 "y": (frv > rv).astype(float).where(frv.notna()), "fwd": frv / rv - 1.0,
                 "naive": -rv, "naive_name": "只看「现在波动率低不低」",
-                "candidates": [("rv_level", "当前波动率水平（无泄漏校准）", -rv)]})
+                "candidates": [
+                    ("rv_level", "当前波动率水平（无泄漏校准）", "score", -rv),
+                    ("har_rv", "HAR-RV 波动率模型 (Corsi 2009)", "score",
+                     M.har_forecast(bench, horizon=20)),
+                ]})
     for h, thr in ((10, -0.04), (20, -0.05), (20, -0.08)):
         fmin = bench[::-1].rolling(h, min_periods=h).min()[::-1].shift(-1)
         dd = fmin / bench - 1.0
@@ -78,7 +86,12 @@ def _targets(bench):
                     "short": "%d日回撤>%d%%" % (h, int(abs(thr) * 100)),
                     "y": (dd < thr).astype(float).where(dd.notna()), "fwd": dd,
                     "naive": rv, "naive_name": "只看「现在波动率高不高」",
-                    "candidates": [("rv_level", "当前波动率水平（无泄漏校准）", rv)]})
+                    "candidates": [
+                        ("rv_level", "当前波动率水平（无泄漏校准）", "score", rv),
+                        ("cond_clim", "条件气候学（按波动率五分位的历史频率）", "prob_fn",
+                         (lambda _rv: (lambda yy, hh: M.conditional_climatology(
+                             _rv.reindex(yy.index), yy, hh)))(rv)),
+                    ]})
     return out
 
 
@@ -138,20 +151,35 @@ def _fit_target(tg, Xf, cache=None, log=print):
     #     rows its published metrics will come from;
     #   * the AUC comparison runs on rows BOTH cover, so it is a like-for-like race.
     cand_report, best = [], None
-    for ck, clabel, cscore in tg.get("candidates", []):
-        p_c = M.score_to_prob_expanding(pd.Series(cscore).reindex(ya.index), ya, h)
+    for ck, clabel, ckind, payload in tg.get("candidates", []):
+        if ckind == "prob_fn":
+            p_c = payload(ya, h)
+            raw_for_auc = p_c
+        else:
+            p_c = M.score_to_prob_expanding(pd.Series(payload).reindex(ya.index), ya, h)
+            raw_for_auc = payload
+        if p_c is None or not len(pd.Series(p_c).dropna()):
+            continue
+        p_c = pd.Series(p_c).reindex(ya.index)
         m_full = M.evaluate(p_c, ya)
         if m_full is None:
             continue
         common = s.index.intersection(p_c.dropna().index)
         m_common = M.evaluate(p_c.reindex(common), ya)
         m_model_common = M.evaluate(series.reindex(common), ya)
+        # `bss`/`auc` are on each candidate's OWN rows, so they are NOT comparable
+        # between candidates -- HAR-RV starts 750 sessions later than the bare vol
+        # level, which alone made HAR look like it had the better Brier skill
+        # (0.150 vs 0.123) when on shared rows it is worse (0.150 vs 0.175).
+        # The `_common` figures are the like-for-like ones; read those.
         cand_report.append({"key": ck, "label": clabel,
                             "auc": m_full["auc"], "bss": m_full["brier_skill_score"],
                             "auc_common": (m_common or {}).get("auc"),
+                            "bss_common": (m_common or {}).get("brier_skill_score"),
                             "auc_model_common": (m_model_common or {}).get("auc"),
+                            "bss_model_common": (m_model_common or {}).get("brier_skill_score"),
                             "n_common": len(common),
-                            "auc_raw": M.naive_auc(cscore, ya, s.index)})
+                            "auc_raw": M.naive_auc(raw_for_auc, ya, s.index)})
         if (m_full["brier_skill_score"] or 0) <= 0 or not (m_common or {}).get("auc"):
             continue
         if (m_common["auc"] or 0) <= ((m_model_common or {}).get("auc") or 0):
