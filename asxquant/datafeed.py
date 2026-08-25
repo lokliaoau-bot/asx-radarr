@@ -149,9 +149,35 @@ def halted_tickers(px, tickers, min_stale_days=1):
 # --------------------------------------------------------------------------
 # ASIC short positions
 # --------------------------------------------------------------------------
-def _try_ytd(datestr, timeout=90):
+_ASIC_V = "https://download.asic.gov.au/short-selling/RR%s-%s-SSDailyYTD.csv"
+_ASIC_INDEX = "https://download.asic.gov.au/short-selling/short-selling-data.json"
+
+
+def _asic_index(log=print):
+    """ASIC's own index of published dates and revision numbers.
+
+    One 139KB JSON of `{date, version}` for every report since 2010. Two things it
+    buys over the old approach of probing candidate URLs:
+      * the latest date is read, not guessed -- the old code walked back day by day,
+        up to twenty 3MB downloads on a bad day;
+      * ~345 dates have revisions (version 002/003/010). The hardcoded `-001-` URL
+        always fetched the ORIGINAL file; the index names the corrected one.
+    """
     try:
-        r = requests.get(_ASIC % datestr, headers=_HDR, timeout=timeout)
+        r = requests.get(_ASIC_INDEX, headers=_HDR, timeout=60)
+        if r.status_code == 200:
+            rows = r.json()
+            if isinstance(rows, list) and rows:
+                return {int(x["date"]): str(x["version"]) for x in rows
+                        if isinstance(x, dict) and "date" in x}
+    except Exception as e:
+        log("空头持仓: 索引获取失败(%s)，退回逐日试探" % e)
+    return None
+
+
+def _try_ytd(datestr, version="001", timeout=90):
+    try:
+        r = requests.get(_ASIC_V % (datestr, version), headers=_HDR, timeout=timeout)
         if r.status_code == 200 and len(r.content) > 50000:
             return r.content
     except Exception:
@@ -159,8 +185,14 @@ def _try_ytd(datestr, timeout=90):
     return None
 
 
-def _find_latest_ytd(log=print):
-    """ASIC publishes four business days in arrears, so walk back until a file exists."""
+def _find_latest_ytd(index=None, log=print):
+    """Newest YTD file: straight from the index, else walk back probing (fallback)."""
+    if index:
+        latest = max(index)
+        d = dt.date(latest // 10000, latest // 100 % 100, latest % 100)
+        blob = _try_ytd("%08d" % latest, index[latest], timeout=90)
+        if blob is not None:
+            return d, blob
     today = dt.date.today()
     for back in range(2, 22):
         d = today - dt.timedelta(days=back)
@@ -172,8 +204,15 @@ def _find_latest_ytd(log=print):
     return None, None
 
 
-def _find_year_end_ytd(year):
-    """The final YTD file of a past year -- probe the last few business days of December."""
+def _find_year_end_ytd(year, index=None):
+    """The final YTD file of a past year, at its latest published revision."""
+    if index:
+        in_year = [d for d in index if d // 10000 == year]
+        if in_year:
+            last = max(in_year)
+            blob = _try_ytd("%08d" % last, index[last], timeout=90)
+            if blob is not None:
+                return blob
     for day in range(31, 18, -1):
         try:
             d = dt.date(year, 12, day)
@@ -249,7 +288,8 @@ def fetch_shorts(force=False, log=print):
             return cached
 
     log("空头持仓: 从 ASIC 下载年度汇总文件 ...")
-    asof, blob = _find_latest_ytd(log=log)
+    index = _asic_index(log=log)
+    asof, blob = _find_latest_ytd(index=index, log=log)
     if blob is None:
         log("空头持仓: ASIC 无法访问 (该组因子将被跳过)")
         empty = pd.DataFrame(columns=["date", "code", "short_shares", "short_pct"])
@@ -260,7 +300,7 @@ def fetch_shorts(force=False, log=print):
     this_year = asof.year
     years = [this_year - k for k in range(1, SHORT_YEARS)]
     with cf.ThreadPoolExecutor(max_workers=5) as ex:
-        for b in ex.map(_find_year_end_ytd, years):
+        for b in ex.map(lambda yr: _find_year_end_ytd(yr, index=index), years):
             if b is not None:
                 blobs.append(b)
 
