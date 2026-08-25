@@ -239,8 +239,11 @@ def build_sector_panel(px, short_pct, short_shares):
         rv20 = ind.realized_vol(sec_idx, 20)
         rv60 = ind.realized_vol(sec_idx, 60)
         volexp = ind.safe_last(rv20) / (ind.safe_last(rv60) or np.nan) - 1.0
-        overbought = float(np.nanmean(rsis > 70)) if np.isfinite(rsis).any() else np.nan
-        near_hi = float(np.nanmean(p52 > 0.90)) if np.isfinite(p52).any() else np.nan
+        # Mask before comparing: NaN > 70 is False, so an unmasked mean would count
+        # names with missing data as "not overbought" and quietly deflate the ratio.
+        _ok_r, _ok_p = np.isfinite(rsis), np.isfinite(p52)
+        overbought = float((rsis[_ok_r] > 70).mean()) if _ok_r.any() else np.nan
+        near_hi = float((p52[_ok_p] > 0.90).mean()) if _ok_p.any() else np.nan
         atr_sec = _wmean([s["atr_pct"] for s in stats], wts)
 
         out[key] = {

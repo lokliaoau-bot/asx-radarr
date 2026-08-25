@@ -117,7 +117,7 @@ VERDICT_CN = {
 }
 
 
-def build_factor_panel(px, short_pct, tickers, sector_map):
+def build_factor_panel(px, short_pct, tickers, sector_map, short_shares=None):
     """Time series of every score component, as date x ticker frames."""
     c = px["close"][tickers]
     h, l, v = px["high"][tickers], px["low"][tickers], px["volume"][tickers]
@@ -154,6 +154,15 @@ def build_factor_panel(px, short_pct, tickers, sector_map):
     sp_chg = sp - sp.shift(20)
     advol = v.rolling(20, min_periods=5).mean().replace(0, np.nan)
 
+    # days-to-cover, matching the live `squeeze_safe` component in picks.py. This
+    # used to be a frame of zeros here, which meant the headline validation was
+    # scoring a slightly DIFFERENT composite than production ships (production
+    # includes a -z(days_to_cover) term at weight 0.08). Found 2026-08-25.
+    if short_shares is not None:
+        dtc = short_shares.reindex(index=c.index, columns=tickers) / advol
+    else:
+        dtc = pd.DataFrame(np.nan, index=c.index, columns=tickers)
+
     # sector aggregates, broadcast back to each member column
     sect = pd.Series({t: sector_map.get(t, "na") for t in tickers})
     def _sector_mean(frame):
@@ -175,7 +184,7 @@ def build_factor_panel(px, short_pct, tickers, sector_map):
         "above_ma50": ma50, "above_ma200": ma200, "rsi": rsi, "extension": extension,
         "short_pct": sp, "short_chg": sp_chg,
         "sector_flow": sector_flow, "sector_short": sector_short,
-        "adv": advol * c, "adj": a,
+        "adv": advol * c, "adj": a, "dtc": dtc,
     }
 
 
@@ -198,7 +207,7 @@ def composite_scores(F):
         "short_level": z["short_pct"], "cmf_neg": -z["cmf"], "obv_neg": -z["obv"],
         "mom_neg": -z["mom20"], "below_ma": -z["above_ma50"],
         "extension": z["extension"],
-        "squeeze_safe": pd.DataFrame(0.0, index=F["cmf"].index, columns=F["cmf"].columns),
+        "squeeze_safe": -_xz_frame(F["dtc"]),
     }
     long_s = sum(LONG_WEIGHTS[k] * lc[k] for k in LONG_WEIGHTS)
     short_s = sum(SHORT_WEIGHTS[k] * sc[k] for k in SHORT_WEIGHTS)
@@ -221,9 +230,9 @@ def _ic(score, fwd):
 
 
 def run_validation(px, short_pct, tickers, sector_map, horizon=20,
-                   n_side=3, cost_bps=15.0, min_adv=3e6):
+                   n_side=3, cost_bps=15.0, min_adv=3e6, short_shares=None):
     """Full cross-sectional scorecard for the long and short scores."""
-    F = build_factor_panel(px, short_pct, tickers, sector_map)
+    F = build_factor_panel(px, short_pct, tickers, sector_map, short_shares=short_shares)
     long_s, short_s = composite_scores(F)
 
     a = F["adj"]

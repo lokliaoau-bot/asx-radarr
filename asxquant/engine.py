@@ -314,7 +314,8 @@ def run(force=False, log=print, progress=None):
 
     step("正在做选股评分的横截面回测验证 ...", 34)
     try:
-        val = V.run_validation(px, spct, tickers, ticker_to_sector(), horizon=20, n_side=10)
+        val = V.run_validation(px, spct, tickers, ticker_to_sector(), horizon=20, n_side=10,
+                                short_shares=ssha)
     except Exception:
         log("验证失败: %s" % traceback.format_exc().splitlines()[-1])
         val = None
