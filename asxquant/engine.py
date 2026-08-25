@@ -188,8 +188,16 @@ def _fit_target(tg, Xf, cache=None, log=print):
     lvl, lvl_cn = _skill_verdict((metrics or {}).get("auc"),
                                  (metrics or {}).get("brier_skill_score"),
                                  (metrics or {}).get("n"), naive_gate)
+    # Score what is actually shipped, not the pre-shrinkage series, and refuse to
+    # ship anything that still loses to climatology after shrinking.
+    bss_pub = M.published_skill(series, ya, lam, base) if lam > 0 else None
+    if lam > 0 and bss_pub is not None and bss_pub <= 0:
+        p_final, lam, bss_pub = base, 0.0, None
+        lvl, lvl_cn = "none", "收缩后仍不及历史平均，已停发"
+
     if not has_current:
         p_final, lam = base, 0.0
+        bss_pub = None
         lvl, lvl_cn = "none", "当前无有效预测（校准器建不出单调映射）"
     hist = s.tail(260)
     payload = {
@@ -206,6 +214,7 @@ def _fit_target(tg, Xf, cache=None, log=print):
         "source": source, "source_cn": source_cn,
         "candidates": cand_report,
         "skill": lvl, "skill_cn": lvl_cn, "has_current": has_current,
+        "bss_published": bss_pub,
         "conditional": M.conditional_outcomes(series, tg["fwd"].reindex(series.index), p_model),
         "history": {"dates": [str(x.date()) for x in hist.index],
                     "p": [round(float(v), 4) for v in hist.values]},

@@ -319,6 +319,30 @@ def score_to_prob_expanding(score: pd.Series, y: pd.Series, horizon: int,
     return pd.Series(out, index=idx)
 
 
+def published_skill(series: pd.Series, y: pd.Series, lam: float, base_rate: float):
+    """Brier skill of the probability actually PUBLISHED, i.e. after shrinkage.
+
+    `evaluate` scores the unshrunk series, but users are shown `base + lam*(p-base)`.
+    Quoting the unshrunk number beside a shrunk forecast describes a product nobody
+    receives -- and the two can straddle zero: measured 2026-08-25, dir_5d scores
+    -0.0032 raw and +0.0003 published, dir_10d -0.0050 and +0.0002. Shrinkage is
+    what rescues them, so shrinkage is what has to be scored.
+
+    Doubles as a safety net: if even the shrunk forecast cannot beat climatology,
+    there is nothing worth publishing and the caller should fall back to the base rate.
+    """
+    d = pd.concat([pd.Series(series).rename("p"), pd.Series(y).rename("y")], axis=1).dropna()
+    if len(d) < 60 or d["y"].nunique() < 2:
+        return None
+    yv = d["y"].values.astype(int)
+    shrunk = base_rate + lam * (d["p"].values - base_rate)
+    bs = brier_score_loss(yv, np.clip(shrunk, 0.0, 1.0))
+    bs_clim = brier_score_loss(yv, np.full(len(yv), float(yv.mean())))
+    if bs_clim <= 0:
+        return None
+    return round(float(1 - bs / bs_clim), 4)
+
+
 def shrink_to_base(p_last, base_rate, auc, full_skill_auc=0.60, naive_auc=None):
     """Shrink the raw probability toward the base rate by measured discrimination.
 

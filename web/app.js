@@ -689,7 +689,11 @@ function forecastTable(r) {
       '<td class="' + (f.beats_naive === false ? "dn" : "mut") + '"' +
         (f.naive_name ? ' title="' + esc(f.naive_name) + '"' : "") + '>' +
         (f.naive_auc == null ? "—" : num(f.naive_auc, 3)) + '</td>' +
-      '<td class="' + ((m.brier_skill_score || 0) > 0 ? "up" : "mut") + '">' + sgn(m.brier_skill_score, 4) + '</td>' +
+      '<td class="' + ((f.bss_published != null ? f.bss_published : (m.brier_skill_score || 0)) > 0 ? "up" : "mut") + '"' +
+        (f.bss_published != null
+          ? ' title="这是你实际看到的那个概率（已按信任度收缩后）的成绩。收缩前是 ' + num(m.brier_skill_score, 4) + '。"'
+          : "") + '>' +
+        (f.bss_published != null ? sgn(f.bss_published, 4) : sgn(m.brier_skill_score, 4)) + '</td>' +
       '<td class="mut">' + num(mr.auc, 3) + '</td><td class="mut">' + (m.n || "—") + '</td>' +
       '<td><span class="pill ' + esc(f.skill) + '">' + esc(f.skill_cn) + '</span>' +
       (f.source && f.source !== "model"
