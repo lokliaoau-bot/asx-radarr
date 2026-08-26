@@ -121,6 +121,10 @@ EMBARGO_EXTRA = 5
 SHORT_YEARS = 5              # how many ASIC year-to-date files to pull
 CACHE_DIR = "cache"
 
+# 交易摩擦（横截面验证与策略曲线共用）
+COST_BPS = 15.0              # 单边冲击+佣金，ASX 中大盘的保守值
+BORROW_BPS_PA = 300.0        # 空头借券费年化，高做空拥挤名字实际常在 200-800bps
+
 # Stamped into models.pkl. The walk-forward cache reuses predictions computed by an
 # EARLIER version of the modelling code, so changing that code without bumping this
 # would silently mix old and new predictions in one series forever. Bump on any change
@@ -130,4 +134,13 @@ CACHE_DIR = "cache"
 # of its own). Cached `cal` blocks from v2/v3 are stale and must be recomputed.
 # v5 (2026-08-25): three volatility LEVEL features added, so the feature matrix
 # itself changed -- every cached walk-forward prediction is stale.
-MODEL_VERSION = "v5"
+# v6 (升级第一步，纯 bug 修复):
+#     · 跨市场序列改为**交易时段对齐**（修掉时区前视偏差）——8 个 xa_/vol_vix 因子
+#       的数值全部改变，这是必须 bump 的主因；
+#     · RSI/MFI 退化情形修正，凡是用到 RSI 的因子数值都变了；
+#     · 广度指标加最小横截面闸门、avg_correlation 改按代表性取样。
+#     从本版起，缓存还会额外用 features.feature_fingerprint() 校验，
+#     改 config 里的股票池也能自动失效。
+#     ⚠️ 建模层（model.py 的拟合/校准/集成）本步**未改动**，是刻意的：
+#        这样 AUC 的变化只能归因于泄漏被堵住，而不是别的东西。
+MODEL_VERSION = "v6"

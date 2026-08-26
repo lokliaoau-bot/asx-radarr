@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 """Sector construction, money flow, speculative heat, and short-side positioning.
 
@@ -253,7 +254,9 @@ def build_sector_panel(px, short_pct, short_shares):
             "breadth": {
                 "pct_above_ma50": ind.safe_last(pa50),
                 "pct_above_ma200": ind.safe_last(pa200),
-                "pct_above_ma50_chg20": ind.safe_last(pa50) - ind.safe_last(pa50.shift(20)),
+                # safe_last(x) - safe_last(x.shift(20)) 会两次 dropna，尾部只要有一个 NaN
+                # 取到的就不是相隔 20 根的两个点。lagged_diff 按位置取，不会错位。
+                "pct_above_ma50_chg20": ind.lagged_diff(pa50, 20),
                 "ad_ratio_5d": ind.safe_last(adr.rolling(5).mean()),
                 "pct_overbought": overbought,
                 "pct_near_52w_high": near_hi,

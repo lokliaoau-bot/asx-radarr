@@ -15,6 +15,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
+from . import crossmarket as XM
 from . import indicators as ind
 from .config import BENCHMARK, all_stock_tickers
 
@@ -129,15 +130,18 @@ def build_market_features(px, short_pct):
     f["vol_park_z"] = ind.zscore(ind.parkinson_vol(bh, bl, 20), 252)
     f["vol_dd"] = ind.max_drawdown(bench, 252)
 
-    def _series(tk):
-        if tk in closes.columns:
-            return closes[tk].reindex(closes.index).ffill()
-        return pd.Series(np.nan, index=closes.index)
+    # ---- 跨市场序列：一律经交易时段对齐（修掉时区前视偏差）----
+    # 外盘的「D 日收盘」发生在澳股 D 日收盘**之后**（标普500 晚约 14 小时），
+    # 把它对齐到澳股 D 日等于提前知道了驱动 D+1 日跳空的变量。详见 crossmarket.py。
+    def _x(tk):
+        if tk not in closes.columns:
+            return pd.Series(np.nan, index=closes.index)
+        return XM.align(closes[tk], closes.index, tk)
 
-    axvi = _series("^AXVI")
+    axvi = _x("^AXVI")                       # 本土，滞后 0
     f["vol_axvi_z"] = ind.zscore(axvi, 252)
     f["vol_axvi_chg"] = axvi / axvi.shift(5) - 1.0
-    f["vol_vix_z"] = ind.zscore(_series("^VIX"), 252)
+    f["vol_vix_z"] = ind.zscore(_x("^VIX"), 252)     # 美国，滞后 1
 
     # ---- breadth ----
     f["brd_ma50"] = ind.pct_above_ma(sc, 50) - 0.5
@@ -147,14 +151,15 @@ def build_market_features(px, short_pct):
     f["brd_adratio"] = ind.ad_ratio(sc).rolling(10, min_periods=3).mean()
     f["brd_nhnl"] = ind.new_high_low(sc, 252)
     f["brd_updownvol"] = ind.up_down_volume(sc, sv).rolling(5, min_periods=2).mean()
-    f["brd_corr"] = ind.avg_correlation(sc, 60)
+    # 取样改为「历史完整度 + 成交额」，不再是按字母序的前 40 只
+    f["brd_corr"] = ind.avg_correlation(sc, 60, sample=60, volumes=sv)
 
     # ---- money flow ----
     f["flow_cmf"] = ind.cmf(bh, bl, bench, bv, 20)
     f["flow_mfi"] = (ind.mfi(bh, bl, bench, bv, 14) - 50) / 50.0
     o = ind.obv(bench, bv)
     f["flow_obv"] = (o - o.shift(20)) / bv.rolling(60, min_periods=20).mean().replace(0, np.nan) / 20.0
-    mkt_dv = (sc * sv).sum(axis=1)
+    mkt_dv = (sc * sv).sum(axis=1, min_count=10)
     f["flow_dollarvol_z"] = ind.zscore(mkt_dv.rolling(5, min_periods=2).mean(), 252)
 
     # ---- short positioning (ASIC) ----
@@ -174,7 +179,7 @@ def build_market_features(px, short_pct):
 
     # ---- cross-asset / commodities ----
     def _roc_of(tk, n=20):
-        s = _series(tk)
+        s = _x(tk)
         return s / s.shift(n) - 1.0
 
     f["xa_spx20"] = _roc_of("^GSPC")
@@ -183,8 +188,28 @@ def build_market_features(px, short_pct):
     f["xa_copper20"] = _roc_of("HG=F")
     f["xa_oil20"] = _roc_of("CL=F")
     f["xa_china20"] = _roc_of("000001.SS")
-    t10 = _series("^TNX")
+    t10 = _x("^TNX")
     f["xa_ust10"] = t10 - t10.shift(20)
 
     f = f[[c for c in PRIOR_SIGN.keys() if c in f.columns]]
     return f.replace([np.inf, -np.inf], np.nan)
+
+
+def feature_fingerprint(X: pd.DataFrame) -> str:
+    """特征矩阵指纹，用来判断走向前缓存是否还能复用。
+
+    只按 MODEL_VERSION 判定失效是不够的：改动 config 里的股票池、或改动某个指标的
+    实现，都会让**同名特征的数值**变掉，而 MODEL_VERSION 不变。于是新旧两代预测
+    会被拼接进同一条序列，而且永远不会自愈（后续每次运行都跳过「已有值」的区块）。
+    """
+    import hashlib
+    h = hashlib.sha1()
+    h.update(",".join(map(str, X.columns)).encode())
+    h.update(str(X.shape).encode())
+    if len(X):
+        # 取三个锚点行的数值：改动实现几乎必然改变其中之一
+        for pos in (0, len(X) // 2, len(X) - 1):
+            row = X.iloc[pos].to_numpy(dtype=float)
+            h.update(np.nan_to_num(row, nan=-9.87e9).round(8).tobytes())
+            h.update(str(X.index[pos]).encode())
+    return h.hexdigest()[:16]
