@@ -503,6 +503,36 @@ def conditional_outcomes(p: pd.Series, fwd_ret: pd.Series, p_now: float, width=0
     }
 
 
+# ----------------------------------------------------------------------
+# 多重检验修正
+# ----------------------------------------------------------------------
+def probabilistic_sharpe(sr, n, skew=0.0, kurt=3.0, sr_benchmark=0.0):
+    """PSR：观测到的 Sharpe 真的大于 `sr_benchmark` 的概率
+    (Bailey & Lopez de Prado 2012)。`sr` 与 `sr_benchmark` 都是**每期**口径。"""
+    from scipy.stats import norm
+    if n is None or n < 30 or not np.isfinite(sr):
+        return None
+    denom = np.sqrt(max(1e-12, 1 - skew * sr + (kurt - 1) / 4.0 * sr ** 2))
+    z = (sr - sr_benchmark) * np.sqrt(n - 1) / denom
+    return round(float(norm.cdf(z)), 4)
+
+
+def deflated_sharpe(sr, n, n_trials, skew=0.0, kurt=3.0, sr_var=None):
+    """DSR：对**试过多少个变体**做修正后的 PSR (Bailey & Lopez de Prado 2014)。
+
+    为什么这个项目需要它：目标 x 挑战者 x 阈值 x 权重方案，实际搜索空间很大，
+    「最好的那个」的 Sharpe 必然向上有偏。DSR 把这个选择效应扣回去。
+    """
+    from scipy.stats import norm
+    if n_trials is None or n_trials < 2 or not np.isfinite(sr):
+        return None
+    v = sr_var if sr_var is not None else 1.0 / max(n - 1, 1)
+    g = 0.5772156649
+    e = np.sqrt(v) * ((1 - g) * norm.ppf(1 - 1.0 / n_trials)
+                      + g * norm.ppf(1 - 1.0 / (n_trials * np.e)))
+    return probabilistic_sharpe(sr, n, skew, kurt, sr_benchmark=e)
+
+
 def strategy_curve(p: pd.Series, ret1d: pd.Series, thresh=0.52, cost_bps=5.0):
     """Long-when-confident vs buy-and-hold, using only OOS probabilities.
 

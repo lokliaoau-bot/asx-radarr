@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 """Point-in-time archive — the part of the system that gets better by running.
 
@@ -77,7 +78,10 @@ def record(report, log=print):
              (s.get("raw") or {}).get("short_pct"), (s.get("raw") or {}).get("short_chg_20d"),
              (s.get("stage") or {}).get("label"), (s.get("rotation") or {}).get("quadrant_cn"),
              (s.get("perf") or {}).get("ret_20d"), s.get("signed_flow_20d_m"),
-             (s.get("perf") or {}).get("ret_1d"), now))
+             # 这一列叫 sector_index，v1 却往里写了 ret_1d。存档是这个系统里唯一
+             # 无法事后重建的东西，写错列等于把一段历史永久废掉。
+             (s.get("index_level") if s.get("index_level") is not None
+              else (s.get("perf") or {}).get("index_level")), now))
         n_sec += 1
 
     n_stk = 0

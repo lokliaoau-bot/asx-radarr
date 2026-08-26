@@ -33,11 +33,13 @@ from . import sectors as S
 from . import shortcost as SC
 from . import smartmoney as SM
 from . import validate as V
-from .config import (BENCHMARK, MACRO, MODEL_VERSION, SECTORS, all_stock_tickers,
-                     ticker_to_sector)
+from . import crossmarket as XM
+from .config import (BENCHMARK, BORROW_BPS_PA, COST_BPS, MACRO, MODEL_VERSION,
+                     SECTORS, all_stock_tickers, ticker_to_sector)
 
 MIN_TRAIN = 750
 FULL_SKILL_AUC = 0.62
+N_TRIALS_TRIED = 12          # 试过的目标x挑战者x阈值组合数，用于 deflated Sharpe
 RECENT_YEARS = 3
 
 
@@ -255,21 +257,36 @@ def _direction_summary(results):
     if not dirs:
         return None
     wsum = sum(r["shrink_lambda"] for r in dirs)
-    tilt = (sum(r["shrink_lambda"] * (r["p_final"] - 0.5) for r in dirs) / wsum) if wsum > 1e-9 else 0.0
-    p = 0.5 + tilt
+    if wsum > 1e-9:
+        p = sum(r["shrink_lambda"] * r["p_final"] for r in dirs) / wsum
+        # 基准率必须用**同一套 λ 权重**加权，否则界面上「历史平均 + 模型贡献」
+        # 加不出那个大数字（简单平均会把 λ=0 的目标也算进去）。
+        base = sum(r["shrink_lambda"] * r["base_rate"] for r in dirs) / wsum
+        # ⚠️ 立场只能看**相对各目标自己基准率的超额**。
+        # v1 拿 p_final 和 0.5 比，于是把「大盘长期涨多跌少」这个无条件事实
+        # 读成了「模型看多」：实测 5/10/20 日方向的基准率是 0.552/0.561/0.585，
+        # 而模型的真实边际只有 +0.02/+0.07/+0.45 个百分点 —— 界面却因此显示「偏多」。
+        # 那正是这个项目最不该有的东西：凭空制造的信心。
+        edge = p - base
+    else:
+        base = float(np.mean([r["base_rate"] for r in dirs]))
+        p, edge = base, 0.0
     if wsum < 0.15:
         stance, cls = "无方向性优势 — 建议中性", "neutral"
-    elif p >= 0.56:
+    elif edge >= 0.06:
         stance, cls = "偏多", "bull"
-    elif p >= 0.52:
+    elif edge >= 0.02:
         stance, cls = "轻微偏多", "mild-bull"
-    elif p > 0.48:
+    elif edge > -0.02:
         stance, cls = "中性", "neutral"
-    elif p > 0.44:
+    elif edge > -0.06:
         stance, cls = "轻微偏空", "mild-bear"
     else:
         stance, cls = "偏空", "bear"
     return {"p_up": round(float(p), 4), "stance": stance, "cls": cls,
+            # 把「历史平均」和「模型贡献」拆开，界面据此说明白那个大数字的来源
+            "base_rate": round(base, 4),
+            "edge_vs_base_pp": round(float(edge * 100), 2),
             "confidence": round(float(np.clip(wsum / max(len(dirs), 1), 0, 1)), 3)}
 
 
@@ -381,7 +398,8 @@ def run(force=False, log=print, progress=None):
     step("正在做选股评分的横截面回测验证 ...", 34)
     try:
         val = V.run_validation(px, spct, tickers, ticker_to_sector(), horizon=20, n_side=10,
-                                short_shares=ssha)
+                                short_shares=ssha, cost_bps=COST_BPS,
+                                borrow_bps_pa=BORROW_BPS_PA, n_trials=N_TRIALS_TRIED)
     except Exception:
         log("验证失败: %s" % traceback.format_exc().splitlines()[-1])
         val = None
@@ -391,11 +409,15 @@ def run(force=False, log=print, progress=None):
     Xf = X.dropna(thresh=int(X.shape[1] * 0.7))
 
     tgs = _targets(bd)
+    # 走向前缓存的有效性 = 版本号 + 特征指纹。
+    # 只看版本号是不够的：改 config 里的股票池、或改某个指标的实现，都会让**同名
+    # 特征的数值**变掉而版本号不变，于是新旧两代预测被拼进同一条序列，永不自愈。
+    fp = F.feature_fingerprint(Xf)
     mcache = D._load("models.pkl") or {}
-    if mcache.get("__ver") != MODEL_VERSION:
+    if mcache.get("__ver") != MODEL_VERSION or mcache.get("__fp") != fp:
         if mcache:
-            log("模型代码版本已变（%s -> %s），弃用旧的走向前缓存，本次全量重训"
-                % (mcache.get("__ver"), MODEL_VERSION))
+            log("走向前缓存失效（版本 %s->%s，特征指纹 %s->%s），本次全量重训"
+                % (mcache.get("__ver"), MODEL_VERSION, mcache.get("__fp"), fp))
         mcache = {}
     step("正在做走向前样本外建模 (%d 个目标) ..." % len(tgs), 48)
     results, new_cache = [], {}
@@ -415,6 +437,7 @@ def run(force=False, log=print, progress=None):
                 log("目标建模失败 [%s]: %s" % (key, traceback.format_exc().splitlines()[-1]))
             step("建模进度 %d/%d" % (done, len(tgs)), 48 + int(32 * done / len(tgs)))
     new_cache["__ver"] = MODEL_VERSION
+    new_cache["__fp"] = fp
     D._save("models.pkl", new_cache)
     order = {t["key"]: i for i, t in enumerate(tgs)}
     results.sort(key=lambda r: order.get(r["key"], 99))
@@ -446,6 +469,8 @@ def run(force=False, log=print, progress=None):
             "extension": p["extension"], "stage": p["stage"], "rotation": p["rotation"],
             "perf": p["perf"], "breadth": p["breadth"], "raw": p["raw"],
             "signed_flow_20d_m": (p["raw"]["signed_flow_20d"] or 0) / 1e6,
+            # archive 的 sector_index 列要的是板块指数**水平**（此前误存了 ret_1d）
+            "index_level": I.safe_last(p["index"]),
             "stocks": sorted(p["stocks"], key=lambda s: -(s["ret_20d"] or 0)),
             "short_history": {"dates": [str(x.date()) for x in sp_hist.index],
                               "v": [round(float(v), 3) for v in sp_hist.values]},
@@ -485,6 +510,11 @@ def run(force=False, log=print, progress=None):
             "halted": [{"code": t.replace(".AX", ""), **D.trading_status(px, [t])[t]}
                        for t in sorted(halted)],
             "universe": len(tickers),
+            # 时区自检：列出每个跨市场标的相对澳股交易时段需要滞后几天。
+            # 往 config.MACRO 里加新标的却忘了在 crossmarket.TICKER_VENUE 登记场地时，
+            # 这张表会立刻显示出来（未登记的一律按最保守的 GLOBAL 处理）。
+            "session_alignment": XM.leak_audit(px["close"][
+                [c for c in MACRO if c in px["close"].columns]], px["close"].index),
         },
         "announcements": ann,
         "archive": arch,

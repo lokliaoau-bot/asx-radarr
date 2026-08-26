@@ -370,8 +370,11 @@ function verdictSection(r) {
     '不过<b>"空头篮子确实跑输大盘"这条事实不受影响</b>——那是每' + (v.horizon || 20) +
     '天换一次仓算出来的，本来就没有重叠问题。' +
     '<br><b style="color:#fbbf24">三点务必记住：</b>①"跑输大盘"<b>不等于"一定下跌"</b>——' +
-    '历史上这批股票整体其实还涨了 ' + spct((legs.short_basket || {}).cagr) +
-    '/年（同期大盘 ' + spct((legs.market || {}).cagr) + '）。真要' +
+    '历史上这批股票整体自身的收益是 ' + spct((legs.short_basket || {}).cagr) +
+    '/年（同期大盘 ' + spct((legs.market || {}).cagr) + '）——' +
+    (((legs.short_basket || {}).cagr || 0) >= 0
+      ? '也就是说它们<b>照样在涨</b>，只是涨得比大盘慢。'
+      : '它们确实在跌，但跌幅远小于「跑输大盘」给人的印象。') + '真要' +
     term("做空", GLOSSARY["做空"]) + '，你还得自己判断大盘方向。' +
     '②<b>真照它做一多一空的中性组合，扣掉手续费后一年只剩 ' +
     spct((legs.long_short_net || {}).cagr) + '（' + term("夏普", GLOSSARY["夏普"]) + ' ' +
@@ -518,7 +521,12 @@ function headCards(r) {
     '<div class="note">' + (d.confidence < 0.15 ?
       "系统实测自己猜大盘方向不比抛硬币强，所以不给追涨杀跌的建议。" :
       "综合了几个时间尺度的判断，并按各自实测准确度加权。") + '</div>' +
-    '<div class="foot"><span>上涨概率</span><span>' + term("把握度", "系统对这个方向判断有多少信心，0=完全没把握") + ' ' + num(d.confidence, 2) + '</span></div></div>';
+    '<div class="foot"><span>' +
+    (d.base_rate != null
+      ? term("历史平均 " + pct(d.base_rate), "同样长度的时间窗里，历史上大盘上涨的比例。大盘本来就涨多跌少，所以这个数天然高于 50%——它不是模型的功劳。旁边的「模型」才是模型在历史平均之外多说出来的那一点点。")
+        + ' · 模型 ' + (d.edge_vs_base_pp >= 0 ? '+' : '') + num(d.edge_vs_base_pp, 2) + 'pp'
+      : '上涨概率') +
+    '</span><span>' + term("把握度", "系统对这个方向判断有多少信心，0=完全没把握") + ' ' + num(d.confidence, 2) + '</span></div></div>';
   if (vol) {
     h += '<div class="head ' + (vol.p_final >= .6 ? "warn" : vol.p_final <= .4 ? "info" : "") + '">' +
       '<div class="k">未来20天 · 会不会变颠簸</div><div class="big">' + pct(vol.p_final) + '</div>' +
@@ -809,8 +817,8 @@ function methodology(r) {
   spct(((v.legs || {}).market || {}).cagr) + '，超额接近零且波动更高<br>' +
   '· <b>做空评分只是边缘显著</b>（修正重叠样本后 t=' + num((v.ic_short || {}).t_stat, 2) +
   '，未修正时看起来是 ' + num((v.ic_short || {}).t_naive, 2) + '），<b>且衡量的是「跑输」而非「下跌」。</b>' +
-  '样本期内空头篮子自身仍上涨 ' + spct(((v.legs || {}).short_basket || {}).cagr) +
-  '/年。裸空需要额外的大盘方向判断<br>' +
+  '样本期内空头篮子自身的收益是 ' + spct(((v.legs || {}).short_basket || {}).cagr) +
+  '/年（同期大盘 ' + spct(((v.legs || {}).market || {}).cagr) + '）。裸空需要额外的大盘方向判断<br>' +
   '· <b>空头信号衰减很快</b>：实测 20 日再平衡时空头篮子跑输约 10pp/年，40 日降到约 6pp，' +
   '60 日及以上信号消失甚至反转（轧空）。<b>名单需要大约每月刷新一次</b><br>' +
   '· 市场中性多空组合扣成本后年化仅约 ' + spct(((v.legs || {}).long_short_net || {}).cagr) +

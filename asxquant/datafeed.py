@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 """Data acquisition: Yahoo Finance OHLCV + ASIC daily short position disclosure.
 
@@ -83,14 +84,33 @@ def fetch_prices(force=False, log=print):
     raw = yf.download(tickers, period=HISTORY_PERIOD, interval="1d",
                       progress=False, auto_adjust=False, threads=True, group_by="column")
 
+    if raw is None or not len(raw):
+        raise RuntimeError("Yahoo 返回空数据，无法继续（检查网络/代理）")
+
     out = {}
-    lvl0 = list(raw.columns.get_level_values(0))
+    # yfinance 的列结构在不同版本间变过好几次（单标的时退化成单层索引，
+    # auto_adjust 的默认值也翻转过）。这里做防御式解析而不是假设一种形状。
+    if isinstance(raw.columns, pd.MultiIndex):
+        lvl0 = set(raw.columns.get_level_values(0))
+        take = lambda fld: raw[fld].copy()               # noqa: E731
+    else:
+        lvl0 = set(raw.columns)
+        take = lambda fld: raw[[fld]].copy()             # noqa: E731
+
     for field, key in [("Close", "close"), ("Open", "open"), ("High", "high"),
                        ("Low", "low"), ("Volume", "volume"), ("Adj Close", "adjclose")]:
         if field in lvl0:
-            df = raw[field].copy()
+            df = take(field)
             df.index = pd.to_datetime(df.index).tz_localize(None)
             out[key] = df.sort_index()
+
+    if "close" not in out:
+        raise RuntimeError("Yahoo 返回的数据里没有 Close 列，字段=%s" % sorted(lvl0))
+    # `open` 是隔夜/日内分解因子的输入，v1 只是顺手取了、没人检查它在不在。
+    if "open" not in out:
+        log("⚠ 行情数据缺少 Open 列，隔夜跳空/日内漂移因子将不可用")
+    if "adjclose" not in out:
+        log("⚠ 行情数据缺少 Adj Close 列，跨日测量会受除息影响（澳股股息率 4-6%，影响不小）")
 
     good = [c for c in out["close"].columns if out["close"][c].notna().sum() >= 200]
     for k in list(out.keys()):
@@ -317,11 +337,14 @@ def fetch_shorts(force=False, log=print):
     return df
 
 
-def shorts_panel(shorts, tickers, index):
-    """Pivot to date x ticker frames of short % and short shares, aligned to price dates.
+PUBLICATION_LAG_DAYS = 4      # ASIC 的 T+4 个交易日披露滞后
 
-    ASIC reports with a four-business-day lag, so the value is shifted onto the date it
-    actually became public. Using it on its own trade date would be lookahead.
+
+def shorts_panel(shorts, tickers, index):
+    """透视成 date x ticker 的空头占比 / 空头股数，对齐到价格日期。
+
+    ASIC 以 T+4 个交易日披露，所以数值被前移到它**真正变成公开信息**的那一天。
+    直接用在它自己的交易日上就是前视。
     """
     from .config import asx_code
     empty = pd.DataFrame(index=index, columns=tickers, dtype=float)
@@ -337,9 +360,23 @@ def shorts_panel(shorts, tickers, index):
     pct = d.pivot_table(index="date", columns="ticker", values="short_pct", aggfunc="last")
     sha = d.pivot_table(index="date", columns="ticker", values="short_shares", aggfunc="last")
 
+    # ASIC 以 T+4 个**交易日**公布。v1 用固定 6 个日历日近似，遇到复活节、圣诞
+    # 这种连续假期就会提前 1-2 天把还没公开的持仓当成已公开 —— 那正是空头数据
+    # 最有价值的时候（危机前后）。改为在**价格自身的交易日历**上数 4 个交易日。
+    idx = pd.DatetimeIndex(index).sort_values()
+
     def _align(x):
         x = x.sort_index()
-        x.index = x.index + pd.Timedelta(days=6)      # publication lag, calendar days
-        return x.reindex(index, method="ffill").reindex(columns=tickers)
+        # 每个 ASIC 交易日 -> 价格日历上它之后第 PUBLICATION_LAG_DAYS 个交易日
+        pos = idx.searchsorted(x.index, side="left") + PUBLICATION_LAG_DAYS
+        keep = pos < len(idx)
+        x = x[keep]
+        if not len(x):
+            return pd.DataFrame(index=idx, columns=tickers, dtype=float)
+        x.index = idx[pos[keep]]
+        x = x[~x.index.duplicated(keep="last")]
+        # limit: 空头数据停更超过 15 个交易日就不再往前填，避免一条陈旧的持仓
+        # 被当成"今天的"读数
+        return x.reindex(idx).ffill(limit=15).reindex(columns=tickers)
 
     return _align(pct), _align(sha)
