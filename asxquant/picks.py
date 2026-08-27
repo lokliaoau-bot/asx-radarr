@@ -80,7 +80,22 @@ def _xz(vals, clip=3.0):
 
 
 def _blend(components, weights):
-    """按**可得成分**重新归一化的加权和。
+    """按**可得成分**重新归一化的加权和，并把分数归一到**单位方差**。
+
+    只做 `Σwz/Σw` 是不够的：成分近似独立、单位方差时
+        Var(score) = Σw²_可得 / (Σw_可得)²
+    这个量**随可得成分减少而上升**，于是缺成分的股票分数方差更大、
+    被系统性地推向排序的两端。实测本项目权重：
+        多头全覆盖      Σw=1.00  sd=0.3191
+        多头缺 ASIC 两项 Σw=0.80  sd=0.3536   (+10.8%)
+        空头缺 squeeze  Σw=0.92  sd=0.3689   (+5.8%)
+    蒙特卡洛（150 只股票、30% 无 ASIC 披露、400 次重抽、取前15/后15）：
+    无披露股票占池 30.0%，却占据极值名单的 34.7% —— **超配 15.7%**。
+    `MIN_COVERAGE = 0.70` 拦不住（缺 ASIC 两项后覆盖率是 0.80，照样过闸）。
+    除以 sd 之后超配降到 -0.2%。
+
+    注：各成分并非真的独立（mom20 与 mom60 相关约 0.7），所以这是解析近似；
+    要做到位需要成分的经验相关矩阵 sqrt(wᵀΣw)。近似修正远好过不修正。
 
     components: {name: (z_array, ok_mask)}
     返回 (score, coverage)，coverage 是每只股票实际被覆盖的权重比例。
@@ -88,13 +103,18 @@ def _blend(components, weights):
     n = len(next(iter(components.values()))[0])
     num = np.zeros(n)
     den = np.zeros(n)
+    sq = np.zeros(n)
     for name, w in weights.items():
         z, ok = components[name]
         num += w * z * ok
         den += w * ok
+        sq += (w * ok) ** 2
     total = sum(weights.values())
     cov = den / total
     score = np.divide(num, den, out=np.zeros(n), where=den > 1e-9)
+    # 单位方差归一：sd(score) = sqrt(Σw²_可得) / Σw_可得
+    scale = np.divide(np.sqrt(sq), den, out=np.ones(n), where=den > 1e-9)
+    score = np.divide(score, scale, out=np.zeros(n), where=scale > 1e-9)
     return score, cov
 
 

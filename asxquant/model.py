@@ -258,17 +258,32 @@ def evaluate(p: pd.Series, y: pd.Series):
         "brier_climatology": round(float(bs_clim), 5),
         "brier_skill_score": round(float(1 - bs / bs_clim), 4) if bs_clim > 0 else None,
         "log_loss": round(float(log_loss(yv, np.clip(pv, 1e-6, 1 - 1e-6))), 5),
-        "accuracy": round(float(((pv > 0.5).astype(int) == yv).mean()), 4),
-        "hit_rate_high_conf": _high_conf_hit(pv, yv),
+        # ⚠️ 阈值必须是**基准率**，不是 0.5。方向目标的基准率是 0.552/0.561/0.585，
+        # 一个恒说「涨」的模型在 dir_20d 上 accuracy 就有 0.585，界面会把它读成
+        # 「58.5% 的命中率」。这和 engine._direction_summary 里已经修好的
+        # 「拿 p_final 和 0.5 比」是同一类错误，只是这两处当时漏掉了。
+        # 同时给出「恒猜多数类」的平凡基线与两者之差，孤立的 58.5% 会误导人。
+        "accuracy": round(float(((pv > base).astype(int) == yv).mean()), 4),
+        "accuracy_threshold": round(base, 4),
+        "accuracy_trivial": round(float(max(base, 1.0 - base)), 4),
+        "accuracy_edge_pp": round(float((((pv > base).astype(int) == yv).mean()
+                                         - max(base, 1.0 - base)) * 100), 2),
+        "hit_rate_high_conf": _high_conf_hit(pv, yv, base),
     }
 
 
-def _high_conf_hit(pv, yv, band=0.05):
-    m = np.abs(pv - 0.5) > band
+def _high_conf_hit(pv, yv, base=0.5, band=0.05):
+    """置信带以**基准率**为中心，不是 0.5。
+
+    基准率 0.585 的目标上，`|p-0.5| > 0.05` 几乎恒真，于是「高置信度命中率」
+    只是把 accuracy 换了个名字重报一遍。
+    """
+    m = np.abs(pv - base) > band
     if m.sum() < 20:
         return None
     return {"n": int(m.sum()),
-            "accuracy": round(float(((pv[m] > 0.5).astype(int) == yv[m]).mean()), 4)}
+            "accuracy": round(float(((pv[m] > base).astype(int) == yv[m]).mean()), 4),
+            "threshold": round(float(base), 4)}
 
 
 def score_to_prob_expanding(score: pd.Series, y: pd.Series, horizon: int,

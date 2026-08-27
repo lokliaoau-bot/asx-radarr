@@ -4,7 +4,7 @@
    v2（2026-08-24）：v1 用的是「外壳优先读缓存」，每次部署后第一次打开都会拿到
    上一版的 app.js 去渲染这一版的 report.json。平时只是样式旧一轮，但只要报告里
    增删过字段，旧脚本就会直接抛异常、整页空白。所以外壳也改成网络优先。 */
-var CACHE = "asx-radar-v3";     // 改 app.js / 增删 report.json 字段时必须 bump
+var CACHE = "asx-radar-v4";     // 改 app.js / 增删 report.json 字段时必须 bump
 var SHELL = ["./", "./index.html", "./app.js", "./style.css", "./manifest.webmanifest"];
 
 self.addEventListener("install", function (e) {

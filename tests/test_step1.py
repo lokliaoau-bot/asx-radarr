@@ -213,6 +213,45 @@ def test_blend_parity():
           "缺 c 的覆盖率 %.2f，齐全的 %.2f" % (cov[0], cov[-1]))
 
 
+def test_coverage_variance_bias():
+    """覆盖率不同不得让分数方差不同 —— 否则缺成分的股票被系统性推向排序两端。
+
+    只做 Σwz/Σw 时，Var(score)=Σw²/(Σw)² 随可得成分减少而上升。实测本项目权重：
+    多头缺 ASIC 两项 sd +10.8%，蒙特卡洛下无披露股票在极值名单里超配 15.7%，
+    而 MIN_COVERAGE=0.70 拦不住（那种情况覆盖率是 0.80）。
+    """
+    print("\n[7] 覆盖率不同不得造成方差偏差")
+    from asxquant.picks import LONG_WEIGHTS
+    keys = list(LONG_WEIGHTS)
+    w = np.array([LONG_WEIGHTS[k] for k in keys])
+    miss_idx = [j for j, k in enumerate(keys) if k in ("short_cover", "short_low")]
+
+    rng = np.random.default_rng(0)
+    N, nmiss, trials = 150, 45, 400
+    hit = tot = 0
+    sds_full, sds_miss = [], []
+    for _ in range(trials):
+        z = rng.normal(size=(N, len(keys)))
+        ok = np.ones((N, len(keys)), dtype=bool)
+        for j in miss_idx:
+            ok[:nmiss, j] = False
+        comps = {k: (z[:, j], ok[:, j]) for j, k in enumerate(keys)}
+        score, _ = PK._blend(comps, LONG_WEIGHTS)
+        sds_miss.append(float(np.std(score[:nmiss])))
+        sds_full.append(float(np.std(score[nmiss:])))
+        o = np.argsort(score)
+        ext = set(o[:15].tolist()) | set(o[-15:].tolist())
+        hit += sum(1 for i in ext if i < nmiss)
+        tot += len(ext)
+    over = (hit / tot) / (nmiss / N) * 100 - 100
+    ratio = float(np.mean(sds_miss) / np.mean(sds_full))
+    check("缺成分与齐全成分的分数标准差一致", abs(ratio - 1.0) < 0.05,
+          "sd 之比 %.4f（修复前理论值 1.108）" % ratio)
+    check("极值名单里不再超配缺成分的股票", abs(over) < 3.0,
+          "超配 %+.1f%%（修复前实测 +15.7%%）" % over)
+    _ = w  # 保留权重向量以便调试时打印
+
+
 # ----------------------------------------------------------------------
 def _synthetic_px(n=1600, seed=1):
     """造一份形状与 datafeed.fetch_prices 一致的行情，用于端到端冒烟测试。"""
@@ -238,14 +277,21 @@ def _synthetic_px(n=1600, seed=1):
 
 
 def test_end_to_end():
-    print("\n[7] 端到端冒烟测试")
+    print("\n[8] 端到端冒烟测试")
     px = _synthetic_px()
     tks = [t for t in all_stock_tickers() if t in px["close"].columns]
     sp = pd.DataFrame(np.abs(np.random.default_rng(0).normal(3, 1.2, (len(px["close"]), len(tks)))),
                       index=px["close"].index, columns=tks)
     X = F.build_market_features(px, sp)
     check("因子矩阵构建成功", X.shape[1] >= 40, "%d 个因子 x %d 行" % (X.shape[1], X.shape[0]))
-    check("第一步不引入新因子（仍是 46 个）", X.shape[1] == 46, "实测 %d" % X.shape[1])
+    check("不引入新因子（45 个：46 减掉重复的 rev_ret5）", X.shape[1] == 45,
+          "实测 %d" % X.shape[1])
+    c = np.array(X.corr().abs().values, copy=True)
+    np.fill_diagonal(c, 0.0)
+    worst = float(np.nanmax(c))
+    ij = np.unravel_index(int(np.nanargmax(c)), c.shape)
+    check("无重复因子（任意两列 |corr| < 0.999）", worst < 0.999,
+          "最高的一对 %.4f: %s <-> %s" % (worst, X.columns[ij[0]], X.columns[ij[1]]))
     check("每个因子都有先验方向", set(X.columns) <= set(F.PRIOR_SIGN))
     check("每个因子都有中文标签", all(c in F.FEATURE_LABEL for c in X.columns))
     check("每个因子都归属某个模块", all(c in F.FEATURE_BLOCK for c in X.columns))
@@ -278,7 +324,7 @@ def test_end_to_end():
 
 
 def test_validation_guard():
-    print("\n[8] 验证模块的边界保护与成本")
+    print("\n[9] 验证模块的边界保护与成本")
     px = _synthetic_px(n=400, seed=2)
     tks = [t for t in all_stock_tickers() if t in px["close"].columns][:10]
     sp = pd.DataFrame(np.nan, index=px["close"].index, columns=tks)   # 完全没有空头数据
@@ -299,8 +345,8 @@ def main():
     print("澳股雷达 升级第一步（纯 bug 修复）回归测试")
     print("=" * 68)
     for fn in (test_rsi_mfi, test_crossmarket, test_leak_magnitude, test_ic,
-               test_picks_coverage, test_blend_parity, test_end_to_end,
-               test_validation_guard):
+               test_picks_coverage, test_blend_parity, test_coverage_variance_bias,
+               test_end_to_end, test_validation_guard):
         try:
             fn()
         except Exception as e:

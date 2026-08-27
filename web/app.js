@@ -376,7 +376,8 @@ function verdictSection(r) {
       ? '也就是说它们<b>照样在涨</b>，只是涨得比大盘慢。'
       : '它们确实在跌，但跌幅远小于「跑输大盘」给人的印象。') + '真要' +
     term("做空", GLOSSARY["做空"]) + '，你还得自己判断大盘方向。' +
-    '②<b>真照它做一多一空的中性组合，扣掉手续费后一年只剩 ' +
+    '②<b>真照它做一多一空的中性组合，' +
+    (((legs.long_short_net || {}).cagr || 0) >= 0 ? '扣掉手续费后一年只剩 ' : '扣掉手续费后一年反而是 ') +
     spct((legs.long_short_net || {}).cagr) + '（' + term("夏普", GLOSSARY["夏普"]) + ' ' +
     num((legs.long_short_net || {}).sharpe, 2) + '），一年要换 ' + num(v.turnover_pa, 0) +
     ' 批仓</b>。所以它的正确用法是<b>"回避 / 少配一点"，不是"靠它做空赚钱"</b>。' +
@@ -821,8 +822,16 @@ function methodology(r) {
   '/年（同期大盘 ' + spct(((v.legs || {}).market || {}).cagr) + '）。裸空需要额外的大盘方向判断<br>' +
   '· <b>空头信号衰减很快</b>：实测 20 日再平衡时空头篮子跑输约 10pp/年，40 日降到约 6pp，' +
   '60 日及以上信号消失甚至反转（轧空）。<b>名单需要大约每月刷新一次</b><br>' +
-  '· 市场中性多空组合扣成本后年化仅约 ' + spct(((v.legs || {}).long_short_net || {}).cagr) +
+  '· 市场中性多空组合扣成本后年化 ' + spct(((v.legs || {}).long_short_net || {}).cagr) +
   '——换手成本吃掉了大部分毛收益<br>' +
+  (v.day1_effect ?
+    '· <b>回测按 t+' + num(v.execution_lag_days, 0) + ' 成交</b>：评分要等收盘才算得出来，' +
+    '当天那个收盘价你买不到。实测把成交推迟这一天，做多篮子年化从 ' +
+    spct(v.day1_effect.long_cagr_same_day) + ' 掉到 ' + spct(v.day1_effect.long_cagr_next_day) +
+    '，多空组合从 ' + spct(v.day1_effect.ls_cagr_same_day) + ' 变成 ' +
+    spct(v.day1_effect.ls_cagr_next_day) + ' —— ' +
+    '<b>纸面上的收益大部分待在你根本买不到的那一天里。下面所有数字都是推迟之后的。</b><br>'
+    : '') +
   '· 板块成分为静态名单，存在幸存者偏差<br>' +
   '· 未纳入基本面（估值、盈利修正）、期权隐含波动率曲面、融券成本与可借额度。' +
   '<b>实际做空还需确认券源与融券费率</b><br>' +

@@ -64,16 +64,25 @@ def _blend_frames(components, weights):
     本项目已经在 `squeeze_safe` 上踩过一次这个坑（验证里那一项曾是全零占位）。
     **改 picks.py 的权重或缺失处理，必须同步改这里。**
 
+    **包括单位方差归一化**：只做 Σwz/Σw 会让缺成分的股票分数方差更大
+    （Var = Σw²/(Σw)² 随成分减少而上升），于是它们被系统性推向排序两端。
+    详见 `picks._blend` 的注释与实测数字。
+
     components: {name: (z_frame, ok_frame)}
     """
-    num = den = None
+    num = den = sq = None
     for name, w in weights.items():
         z, ok = components[name]
         okf = ok.astype(float)
         zz = z.fillna(0.0) * okf
         num = w * zz if num is None else num + w * zz
         den = w * okf if den is None else den + w * okf
-    return (num / den.where(den > 1e-9)).fillna(0.0)
+        s2 = (w * okf) ** 2
+        sq = s2 if sq is None else sq + s2
+    d = den.where(den > 1e-9)
+    score = num / d
+    scale = np.sqrt(sq) / d
+    return (score / scale.where(scale > 1e-9)).fillna(0.0)
 
 
 def _nw_variance(x, lag):
@@ -302,13 +311,19 @@ def _ic_by_year(ic):
 
 def run_validation(px, short_pct, tickers, sector_map, horizon=20,
                    n_side=3, cost_bps=15.0, min_adv=3e6, short_shares=None,
-                   borrow_bps_pa=DEFAULT_BORROW_BPS_PA, n_trials=12):
+                   borrow_bps_pa=DEFAULT_BORROW_BPS_PA, n_trials=12, exec_lag=1):
     """多头与空头评分的完整横截面成绩单。"""
     F = build_factor_panel(px, short_pct, tickers, sector_map, short_shares=short_shares)
     long_s, short_s = composite_scores(F)
 
     a = F["adj"]
-    fwd = a.shift(-horizon) / a - 1.0
+    # 执行时点：评分里的 cmf20 / obv_slope / dollar_vol_z / mom20 全都要等 t 日
+    # **收盘**才定型，所以生产上最早只能在 t+1 成交。旧口径 `a.shift(-h)/a - 1`
+    # 隐含「用 t 日收盘后才知道的信息、以 t 日收盘价买入」，是乐观偏。
+    # 现在：t+exec_lag 买入，持有 horizon 天。
+    # `exec_lag` 做成参数是为了能**干净地隔离**这一项的影响：exec_lag=0 逐位复现
+    # 旧口径，这样才能回答「指标变化到底是它造成的，还是别的改动造成的」。
+    fwd = a.shift(-(horizon + exec_lag)) / a.shift(-exec_lag) - 1.0
     r1 = a.pct_change()
 
     liquid = F["adv"] > min_adv
@@ -357,14 +372,18 @@ def run_validation(px, short_pct, tickers, sector_map, horizon=20,
                 "n": int(len(d))}
 
     # ---- 组合，每 `horizon` 天再平衡 -----------------------------------
-    # 权重写在评分日**之后**的那些日子上，本身已经滞后正确。不要再 shift。
+    # 执行时点与 `fwd` 一致：d0 收盘出评分，d0+1 成交，所以收益从 d0+2 起计。
+    # 旧口径让第一笔收益是 close(d0+1)/close(d0)，隐含 d0 收盘成交。
     dates = L.index
     tradable = a.loc[start:].notna() & r1.loc[start:].notna()
     posL = pd.DataFrame(0.0, index=dates, columns=L.columns)
     posS = posL.copy()
     for i in range(0, len(dates), horizon):
         d0 = dates[i]
-        d1 = dates[min(i + horizon, len(dates) - 1)]
+        d_eff = dates[min(i + exec_lag, len(dates) - 1)]     # 实际建仓日
+        # 终点必须跟着起点一起后移，否则每次再平衡会空出一天（持有期还会少 1 天，
+        # 与 fwd 的口径对不上）。区间 (d_eff, d1] 恰好 horizon 天，且首尾相接不重叠。
+        d1 = dates[min(i + horizon + exec_lag, len(dates) - 1)]
         lrow, srow = L.loc[d0].dropna(), S.loc[d0].dropna()
         if len(lrow) < 20 or len(srow) < 20:
             continue
@@ -372,7 +391,7 @@ def run_validation(px, short_pct, tickers, sector_map, horizon=20,
         sw = [t for t in srow.nlargest(n_side).index if t not in lw]
         if not lw or not sw:
             continue
-        seg = (dates > d0) & (dates <= d1)
+        seg = (dates > d_eff) & (dates <= d1)
         for t in lw:
             posL.loc[seg, t] = 1.0 / len(lw)
         for t in sw:
@@ -380,6 +399,19 @@ def run_validation(px, short_pct, tickers, sector_map, horizon=20,
 
     # 停牌/退市：v1 用 fillna(0) 把它们当成一条水平线继续持有。
     # 现在把不能交易的名字从持仓里剔除，剩余仓位按比例摊回，保持总敞口不变。
+    # ⚠️ 但这等于「按停牌前最后一个价格平掉」，损益记为 0。现实中多头腿走向退市
+    # 通常接近 -100%，空头腿则是被锁死（若最终退市反而大赚）。两个方向相反，
+    # 任何单一 haircut 都是猜测，所以这里**只如实报告它发生了几次、涉及多少权重**，
+    # 让读者自己判断这个近似有多要紧。若 events 长期为 0，要去查 tradable 的定义
+    # 是不是根本没生效。
+    def _halt_exits(pos):
+        held = pos.shift(1).fillna(0.0) > 0
+        gone = held & (~tradable.reindex_like(pos).fillna(False))
+        return {"events": int(gone.to_numpy().sum()),
+                "weight": round(float(pos.shift(1).where(gone).sum().sum()), 4)}
+
+    halt_exits = {"long": _halt_exits(posL), "short": _halt_exits(posS)}
+
     posL = posL.where(tradable, 0.0)
     posS = posS.where(tradable, 0.0)
     posL = posL.div(posL.sum(axis=1).replace(0, np.nan), axis=0).fillna(0.0)
@@ -406,8 +438,16 @@ def run_validation(px, short_pct, tickers, sector_map, horizon=20,
         last = float(eq.iloc[-1])
         cagr = float(last ** (1 / yrs) - 1) if last > 0 else -1.0
         sr_daily = float(r.mean() / r.std(ddof=0)) if r.std(ddof=0) > 0 else np.nan
+        # ⚠️ 两个 Sharpe 口径不同，可以差 10-20%，并排放在报告里会被读成同一个东西：
+        #   sharpe_geometric  = CAGR / 年化波动   —— 界面显示的那个
+        #   sharpe_arithmetic = 每期均值/标准差 × sqrt(252) —— PSR/DSR 用的那个
+        # `sharpe` 保留为 geometric 的别名，等前端改完再删。
         out = {"label": label, "cagr": round(cagr, 4), "vol": round(vol, 4),
                "sharpe": round(cagr / vol, 2) if vol > 1e-9 else None,
+               "sharpe_geometric": round(cagr / vol, 2) if vol > 1e-9 else None,
+               "sharpe_arithmetic": (round(float(sr_daily * np.sqrt(252)), 2)
+                                     if np.isfinite(sr_daily) else None),
+               "sharpe_note": "psr/dsr 基于 arithmetic（每期）口径",
                "max_dd": round(float((eq / eq.cummax() - 1).min()), 4),
                "final_equity": round(last, 3),
                "psr": M.probabilistic_sharpe(sr_daily, len(r),
@@ -426,6 +466,9 @@ def run_validation(px, short_pct, tickers, sector_map, horizon=20,
 
     return {
         "horizon": horizon, "n_side": n_side, "cost_bps": cost_bps,
+        "execution_lag_days": exec_lag,
+        "execution_note": "评分用截至 t 日收盘的数据，成交发生在 t+1，收益从 t+2 起计。",
+        "halt_exits": halt_exits,
         "borrow_bps_pa": borrow_bps_pa,
         "start": str(dates[0].date()), "end": str(dates[-1].date()),
         "years": round(yrs, 1),

@@ -29,7 +29,13 @@ PRIOR_SIGN = {
     "trend_ma50": +1, "trend_ma200": +1, "trend_macd": +1, "trend_adx_dir": +1,
     "trend_donchian": +1, "trend_golden": +1,
     "mom_5": +1, "mom_20": +1, "mom_60": +1, "mom_tsmom": +1, "mom_rsi14": +1,
-    "rev_z20": -1, "rev_rsi2": -1, "rev_ret5": -1,
+    # ⚠️ 曾经这里还有一个 "rev_ret5": -1，它的实现是 ind.roc(bench, 5) ——
+    # 与 "mom_5" **逐位相同**（实测相关系数 1.0000），却被赋了相反的先验符号。
+    # 后果有三：combo（逐因子等权平均）里这个变量拿到双倍票数；L2 会把系数
+    # 在两列间一分为二、等于对它单独放松正则；signal_scoreboard 里同一个数字
+    # 出现两次且 stance 一正一负互相抵消，让 block 归因失真。已删除。
+    # 不要重新加回来 —— 若想表达「5日收益的极端程度」，那是另一个量。
+    "rev_z20": -1, "rev_rsi2": -1,
     "vol_rv20_z": -1, "vol_expansion": -1, "vol_axvi_z": -1, "vol_axvi_chg": -1,
     "vol_rv20_level": -1, "vol_rv20_pctile": -1, "vol_rv_ratio": -1,
     "vol_park_z": -1, "vol_dd": +1, "vol_vix_z": -1,
@@ -56,7 +62,7 @@ FEATURE_LABEL = {
     "trend_donchian": "唐奇安通道位置(252日)", "trend_golden": "50/200日均线金叉状态",
     "mom_5": "5日动量", "mom_20": "20日动量", "mom_60": "60日动量",
     "mom_tsmom": "时序动量(12-1月)", "mom_rsi14": "RSI(14)",
-    "rev_z20": "20日价格Z分(反转)", "rev_rsi2": "RSI(2)超买超卖", "rev_ret5": "5日反转",
+    "rev_z20": "20日价格Z分(反转)", "rev_rsi2": "RSI(2)超买超卖",
     "vol_rv20_z": "20日已实现波动率Z分", "vol_expansion": "波动率扩张(20/60)",
     "vol_rv20_level": "波动率绝对水平(对数)", "vol_rv20_pctile": "波动率历史百分位(扩张窗)",
     "vol_rv_ratio": "短期/中期波动率比(5/20)",
@@ -112,7 +118,6 @@ def build_market_features(px, short_pct):
     # ---- mean reversion ----
     f["rev_z20"] = ind.zscore(bench, 20)
     f["rev_rsi2"] = (ind.rsi(bench, 2) - 50) / 50.0
-    f["rev_ret5"] = ind.roc(bench, 5)
 
     # ---- volatility ----
     rv20, rv60 = ind.realized_vol(bench, 20), ind.realized_vol(bench, 60)

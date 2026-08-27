@@ -39,7 +39,13 @@ from .config import (BENCHMARK, BORROW_BPS_PA, COST_BPS, MACRO, MODEL_VERSION,
 
 MIN_TRAIN = 750
 FULL_SKILL_AUC = 0.62
-N_TRIALS_TRIED = 12          # 试过的目标x挑战者x阈值组合数，用于 deflated Sharpe
+# deflated Sharpe 用的「试过多少个变体」。此前写 12 是低估：
+#   目标 8 × 估计器(集成 + rv_level + har/cond_clim) ≈ 20
+#   + 阈值方案 ~3 + 权重方案 ~2 + 历史上试过并放弃的估计器 ~6
+#   + 因子集版本 (43 / 46 / 45) 3
+# 保守取 60。这会让 DSR 变小 —— 那是正确的方向，一个偏高的 DSR 比一个
+# 难看的 DSR 危险得多。
+N_TRIALS_TRIED = 60
 RECENT_YEARS = 3
 
 
@@ -122,6 +128,17 @@ def _fit_target(tg, Xf, cache=None, log=print):
     ens = P["ensemble"]
     cal = M.calibrate_expanding(ens, ya, h, cached=prev.get("cal"))
 
+    # 成员级成绩单：等权集成里如果有成员 AUC <= 0.5，它就是纯粹的方差来源。
+    # HistGradientBoosting 在约 1000 行 x 45 列、有效独立观测约 50 的数据上
+    # 几乎必然在拟合噪声 —— 但在此之前没有任何证据能证实或证伪，因为只有
+    # 集成被打过分。**本处只度量，不据此改变集成权重**（那属于第二步）。
+    member_metrics = {}
+    for _c in ("logit", "gbm", "combo"):
+        _mm = M.evaluate(P[_c], ya)
+        if _mm:
+            member_metrics[_c] = {"auc": _mm["auc"], "bss": _mm["brier_skill_score"],
+                                  "n": _mm["n"]}
+
     m_raw, m_cal = M.evaluate(ens, ya), M.evaluate(cal, ya)
     metrics = m_cal or m_raw
     series = cal if m_cal is not None else ens
@@ -189,7 +206,7 @@ def _fit_target(tg, Xf, cache=None, log=print):
         if best is None or (m_common["auc"] or 0) > (best[1]["auc"] or 0):
             best = (ck, m_common, p_c, clabel, m_full)
 
-    source, source_cn = "model", "43因子集成"
+    source, source_cn = "model", "%d因子集成" % Xa.shape[1]
     if best is not None:
         source, source_cn = best[0], best[3]
         series = best[2]
@@ -242,7 +259,7 @@ def _fit_target(tg, Xf, cache=None, log=print):
                                  or not (metrics or {}).get("auc"))
                         else bool(metrics["auc"] > naive_auc)),
         "source": source, "source_cn": source_cn,
-        "candidates": cand_report,
+        "candidates": cand_report, "members": member_metrics,
         "skill": lvl, "skill_cn": lvl_cn, "has_current": has_current,
         "bss_published": bss_pub,
         "conditional": M.conditional_outcomes(series, tg["fwd"].reindex(series.index), p_model),
@@ -400,6 +417,29 @@ def run(force=False, log=print, progress=None):
         val = V.run_validation(px, spct, tickers, ticker_to_sector(), horizon=20, n_side=10,
                                 short_shares=ssha, cost_bps=COST_BPS,
                                 borrow_bps_pa=BORROW_BPS_PA, n_trials=N_TRIALS_TRIED)
+        # 「第一天效应」：同一套评分，唯一区别是假设当天收盘就能成交（exec_lag=0）。
+        # 评分要等收盘才算得出来，所以那个价格实际上买不到。两者之差就是
+        # **纸面收益里有多少待在你根本交易不到的那一天**。实测这个差非常大，
+        # 大到足以改变结论，所以它必须是每次实算的数字，不能写死在界面里。
+        try:
+            v0 = V.run_validation(px, spct, tickers, ticker_to_sector(), horizon=20,
+                                  n_side=10, short_shares=ssha, cost_bps=COST_BPS,
+                                  borrow_bps_pa=BORROW_BPS_PA, n_trials=N_TRIALS_TRIED,
+                                  exec_lag=0)
+            if val and v0 and not v0.get("error"):
+                val["day1_effect"] = {
+                    "note": ("同一套评分，唯一区别是假设 t 日收盘就能成交。"
+                             "评分要等收盘才算得出来，所以那个价格买不到。"),
+                    "long_cagr_same_day": (v0["legs"]["long"] or {}).get("cagr"),
+                    "long_cagr_next_day": (val["legs"]["long"] or {}).get("cagr"),
+                    "ls_cagr_same_day": (v0["legs"]["long_short_net"] or {}).get("cagr"),
+                    "ls_cagr_next_day": (val["legs"]["long_short_net"] or {}).get("cagr"),
+                    "ic_short_t_same_day": (v0["ic_short"] or {}).get("t_stat"),
+                    "ic_short_t_next_day": (val["ic_short"] or {}).get("t_stat"),
+                }
+        except Exception:
+            log("第一天效应对照失败(不影响主结果): %s"
+                % traceback.format_exc().splitlines()[-1])
     except Exception:
         log("验证失败: %s" % traceback.format_exc().splitlines()[-1])
         val = None
