@@ -326,9 +326,18 @@ def run_validation(px, short_pct, tickers, sector_map, horizon=20,
     fwd = a.shift(-(horizon + exec_lag)) / a.shift(-exec_lag) - 1.0
     r1 = a.pct_change()
 
+    # 停牌日：Yahoo 对**停牌**（不是退市）照样给收盘价，只是成交量记 0。
+    # 以前只用 `a.notna()` 判断能不能交易，于是停牌日被当成正常交易日：评分照算、
+    # 能在停牌价进场，组合里的 halt_exits 事件数恒为 0（CTD 停牌近一年就这样漏过去）。
+    # 现在：评分日必须有成交；进场日（t+exec_lag）必须有成交；持仓遇到零成交日按停牌处理。
+    # 成交量缺失（NaN）不算停牌——那是数据缺口，不是「确知没有成交」。
+    vol = px["volume"][tickers].reindex(index=a.index)
+    traded = ~(vol == 0)
+    fwd = fwd.where(traded.shift(-exec_lag).fillna(False).astype(bool))
+
     liquid = F["adv"] > min_adv
     have = F["short_pct"].notna()          # ASIC 空头数据 2022 才开始
-    mask = liquid & have & a.notna()
+    mask = liquid & have & a.notna() & traded
 
     enough = mask.sum(axis=1).ge(30)
     if not bool(enough.any()):
@@ -375,7 +384,11 @@ def run_validation(px, short_pct, tickers, sector_map, horizon=20,
     # 执行时点与 `fwd` 一致：d0 收盘出评分，d0+1 成交，所以收益从 d0+2 起计。
     # 旧口径让第一笔收益是 close(d0+1)/close(d0)，隐含 d0 收盘成交。
     dates = L.index
-    tradable = a.loc[start:].notna() & r1.loc[start:].notna()
+    # 复牌当天那根跳空（停牌前最后价 -> 复牌收盘）不能算进持仓收益：按上面的约定，停牌时
+    # 已按最后价平掉，复牌后最早只能在复牌当天收盘重新建仓。所以前一天也必须有成交。
+    # 这与退市股 NaN 之后 pct_change 给 NaN 的处理是同一个口径。
+    tradable = (a.loc[start:].notna() & r1.loc[start:].notna() & traded.loc[start:]
+                & traded.shift(1, fill_value=True).loc[start:])
     posL = pd.DataFrame(0.0, index=dates, columns=L.columns)
     posS = posL.copy()
     for i in range(0, len(dates), horizon):

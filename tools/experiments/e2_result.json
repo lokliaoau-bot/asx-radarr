@@ -1,0 +1,45 @@
+{
+ "dividend_events": 2867,
+ "spot_check_cba": {
+  "2024-08-21": 2.5,
+  "2025-02-19": 2.25,
+  "2025-08-20": 2.6,
+  "2026-02-18": 2.35,
+  "2026-08-19": 2.7
+ },
+ "yield_h20": {
+  "mean_ic": -0.0099,
+  "nw_t": -0.86,
+  "days": 2709
+ },
+ "div_change_h20": {
+  "mean_ic": 0.006,
+  "nw_t": 0.51,
+  "days": 2516
+ },
+ "yield_h10": {
+  "mean_ic": -0.0067,
+  "nw_t": -0.8,
+  "days": 2719
+ },
+ "div_change_h10": {
+  "mean_ic": 0.0068,
+  "nw_t": 0.86,
+  "days": 2526
+ },
+ "yield_h5": {
+  "mean_ic": -0.0051,
+  "nw_t": -0.84,
+  "days": 2724
+ },
+ "div_change_h5": {
+  "mean_ic": 0.0064,
+  "nw_t": 1.17,
+  "days": 2531
+ },
+ "verdict": {
+  "yield": "fails",
+  "div_change": "fails"
+ },
+ "run_at": "2026-10-14 21:51"
+}

@@ -146,6 +146,7 @@ def trading_status(px, tickers):
     delistings and plain data outages alike.
     """
     closes = px["close"]
+    vols = px.get("volume")
     idx = closes.index
     out = {}
     for t in tickers:
@@ -153,6 +154,11 @@ def trading_status(px, tickers):
             out[t] = {"last_trade": None, "stale_days": 10 ** 4}
             continue
         s = closes[t].dropna()
+        # 停牌（不是退市）时 Yahoo 照给收盘价、成交量记 0 —— 只看收盘价在不在，会把停牌
+        # 当成正常交易（CTD 停牌近一年就这样一直留在候选池里）。成交量为 0 的日子不算成交；
+        # 成交量缺失（NaN）不算 0，那是数据缺口而不是「确知没成交」。
+        if vols is not None and t in vols.columns:
+            s = s[~(vols[t].reindex(s.index) == 0)]
         if not len(s):
             out[t] = {"last_trade": None, "stale_days": 10 ** 4}
             continue

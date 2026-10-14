@@ -1,0 +1,746 @@
+{
+"360.AX": {
+"type": "EQUITY",
+"sector": "Technology",
+"industry": "Software - Application",
+"name": "LIFE360 CDI 3:1 [360]"
+},
+"4DX.AX": {
+"type": "EQUITY",
+"sector": "Healthcare",
+"industry": "Medical Devices",
+"name": "4DMEDICAL FPO [4DX]"
+},
+"AAA.AX": {
+"type": "ETF",
+"sector": null,
+"industry": null,
+"name": "BETACASH ETF UNITS [AAA]"
+},
+"AAI.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Aluminum",
+"name": "ALCOA CORP CDI 1:1 [AAI]"
+},
+"ABB.AX": {
+"type": "EQUITY",
+"sector": "Communication Services",
+"industry": "Telecom Services",
+"name": "AUSSIEBAND FPO [ABB]"
+},
+"ACL.AX": {
+"type": "EQUITY",
+"sector": "Healthcare",
+"industry": "Diagnostics & Research",
+"name": "AUCLINICAL FPO [ACL]"
+},
+"AD8.AX": {
+"type": "EQUITY",
+"sector": "Technology",
+"industry": "Electronic Components",
+"name": "AUDINATEGL FPO [AD8]"
+},
+"AFI.AX": {
+"type": "EQUITY",
+"sector": "Financial Services",
+"industry": "Asset Management",
+"name": "AUS.FOUND. FPO [AFI]"
+},
+"AIS.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Other Industrial Metals & Mining",
+"name": "AERISRES FPO [AIS]"
+},
+"ALD.AX": {
+"type": "EQUITY",
+"sector": "Energy",
+"industry": "Oil & Gas Refining & Marketing",
+"name": "AMPOL FPO [ALD]"
+},
+"ALK.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Gold",
+"name": "ALKANE FPO [ALK]"
+},
+"AOV.AX": {
+"type": "EQUITY",
+"sector": "Consumer Cyclical",
+"industry": "Auto Parts",
+"name": "AMOTIV FPO [AOV]"
+},
+"APE.AX": {
+"type": "EQUITY",
+"sector": "Consumer Cyclical",
+"industry": "Auto & Truck Dealerships",
+"name": "EAGERS FPO [APE]"
+},
+"ARG.AX": {
+"type": "EQUITY",
+"sector": "Financial Services",
+"industry": "Asset Management",
+"name": "ARGO FPO [ARG]"
+},
+"ARU.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Other Industrial Metals & Mining",
+"name": "ARAFURA FPO [ARU]"
+},
+"ASB.AX": {
+"type": "EQUITY",
+"sector": "Industrials",
+"industry": "Aerospace & Defense",
+"name": "AUSTAL LTD FPO [ASB]"
+},
+"ASL.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Gold",
+"name": "ANDEAN FPO [ASL]"
+},
+"AUB.AX": {
+"type": "EQUITY",
+"sector": "Financial Services",
+"industry": "Insurance Brokers",
+"name": "AUB GROUP FPO [AUB]"
+},
+"AZJ.AX": {
+"type": "EQUITY",
+"sector": "Industrials",
+"industry": "Railroads",
+"name": "AURIZON FPO [AZJ]"
+},
+"BAP.AX": {
+"type": "EQUITY",
+"sector": "Consumer Cyclical",
+"industry": "Specialty Retail",
+"name": "BAPCOR LTD FPO [BAP]"
+},
+"BC8.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Gold",
+"name": "BLACK CAT FPO [BC8]"
+},
+"BGL.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Gold",
+"name": "BELLEVUE FPO [BGL]"
+},
+"BMN.AX": {
+"type": "EQUITY",
+"sector": "Energy",
+"industry": "Uranium",
+"name": "BANNERMAN FPO [BMN]"
+},
+"BVS.AX": {
+"type": "EQUITY",
+"sector": "Technology",
+"industry": "Software - Application",
+"name": "BRAVURA FPO [BVS]"
+},
+"BWP.AX": {
+"type": "EQUITY",
+"sector": "Real Estate",
+"industry": "REIT - Industrial",
+"name": "BWPPROPGP STAPLED [BWP]"
+},
+"CAT.AX": {
+"type": "EQUITY",
+"sector": "Technology",
+"industry": "Scientific & Technical Instruments",
+"name": "CATAPULT FPO [CAT]"
+},
+"CCP.AX": {
+"type": "EQUITY",
+"sector": "Financial Services",
+"industry": "Credit Services",
+"name": "CREDITCORP FPO [CCP]"
+},
+"CDA.AX": {
+"type": "EQUITY",
+"sector": "Technology",
+"industry": "Scientific & Technical Instruments",
+"name": "CODAN FPO [CDA]"
+},
+"CIA.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Steel",
+"name": "CHAMP IRON FPO [CIA]"
+},
+"CKF.AX": {
+"type": "EQUITY",
+"sector": "Consumer Cyclical",
+"industry": "Restaurants",
+"name": "COLLINS FD FPO [CKF]"
+},
+"CLW.AX": {
+"type": "EQUITY",
+"sector": "Real Estate",
+"industry": "REIT - Diversified",
+"name": "CHTR H LWR STAPLED [CLW]"
+},
+"CNI.AX": {
+"type": "EQUITY",
+"sector": "Real Estate",
+"industry": "REIT - Diversified",
+"name": "CENTURIA STAPFORUS [CNI]"
+},
+"CNU.AX": {
+"type": "EQUITY",
+"sector": "Communication Services",
+"industry": "Telecom Services",
+"name": "CHORUS FPO NZX [CNU]"
+},
+"CQE.AX": {
+"type": "EQUITY",
+"sector": "Real Estate",
+"industry": "REIT - Specialty",
+"name": "CHSOCINFRA ORD UNITS [CQE]"
+},
+"CRN.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Coking Coal",
+"name": "CORONADO CDI 10:1 [CRN]"
+},
+"CSC.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Copper",
+"name": "CAPSTONE CDI 1:1 [CSC]"
+},
+"CTT.AX": {
+"type": "EQUITY",
+"sector": "Consumer Cyclical",
+"industry": "Luxury Goods",
+"name": "CETTIRE FPO [CTT]"
+},
+"CXO.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Other Industrial Metals & Mining",
+"name": "CORE EXP FPO [CXO]"
+},
+"CYL.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Gold",
+"name": "CAT METALS FPO [CYL]"
+},
+"DBI.AX": {
+"type": "EQUITY",
+"sector": "Industrials",
+"industry": "Integrated Freight & Logistics",
+"name": "DALRYMPLE STAPLED [DBI]"
+},
+"DDR.AX": {
+"type": "EQUITY",
+"sector": "Technology",
+"industry": "Electronics & Computer Distribution",
+"name": "DICKERDATA FPO [DDR]"
+},
+"DGT.AX": {
+"type": "EQUITY",
+"sector": "Real Estate",
+"industry": "REIT - Specialty",
+"name": "DIGICO INF STAPLED [DGT]"
+},
+"DNL.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Specialty Chemicals",
+"name": "DYNO NOBEL FPO [DNL]"
+},
+"DRO.AX": {
+"type": "EQUITY",
+"sector": "Industrials",
+"industry": "Aerospace & Defense",
+"name": "DRONE FPO [DRO]"
+},
+"DRR.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Other Industrial Metals & Mining",
+"name": "DETERRA RE FPO [DRR]"
+},
+"DVP.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Other Industrial Metals & Mining",
+"name": "DEVELOP FPO [DVP]"
+},
+"EDV.AX": {
+"type": "EQUITY",
+"sector": "Consumer Defensive",
+"industry": "Beverages - Wineries & Distilleries",
+"name": "ENDEAVOUR FPO [EDV]"
+},
+"EMR.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Gold",
+"name": "EMERALD FPO [EMR]"
+},
+"EOS.AX": {
+"type": "EQUITY",
+"sector": "Industrials",
+"industry": "Aerospace & Defense",
+"name": "ELEC OPTIC FPO [EOS]"
+},
+"FBU.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Building Materials",
+"name": "FLETBUILD FPO NZX [FBU]"
+},
+"FFM.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Other Industrial Metals & Mining",
+"name": "FFMLTD FPO [FFM]"
+},
+"FPH.AX": {
+"type": "EQUITY",
+"sector": "Healthcare",
+"industry": "Medical Instruments & Supplies",
+"name": "F&P HEALTH FPO NZX [FPH]"
+},
+"GDG.AX": {
+"type": "EQUITY",
+"sector": "Financial Services",
+"industry": "Asset Management",
+"name": "GEN DEV FPO [GDG]"
+},
+"GYG.AX": {
+"type": "EQUITY",
+"sector": "Consumer Cyclical",
+"industry": "Restaurants",
+"name": "GUZ GOMEZ FPO [GYG]"
+},
+"HDN.AX": {
+"type": "EQUITY",
+"sector": "Real Estate",
+"industry": "REIT - Retail",
+"name": "HOMECO DNR ORD UNITS [HDN]"
+},
+"HLS.AX": {
+"type": "EQUITY",
+"sector": "Healthcare",
+"industry": "Diagnostics & Research",
+"name": "HEALIUS FPO [HLS]"
+},
+"IEL.AX": {
+"type": "EQUITY",
+"sector": "Consumer Defensive",
+"industry": "Education & Training Services",
+"name": "IEL FPO [IEL]"
+},
+"IMD.AX": {
+"type": "EQUITY",
+"sector": "Industrials",
+"industry": "Farm & Heavy Construction Machinery",
+"name": "IMDEX FPO [IMD]"
+},
+"INA.AX": {
+"type": "EQUITY",
+"sector": "Real Estate",
+"industry": "REIT - Residential",
+"name": "INGENIA STAPLED [INA]"
+},
+"ING.AX": {
+"type": "EQUITY",
+"sector": "Consumer Defensive",
+"industry": "Farm Products",
+"name": "INGHAMS FPO [ING]"
+},
+"IOZ.AX": {
+"type": "ETF",
+"sector": null,
+"industry": null,
+"name": "ISHAUS200 ETF UNITS [IOZ]"
+},
+"IPX.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Other Industrial Metals & Mining",
+"name": "IPERIONX FPO [IPX]"
+},
+"IVV.AX": {
+"type": "ETF",
+"sector": null,
+"industry": null,
+"name": "ISCS&P500 ETF UNITS [IVV]"
+},
+"JDO.AX": {
+"type": "EQUITY",
+"sector": "Financial Services",
+"industry": "Banks - Regional",
+"name": "JUDOCAPHOL FPO [JDO]"
+},
+"JIN.AX": {
+"type": "EQUITY",
+"sector": "Consumer Cyclical",
+"industry": "Gambling",
+"name": "JUMBO INT FPO [JIN]"
+},
+"KCN.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Gold",
+"name": "KINGSGATE FPO [KCN]"
+},
+"KLS.AX": {
+"type": "EQUITY",
+"sector": "Industrials",
+"industry": "Railroads",
+"name": "KELSIAN FPO [KLS]"
+},
+"LIC.AX": {
+"type": "EQUITY",
+"sector": "Real Estate",
+"industry": "Real Estate - Diversified",
+"name": "LIFESTYLE FPO [LIC]"
+},
+"LOT.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Other Industrial Metals & Mining",
+"name": "LOTUSRES FPO [LOT]"
+},
+"LRV.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Other Precious Metals & Mining",
+"name": "LARVOTTO FPO [LRV]"
+},
+"MAF.AX": {
+"type": "EQUITY",
+"sector": "Financial Services",
+"industry": "Asset Management",
+"name": "MA FIN GRP FPO [MAF]"
+},
+"MAQ.AX": {
+"type": "EQUITY",
+"sector": "Technology",
+"industry": "Information Technology Services",
+"name": "MAQ TECH FPO [MAQ]"
+},
+"MEK.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Gold",
+"name": "MEEKAMET FPO [MEK]"
+},
+"MGH.AX": {
+"type": "EQUITY",
+"sector": "Industrials",
+"industry": "Engineering & Construction",
+"name": "MAAS GROUP FPO [MGH]"
+},
+"MI6.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Other Precious Metals & Mining",
+"name": "MINERAL260 FPO [MI6]"
+},
+"MLX.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Other Industrial Metals & Mining",
+"name": "METALS X FPO [MLX]"
+},
+"MMS.AX": {
+"type": "EQUITY",
+"sector": "Industrials",
+"industry": "Staffing & Employment Services",
+"name": "MCMILLAN FPO [MMS]"
+},
+"MTM.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Other Industrial Metals & Mining",
+"name": "METALLIUM FPO [MTM]"
+},
+"MYR.AX": {
+"type": "EQUITY",
+"sector": "Consumer Cyclical",
+"industry": "Department Stores",
+"name": "MYER FPO [MYR]"
+},
+"NDQ.AX": {
+"type": "ETF",
+"sector": null,
+"industry": null,
+"name": "BETANASDAQ ETF UNITS [NDQ]"
+},
+"NEM.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Gold",
+"name": "NEWMONT CDI 1:1 [NEM]"
+},
+"NHF.AX": {
+"type": "EQUITY",
+"sector": "Financial Services",
+"industry": "Insurance - Specialty",
+"name": "NIBHOLDING FPO [NHF]"
+},
+"NUF.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Agricultural Inputs",
+"name": "NUFARM FPO [NUF]"
+},
+"NXG.AX": {
+"type": "EQUITY",
+"sector": "Energy",
+"industry": "Uranium",
+"name": "NEXGEN CDI 1:1 [NXG]"
+},
+"NXL.AX": {
+"type": "EQUITY",
+"sector": "Technology",
+"industry": "Software - Application",
+"name": "NUIX LTD FPO [NXL]"
+},
+"OBM.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Gold",
+"name": "ORABANDA FPO [OBM]"
+},
+"ORA.AX": {
+"type": "EQUITY",
+"sector": "Consumer Cyclical",
+"industry": "Packaging & Containers",
+"name": "ORORA FPO [ORA]"
+},
+"PDI.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Gold",
+"name": "PDIGOLD FPO [PDI]"
+},
+"PNR.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Gold",
+"name": "PANTORO FPO [PNR]"
+},
+"PNV.AX": {
+"type": "EQUITY",
+"sector": "Healthcare",
+"industry": "Medical Devices",
+"name": "POLYNOVO FPO [PNV]"
+},
+"PRN.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Other Industrial Metals & Mining",
+"name": "PERENTI FPO [PRN]"
+},
+"PRU.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Gold",
+"name": "PERSEUS FPO [PRU]"
+},
+"PXA.AX": {
+"type": "EQUITY",
+"sector": "Technology",
+"industry": "Software - Application",
+"name": "PEXAGROUP FPO [PXA]"
+},
+"REG.AX": {
+"type": "EQUITY",
+"sector": "Healthcare",
+"industry": "Medical Care Facilities",
+"name": "REG HEALTH FPO [REG]"
+},
+"RGN.AX": {
+"type": "EQUITY",
+"sector": "Real Estate",
+"industry": "REIT - Retail",
+"name": "REGION GP STAPLED [RGN]"
+},
+"RPL.AX": {
+"type": "EQUITY",
+"sector": "Financial Services",
+"industry": "Asset Management",
+"name": "REGALPTNRS FPO [RPL]"
+},
+"RSG.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Gold",
+"name": "RESOLUTE FPO [RSG]"
+},
+"RWC.AX": {
+"type": "EQUITY",
+"sector": "Industrials",
+"industry": "Building Products & Equipment",
+"name": "RWC CORP FPO [RWC]"
+},
+"SBM.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Gold",
+"name": "ST.BARBARA FPO [SBM]"
+},
+"SDF.AX": {
+"type": "EQUITY",
+"sector": "Financial Services",
+"industry": "Insurance Brokers",
+"name": "STEADFAST FPO [SDF]"
+},
+"SIQ.AX": {
+"type": "EQUITY",
+"sector": "Industrials",
+"industry": "Specialty Business Services",
+"name": "SMARTGROUP FPO [SIQ]"
+},
+"SLC.AX": {
+"type": "EQUITY",
+"sector": "Communication Services",
+"industry": "Telecom Services",
+"name": "SUPERLOOP FPO [SLC]"
+},
+"SLX.AX": {
+"type": "EQUITY",
+"sector": "Technology",
+"industry": "Semiconductors",
+"name": "SILEX FPO [SLX]"
+},
+"SMR.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Coking Coal",
+"name": "STANMORE FPO [SMR]"
+},
+"SNL.AX": {
+"type": "EQUITY",
+"sector": "Consumer Cyclical",
+"industry": "Auto Parts",
+"name": "SUPPLY NET FPO [SNL]"
+},
+"SOL.AX": {
+"type": "EQUITY",
+"sector": "Financial Services",
+"industry": "Capital Markets",
+"name": "SOUL W.H. FPO [SOL]"
+},
+"SPK.AX": {
+"type": "EQUITY",
+"sector": "Communication Services",
+"industry": "Telecom Services",
+"name": "SPARK NZ FPO NZX [SPK]"
+},
+"SRG.AX": {
+"type": "EQUITY",
+"sector": "Industrials",
+"industry": "Engineering & Construction",
+"name": "SRGGLOBAL FPO [SRG]"
+},
+"SRL.AX": {
+"type": "EQUITY",
+"sector": "Industrials",
+"industry": "Pollution & Treatment Controls",
+"name": "SUNRISE FPO [SRL]"
+},
+"SSM.AX": {
+"type": "EQUITY",
+"sector": "Industrials",
+"industry": "Engineering & Construction",
+"name": "SRVSTREAM FPO [SSM]"
+},
+"SX2.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Gold",
+"name": "SOUTHGOLD2 CDI 1:1 [SX2]"
+},
+"TEA.AX": {
+"type": "EQUITY",
+"sector": "Industrials",
+"industry": "Engineering & Construction",
+"name": "TASMEA FPO [TEA]"
+},
+"TLC.AX": {
+"type": "EQUITY",
+"sector": "Consumer Cyclical",
+"industry": "Gambling",
+"name": "LOTTERY FPO [TLC]"
+},
+"TUA.AX": {
+"type": "EQUITY",
+"sector": "Communication Services",
+"industry": "Telecom Services",
+"name": "TUAS LTD FPO [TUA]"
+},
+"VAU.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Gold",
+"name": "VLTMINLTD FPO [VAU]"
+},
+"VGS.AX": {
+"type": "ETF",
+"sector": null,
+"industry": null,
+"name": "VINTL ETF UNITS [VGS]"
+},
+"VNT.AX": {
+"type": "EQUITY",
+"sector": "Industrials",
+"industry": "Infrastructure Operations",
+"name": "VENTIA FPO [VNT]"
+},
+"VUL.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Other Industrial Metals & Mining",
+"name": "VULCAN E FPO [VUL]"
+},
+"WA1.AX": {
+"type": "EQUITY",
+"sector": "Basic Materials",
+"industry": "Copper",
+"name": "WA1 RES FPO [WA1]"
+},
+"WBT.AX": {
+"type": "EQUITY",
+"sector": "Technology",
+"industry": "Semiconductors",
+"name": "WEEBITNANO FPO [WBT]"
+},
+"WOR.AX": {
+"type": "EQUITY",
+"sector": "Energy",
+"industry": "Oil & Gas Equipment & Services",
+"name": "WORLEY FPO [WOR]"
+},
+"WPR.AX": {
+"type": "EQUITY",
+"sector": "Real Estate",
+"industry": "REIT - Specialty",
+"name": "WAYPOINTRT STAPLED [WPR]"
+},
+"XYZ.AX": {
+"type": "EQUITY",
+"sector": "Technology",
+"industry": "Software - Infrastructure",
+"name": "BLOCK INC CDI 1:1 [XYZ]"
+},
+"ZIP.AX": {
+"type": "EQUITY",
+"sector": "Financial Services",
+"industry": "Credit Services",
+"name": "ZIPCOLTD FPO [ZIP]"
+}
+}

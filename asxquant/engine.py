@@ -360,9 +360,11 @@ def run(force=False, log=print, progress=None):
     tickers = [t for t in all_stock_tickers() if t in px["close"].columns]
     spct, ssha = D.shorts_panel(shorts, tickers, px["close"].index)
 
-    # Suspended / delisted names keep their last close forever. Yahoo already NaNs
-    # them out (so the backtest masks them correctly), but the live cards read the
-    # last VALID close and would quote a dead price as today's. Detect and gate.
+    # Suspended / delisted names keep their last close forever. Yahoo NaNs out
+    # DELISTED names, but a SUSPENDED name keeps printing its last close with zero
+    # volume (CTD sat like that for ~a year). trading_status() therefore counts only
+    # sessions with volume > 0, and validate.py treats zero-volume days as untradable.
+    # The live cards read the last VALID close and would quote a dead price as today's.
     halted = D.halted_tickers(px, tickers)
     if halted:
         log("停牌/退市检测: %s 已停止成交，已排除出所有名单"

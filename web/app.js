@@ -1110,5 +1110,5 @@ if (SNAPSHOT) {
   load();
   fetch("api/status").then(function (x) { return x.json(); }).then(function (s) {
     if (s.running) { setBusy(true); polling = setInterval(poll, 700); }
-  });
+  }).catch(function () { /* 云端静态托管没有后台，404 属正常；以前这里每次打开都在控制台报一次未处理错误 */ });
 }
