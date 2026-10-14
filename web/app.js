@@ -1092,6 +1092,7 @@ function load() {
 
 if (SNAPSHOT) {
   var lv = el("live"); if (lv) lv.style.display = "none";
+  var ls = el("lnkShort"); if (ls) ls.style.display = "none";   // 单文件快照里没有 short/ 子页
   render(window.__REPORT__);
 } else {
   el("btnRefresh").onclick = function () { refresh(false); };

@@ -15,6 +15,10 @@ from . import export as EX
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WEB = os.path.join(ROOT, "web")
 REPORT_PATH = os.path.join(ROOT, "cache", "report.json")
+# 看空雷达页：静态文件在 web/short/，每天的结果写在 cache/short/data/（不进仓库）
+SHORT_DATA_PARENT = os.path.join(ROOT, "cache", "short")
+SHORT_TYPES = {".html": "text/html; charset=utf-8", ".js": "application/javascript; charset=utf-8",
+               ".css": "text/css; charset=utf-8", ".json": "application/json; charset=utf-8"}
 
 _state = {
     "running": False,
@@ -45,6 +49,11 @@ def _refresh(force):
             _progress("已同步导出云盘版: %s (%.1f MB)" % (os.path.basename(path), size / 1e6), 100)
         except Exception as e:
             _progress("云盘版导出失败: %s" % e, 100)
+        try:
+            from . import shortradar as SR
+            SR.write_site(SHORT_DATA_PARENT, SR.build_from_cache(log=lambda m: _progress(m, 100)))
+        except Exception as e:
+            _progress("看空雷达页更新失败(不影响主页): %s" % e, 100)
         with _lock:
             _state.update(running=False, pct=100, msg="完成")
     except Exception:
@@ -113,7 +122,39 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/cache":
             info = {n: D.cache_age(n) for n in ("prices.pkl", "shorts.pkl", "models.pkl")}
             return self._send(200, json.dumps(info, ensure_ascii=False))
+        if path == "/short":
+            self.send_response(301)
+            self.send_header("Location", "/short/")
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+            return
+        if path.startswith("/short/"):
+            return self._short(path[len("/short/"):] or "index.html")
         return self._send(404, json.dumps({"error": "not found"}))
+
+    def _short(self, rel):
+        from .publish import SHORT_ASSETS
+        from . import shortradar as SR
+        if rel.startswith("data/"):
+            name = rel[len("data/"):]
+            if name not in ("radar-5.json", "radar-10.json", "radar-20.json", "import.json"):
+                return self._send(404, json.dumps({"error": "not found"}))
+            p = os.path.join(SHORT_DATA_PARENT, "data", name)
+            if not os.path.exists(p):
+                return self._send(404, json.dumps({"error": "尚未生成，请在首页点「更新全部指标」"},
+                                                  ensure_ascii=False))
+            with open(p, "rb") as f:
+                return self._send(200, f.read())
+        if rel not in SHORT_ASSETS:
+            return self._send(404, json.dumps({"error": "not found"}))
+        with open(os.path.join(WEB, "short", rel), encoding="utf-8") as f:
+            body = f.read()
+        if rel == "plain.js":   # 与静态站点同一套：枚举当场由后端契约生成
+            import re
+            body = re.sub(re.escape(SR.START) + r".*?" + re.escape(SR.END),
+                          lambda _m: SR.contract_block(), body, flags=re.S)
+        ext = os.path.splitext(rel)[1]
+        return self._send(200, body, SHORT_TYPES[ext], cache="max-age=60")
 
     def do_POST(self):
         path = self.path.split("?")[0]

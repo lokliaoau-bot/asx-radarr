@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="color-scheme" content="light"><meta name="theme-color" content="#14303e"><title>看空雷达 · 澳股雷达</title><link rel="stylesheet" href="workbench.css"><link rel="apple-touch-icon" href="../icon-192.png"><link rel="icon" href="../icon-192.png"></head>
+<body>
+<header><a class="brand" href="./">◎ 看空雷达 <small>AI Short Radar · 澳股</small></a><nav><a href="../">← 回澳股雷达</a></nav></header>
+<main>
+<div class="intro"><div><div class="overline">真实行情 · 每个交易日傍晚自动更新 · 0.12 版并入澳股雷达</div><h1>先查数据，再看股票。</h1><p>先检查每天的股价有没有漏、有没有算错，再把最近走势弱、卖压大的股票排在前面，方便你继续查。</p></div><span id="connection" class="tag">正在读取</span></div>
+<section class="verdict" id="verdict"><div class="verdictHead"><span class="tag warn">一句话结论</span><b>这个分数只能说明「最近走势弱」，不能拿来猜它接下来会不会跌。</b></div><p id="verdictText">正在读取实测结果…</p><details id="verdictDetails"><summary>看实测数字</summary><div id="verdictBody"></div></details></section>
+<input type="hidden" id="mode" value="imported"><input type="hidden" id="market" value="AU">
+<section class="callout"><b id="modeNotice">正在读取</b><span id="noticeDetail">哪一天的价格、从哪来、还缺什么，都会说明。</span></section>
+<div class="controls">
+<label>想看接下来多久<select id="horizon"><option value="5">接下来5个交易日</option><option value="10" selected>接下来10个交易日</option><option value="20">接下来20个交易日</option></select></label>
+<label class="search">找股票<input id="query" type="search" placeholder="输入公司名或股票代码"></label><button id="refresh">重新读取</button><button id="export" class="secondary">保存表格</button>
+</div>
+<div class="metrics">
+<article><small>这次读到几只股票</small><strong id="count">—</strong><span>澳股雷达的股票池 + 你的自选</span></article>
+<article><small>几只通过检查、可以排名</small><strong id="ready">—</strong><span>要有252个完整交易日和市场对照</span></article>
+<article><small>把各种资料一起算的总分</small><strong>还算不了</strong><span>公司赚不赚钱、贵不贵、消息还没接</span></article>
+<article><small>能不能做空、要花多少钱</small><strong>还没查清</strong><span>要向你的券商确认</span></article>
+</div>
+<section class="panel">
+<div class="panelTitle"><h2>最近走势弱、卖压大的股票</h2><span id="cutoff">—</span></div>
+<div class="tableWrap"><table class="rowsTable"><thead><tr><th>股票</th><th>价格日期 / 来源</th><th>数据能用吗</th><th>走势弱的分数</th><th>过去涨跌力度</th><th>完整分析 / 风险</th><th>详情</th></tr></thead><tbody id="rows"></tbody></table></div>
+<p class="footnote">分数越高 = 最近相对大盘跌得越多、下跌日成交越大。它描述的是已经发生的事。过去12年实测：分数高的股票之后并没有更容易跌。“—”表示还算不了，不是零风险。</p>
+</section>
+<section class="panel importPanel"><div class="panelTitle"><h2>今天的数据检查</h2><span id="importWhen">—</span></div><div id="importBody" class="importBody">正在读取…</div></section>
+<section class="panel calendarPanel">
+<div class="panelTitle"><h2>行情更新到哪一天了</h2><span>按澳股开休市安排检查</span></div>
+<div class="tableWrap"><table class="rowsTable"><thead><tr><th>市场</th><th>应该有哪天的收盘价</th><th>已读入 / 可以比较</th><th>还没更新的股票</th><th>开休市日期查过吗</th></tr></thead><tbody id="calendarSummary"></tbody></table></div>
+<p class="footnote">已核查2025–2027年的计划开休市日期。临时停牌、临时停市还要另查。</p>
+</section>
+<section class="howToRead"><h2>照这个顺序看，就容易理解</h2><ol><li><b>先看数据能不能用</b><span>漏了交易日、停牌、当天还没收完盘的股票，先不排名。</span></li><li><b>再看最近走势</b><span>分数只记录过去的价格和成交量，不代表以后会跌。</span></li><li><b>打开股票，查原因和费用</b><span>再查公司生意、消息，以及券商能否做空、要收多少钱。</span></li></ol></section><div id="beginnerGuide"></div>
+<div class="bottom">
+<section class="panel"><h2>现在已经能做什么</h2><ul><li>每个交易日自动读入约160只澳股的真实日线</li><li>检查漏日、停牌、休市日行情、价格不合理、拆股版本</li><li>比较股价趋势、成交量和同期市场（STW 基金）表现</li><li>提醒成交少、价格常不动或一天变化很大的股票</li></ul></section>
+<section class="panel"><h2>还有哪些事没查清</h2><ul><li>价格只来自 Yahoo，还没有用第二个来源核对</li><li>分红、配股和停牌公告还没逐条核实</li><li>公司赚不赚钱、股价贵不贵和影响股价的消息</li><li>券商能否借到股票、费用</li></ul><p class="footnote">想看有统计检验支持的看空名单，回到澳股雷达首页看「做空/低配」那一栏。</p></section>
+</div>
+<details class="rawExport"><summary>想留下一份完整记录，方便以后查错？</summary><p>普通查看用上面的表格。这个原始数据文件保留所有字段和版本编号，方便开发或核对。</p><button id="exportRaw" class="secondary">保存原始记录（查错用）</button></details></main>
+<dialog id="detailDialog"><div class="dialogHead"><h2 id="detailName">股票详情</h2><button id="closeDetail" class="secondary">关闭 ×</button></div><div id="detailBody"></div></dialog>
+<script src="plain.js"></script><script src="workbench.js"></script>
+</body></html>

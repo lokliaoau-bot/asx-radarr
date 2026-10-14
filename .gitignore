@@ -1,6 +1,7 @@
 cache/*.pkl
 cache/*.log
 cache/report.json
+cache/short/
 site/
 export/
 __pycache__/

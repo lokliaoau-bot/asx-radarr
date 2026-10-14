@@ -42,6 +42,8 @@ button.ghost{
 }
 button.ghost:hover:not(:disabled){color:var(--tx);border-color:#3a445c}
 button.ghost:disabled{opacity:.5;cursor:progress}
+a.ghost{color:var(--mut);border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-size:12.5px;text-decoration:none;white-space:nowrap}
+a.ghost:hover{color:var(--tx);border-color:#3a445c}
 
 .prog{margin-top:11px;display:none}
 .prog.on{display:block}

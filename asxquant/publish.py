@@ -48,8 +48,33 @@ def build(report, out_dir=None, log=print):
     # Pages would otherwise run the output through Jekyll and drop files it dislikes
     open(os.path.join(out_dir, ".nojekyll"), "w").close()
 
-    size = sum(os.path.getsize(os.path.join(out_dir, f))
-               for f in os.listdir(out_dir)
-               if os.path.isfile(os.path.join(out_dir, f)))
-    log("静态站点: %s (%d 个文件, %.1f MB)" % (out_dir, len(os.listdir(out_dir)), size / 1e6))
+    # 看空雷达（ChatGPT 版并入）是附加页：它失败不能拖垮主站，页面自己会显示「今天的结果还没生成」。
+    try:
+        build_short(os.path.join(out_dir, "short"), log=log)
+    except Exception as e:
+        log("看空雷达页生成失败(不影响主站): %s" % e)
+
+    size = sum(os.path.getsize(os.path.join(dp, f))
+               for dp, _, fs in os.walk(out_dir) for f in fs)
+    log("静态站点: %s (%.1f MB)" % (out_dir, size / 1e6))
     return out_dir, size
+
+
+SHORT_WEB = os.path.join(WEB, "short")
+SHORT_ASSETS = ["index.html", "workbench.js", "workbench.css", "plain.js", "evidence.json"]
+
+
+def copy_short_assets(out_dir):
+    """复制看空雷达的静态文件；plain.js 里的枚举当场由后端契约重新生成，两边不可能不同步。"""
+    from . import shortradar as SR
+    os.makedirs(out_dir, exist_ok=True)
+    for name in SHORT_ASSETS:
+        shutil.copy2(os.path.join(SHORT_WEB, name), os.path.join(out_dir, name))
+    SR.sync_contract(os.path.join(out_dir, "plain.js"))
+
+
+def build_short(out_dir, snap=None, log=print):
+    from . import shortradar as SR
+    copy_short_assets(out_dir)
+    SR.write_site(out_dir, snap or SR.build_from_cache(log=log))
+    return out_dir
