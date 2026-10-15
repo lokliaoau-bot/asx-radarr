@@ -584,17 +584,25 @@ def run(force=False, log=print, progress=None):
     # Point-in-time archive: the only part of the system that improves by being run.
     # Written after the report is assembled so a failure here cannot lose the report.
     try:
-        AR.record(report, log=log)
+        AR.record(report, log=log, stock_rows=stock_rows)
         report["archive"] = AR.stats()
     except Exception:
         log("每日存档失败(不影响本次结果): %s" % traceback.format_exc().splitlines()[-1])
         report["archive"] = AR.stats()
+
+    # 前瞻成绩单：存档里当时记下的名单，之后真实表现如何（见 forward.py）。
+    try:
+        from . import forward as FW
+        report["forward_track"] = FW.from_archive(px, tickers)
+    except Exception:
+        log("前瞻成绩单失败(不影响本次结果): %s" % traceback.format_exc().splitlines()[-1])
+        report["forward_track"] = None
 
     step("完成 (%.1fs)" % report["runtime_sec"], 100)
     return _clean(report)
 
 
 def save(report, path):
-    with open(path, "w", encoding="utf-8") as f:
-        json.dump(report, f, ensure_ascii=False, indent=1)
+    from .fileio import atomic_bytes
+    atomic_bytes(path, json.dumps(report, ensure_ascii=False, indent=1).encode("utf-8"))
     return path

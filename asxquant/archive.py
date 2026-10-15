@@ -50,13 +50,67 @@ def _connect():
         long_sector TEXT, long_picks TEXT,
         short_sector TEXT, short_picks TEXT,
         recorded_at TEXT)""")
+    # 2026-10-15 起：全部股票每天的多空评分（不只是名单上的三只）。名单只有三只、
+    # 每天大多重复，攒一年也只有十几段独立样本；整个横截面才能做前瞻 IC 检验。
+    con.execute("""CREATE TABLE IF NOT EXISTS score_snapshots (
+        asof TEXT, code TEXT, long_score REAL, short_score REAL,
+        liquid_long INTEGER, liquid_short INTEGER, recorded_at TEXT,
+        PRIMARY KEY (asof, code))""")
+    # 看空雷达页（ChatGPT 版 technical-v1）每天的排名，10 日口径，只存可排名的股票。
+    con.execute("""CREATE TABLE IF NOT EXISTS shortradar_snapshots (
+        asof TEXT, code TEXT, score REAL, rank INTEGER, eligible_n INTEGER,
+        recorded_at TEXT, PRIMARY KEY (asof, code))""")
     con.execute("CREATE INDEX IF NOT EXISTS ix_snap_sec ON sector_snapshots(sector, asof)")
     con.execute("CREATE INDEX IF NOT EXISTS ix_snap_stk ON stock_snapshots(code, asof)")
     con.commit()
     return con
 
 
-def record(report, log=print):
+def _recorded_now():
+    """记录时刻一律带时区写 UTC。旧行没有时区（云端是 UTC、本地是悉尼时间），
+    forward.py 读旧行时按 UTC 解读——偏保守。新行不再有这个歧义。"""
+    return dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
+
+
+def record_scores(asof, stock_rows, con=None):
+    """全部股票当天的多空评分。同一 asof 重跑会覆盖（以最后一次为准，recorded_at 跟着变，
+    forward.py 据此判断是否迟到）。"""
+    own = con is None
+    con = con or _connect()
+    now = _recorded_now()
+    n = 0
+    for r in stock_rows or []:
+        if r.get("short_score") is None and r.get("long_score") is None:
+            continue
+        con.execute("INSERT OR REPLACE INTO score_snapshots VALUES (?,?,?,?,?,?,?)",
+                    (asof, r["ticker"].replace(".AX", ""), r.get("long_score"), r.get("short_score"),
+                     int(bool(r.get("liquid_long"))), int(bool(r.get("liquid_short"))), now))
+        n += 1
+    con.commit()
+    if own:
+        con.close()
+    return n
+
+
+def record_shortradar(radar10):
+    """看空雷达 10 日口径的排名（只存可排名的）。asof 用它自己的期望交易日，不用运行日期。"""
+    asof = (radar10.get("calendars", {}).get("AU") or {}).get("expected_session")
+    rows = [r for r in radar10.get("rows", []) if r.get("technical_eligible")
+            and r.get("known_contribution") is not None and r.get("session_date") == asof]
+    if not asof or not rows:
+        return {"ok": False, "reason": "no eligible rows for the expected session"}
+    rows.sort(key=lambda r: -r["known_contribution"])
+    con = _connect()
+    now = _recorded_now()
+    for i, r in enumerate(rows, 1):
+        con.execute("INSERT OR REPLACE INTO shortradar_snapshots VALUES (?,?,?,?,?,?)",
+                    (asof, r["symbol_id"].replace("AU.", ""), r["known_contribution"], i, len(rows), now))
+    con.commit()
+    con.close()
+    return {"ok": True, "asof": asof, "rows": len(rows)}
+
+
+def record(report, log=print, stock_rows=None):
     """Store one point-in-time row per sector / highlighted stock / market. Idempotent.
 
     Keyed on the data's own as-of date, so re-running the same day overwrites rather
@@ -65,7 +119,7 @@ def record(report, log=print):
     asof = report.get("as_of")
     if not asof:
         return {"ok": False, "reason": "no as_of"}
-    now = dt.datetime.now().isoformat(timespec="seconds")
+    now = _recorded_now()
     con = _connect()
 
     n_sec = 0
@@ -112,12 +166,14 @@ def record(report, log=print):
                  S.get("sector_name"), ",".join(p["code"] for p in (S.get("picks") or [])),
                  now))
     con.commit()
+    n_scores = record_scores(asof, stock_rows, con) if stock_rows else 0
 
     days = con.execute("SELECT COUNT(*) FROM market_snapshots").fetchone()[0]
     first = con.execute("SELECT MIN(asof) FROM market_snapshots").fetchone()[0]
     con.close()
     log("每日存档: 已记录 %d 个交易日的快照 (自 %s)" % (days, first))
-    return {"ok": True, "sectors": n_sec, "stocks": n_stk, "days": days, "since": first}
+    return {"ok": True, "sectors": n_sec, "stocks": n_stk, "scores": n_scores,
+            "days": days, "since": first}
 
 
 def stats():

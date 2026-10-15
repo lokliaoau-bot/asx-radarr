@@ -56,7 +56,8 @@ var GLOSSARY = {
   "最大回撤": "历史上从最高点跌到最低点、最惨的一次亏了多少。",
   "年化": "把收益换算成一整年的水平，方便比较。",
   "IC": "这套挑股方法的打分和之后股票实际涨跌的吻合程度。数值离0越远、越稳定，说明方法越有效。",
-  "t值": "统计上判断一个结果是真本事还是碰运气的指标。绝对值大于2，一般就认为不是运气。",
+  "t值": "统计上判断一个结果是真本事还是碰运气的指标。绝对值大于2，一般就认为不是运气。本系统的t值只用互不重叠的日子来算（见「重叠样本」），所以比旧版更保守。",
+  "p值": "如果这套方法其实完全没用，纯靠运气也能得到这么好结果的概率。小于0.05才算「不太像运气」；0.06就是差一点点。",
   "AUC": "预测准不准的评分：0.5=和抛硬币一样瞎猜，越接近1越准。",
   "朴素基线": "完全不用模型、只用一行最土的算术能拿到的准确度。比如「现在波动率低不低」本身就很能预测波动率会不会上升（波动率会均值回归）。模型必须赢过这一列才算有价值——赢不过就说明那套复杂机器还不如一行算术，系统会直接改报历史平均值。这是 Welch & Goyal (2008) 的标准检验。",
   "Brier": "衡量给出的概率靠不靠谱：大于0才算比无脑猜历史平均值更好。",
@@ -68,7 +69,7 @@ var GLOSSARY = {
   "空头成本": "把全市场每天公开的空头总仓位当成一个仓库记账：仓位增加＝有人在当天价位新开空单，减少＝最早的空单被平掉。据此倒推出目前还没平掉的空单平均建在什么价。这是全体空头的平均数，不是某一家机构；澳洲不公开做空者身份。",
   "空头盈亏": "相对建仓本金算的。在 A$10 做空、股价跌到 A$5 就是赚 50%；涨到 A$20 就是亏 100%。注意做空的亏损没有上限——做多最多亏光本金，做空理论上可以亏更多，所以空头亏得越狠，被迫买回股票止损的压力越大。",
   "可追溯": "当前空头仓位中，有多大比例能追溯到具体建仓价。ASIC 数据从2022年才有，更早就存在的老仓位无法定价。低于80%时该股的成本估算要打折看。",
-  "重叠样本": "本系统每天都要算一次「未来20天涨多少」，相邻两天的那20天几乎完全重合，所以这些数字并不是互相独立的。若当成独立来算统计显著性，会把 t 值放大3到5倍。本表已用 Newey-West 方法修正。"
+  "重叠样本": "本系统每天都要算一次「未来20天涨多少」，相邻两天的那20天几乎完全重合，所以这些数字并不是互相独立的。若当成独立来算统计显著性，会把 t 值放大3到5倍。以前本表用 Newey-West 方法修正，但 2026-10-15 的模拟发现：对变化很慢的评分（比如空头持仓），这个修正不够，会把运气误判成显著的机会翻倍。现在改成只取互不重叠的日子（每20个交易日取一天）来算，这样不会高估。"
 };
 var _glossaryKeys = Object.keys(GLOSSARY).sort(function (a, b) { return b.length - a.length; });
 function annotate(text) {
@@ -312,6 +313,64 @@ function costMap(p, px) {
     '</div></div>';
 }
 
+/* 前瞻成绩单：每天当场写进存档的名单（记录时间早于第二天开盘，事后改不了），
+   之后真实表现如何。asxquant/forward.py 打分。回测是「重演」，这个才是「实录」。 */
+function forwardSection(r) {
+  var f = r.forward_track;
+  if (!f || !f.short) return "";
+  var VD = {too_early: "还太早，不下结论", confirmed: "方向对，而且不太像运气",
+            consistent: "方向对，但还不能排除运气", wrong_way: "方向是反的"};
+  function rowsFor(side, nm) {
+    return ["5", "10", "20"].map(function (h) {
+      var x = (f[side] || {})[h] || {};
+      var good = x.mean_excess != null && (side === "short" ? x.mean_excess < 0 : x.mean_excess > 0);
+      return '<tr><td class="name">' + nm + ' · ' + h + '天</td>' +
+        '<td>' + esc(VD[x.verdict] || "—") + '</td>' +
+        '<td class="' + (x.mean_excess == null ? "mut" : good ? "up" : "dn") + '">' + spct(x.mean_excess) + '</td>' +
+        '<td>' + (x.hit_rate == null ? "—" : pct(x.hit_rate, 0)) + '</td>' +
+        '<td>' + (x.nonoverlap_n || 0) + ' 段</td>' +
+        '<td>' + (x.matured || 0) + ' 天' + (x.pending ? '<span class="mut">（' + x.pending + ' 天未满期）</span>' : "") + '</td></tr>';
+    }).join("");
+  }
+  var s20 = (f.short || {})["20"] || {}, late = (f.short || {})["5"] ? f.short["5"].late : 0;
+  return '<section><h2>前瞻成绩单：当时记下的名单，后来怎么样了 <span class="tag fcst">实录</span></h2>' +
+    '<p class="lead">上面的回测是拿今天的程序"重演"过去。这一张不一样：系统从 <b>' + esc(f.since || "—") +
+    '</b> 起，每天收盘后就把当天的看空、看多名单写进存档，<b>记录时间早于第二天开盘，事后改不了</b>。' +
+    '这里用之后的真实价格给它们打分，已记录 ' + (f.days_recorded || 0) + ' 天' +
+    (late ? '（其中 ' + late + ' 天记录得太晚、已经开盘了，不算分）' : "") + '。</p>' +
+    '<div class="panel"><table><thead><tr><th>名单 · 持有</th><th>判断</th>' +
+    '<th title="看空名单是负数才说明它真的跑输了；看多名单要正数">平均比全池</th>' +
+    '<th title="看空名单：跑输全池的天数比例；看多名单：跑赢的比例">做对的天数比例</th>' +
+    '<th title="每天的名单大多重复、持有期互相重叠，只有互不重叠的段才算独立证据">独立证据</th><th>已满期</th></tr></thead>' +
+    '<tbody>' + rowsFor("short", "看空名单") + rowsFor("long", "看多名单") + '</tbody></table>' +
+    '<div class="foot-note" style="margin-top:10px">大白话：这张表每天会自动变长。现在独立证据只有几段，' +
+    '<b>少于 10 段一律不下结论</b>——5 天那一行大约 2026 年 11 月中旬够数，20 天那一行要到 2027 年年中。' +
+    (s20.matured ? '到目前为止，20 天看空名单平均比全池' + (s20.mean_excess < 0 ? '少涨 ' : '多涨 ') +
+      spct(Math.abs(s20.mean_excess)).replace("+", "") + '，这是' + (s20.nonoverlap_n || 0) + '段独立证据，说明不了什么。' : "") +
+    '</div></div></section>';
+}
+
+/* 看空评分的证据，用大白话说。文字跟着判决走、不写死：2026-10-15 改用不重叠检验后，
+   判决从「勉强达标」降到了「差一点」，以前写死的「看空靠谱」就成了过头话。 */
+function shortEvidence(ic) {
+  ic = ic || {};
+  var dir = (ic.phases_same_sign != null && ic.phases)
+    ? '换 ' + ic.phases + ' 种不同的起始日去算，有 ' + ic.phases_same_sign + ' 次方向是对的' : "";
+  var pv = ic.p_value != null ? '（' + term("p值", GLOSSARY["p值"]) + ' ' + num(ic.p_value, 2) + '，门槛 0.05）' : "";
+  if (ic.verdict === "strong" || ic.verdict === "marginal")
+    return '系统挑"该躲哪只"的方法<b>过了常规的统计门槛</b>' + (dir ? '（' + dir + '）' : "") + pv + '，但优势不大。';
+  if (ic.verdict === "weak")
+    return '系统挑"该躲哪只"的方法<b>方向一直是对的</b>' + (dir ? '（' + dir + '）' : "") +
+      '，但证据<b>还差一点</b>，按严格的' + term("t值", GLOSSARY["t值"]) + '检验还不能算"证明有效"' + pv + '。';
+  return '系统挑"该躲哪只"的方法<b>目前没有可靠的统计证据</b>' + (dir ? '（' + dir + '）' : "") + pv + '。';
+}
+/* 同一判决的一句话版本，给顶部结论和说明文字用 */
+function shortEvidenceShort(ic) {
+  var vd = (ic || {}).verdict;
+  return (vd === "strong" || vd === "marginal") ? "过了常规统计门槛，但优势不大"
+    : vd === "weak" ? "方向一直对，但证据还差一点，还不算证明有效" : "目前没有可靠的统计证据";
+}
+
 function verdictSection(r) {
   var rec = r.recommendation;
   if (!rec) return "";
@@ -343,6 +402,8 @@ function verdictSection(r) {
   }
 
   var L = rec.long, S = rec.short;
+  var gap = ((legs.market || {}).cagr != null && (legs.short_basket || {}).cagr != null)
+    ? (legs.market.cagr - legs.short_basket.cagr) : null;
   return '<div class="verdict">' +
     '<div class="vcard long"><div class="vh"><span class="vside">建议看多方向</span>' +
     '<span class="vsec">' + esc(L.sector_name) + '</span>' +
@@ -363,12 +424,9 @@ function verdictSection(r) {
     '），板块近20天 ' + spct(S.ret_20d) + '</div>' +
     '<div class="vnote">' + annotate(S.stage_note) +
     '<br><b style="color:#fbbf24">⚠️ 可信度：' + esc(icS.verdict_cn || "—") + '。</b>' +
-    '系统这套<b>挑"该躲哪只"的方法，在4年半样本里站得住，但只是勉强站住</b>。' +
-    '之前报的 t 值 ' + num(icS.t_naive, 1) + ' 是把' + term("重叠样本", GLOSSARY["重叠样本"]) +
-    '当成互相独立算出来的，虚高约 ' + num(icS.se_inflation, 1) + ' 倍；' +
-    '按规矩修正后是 <b>' + num(icS.t_stat, 2) + '</b>（常规门槛 2）。' +
-    '不过<b>"空头篮子确实跑输大盘"这条事实不受影响</b>——那是每' + (v.horizon || 20) +
-    '天换一次仓算出来的，本来就没有重叠问题。' +
+    shortEvidence(icS) +
+    (gap != null ? '历史上照它挑的这批股票，平均每年比大盘少涨约 <b>' + num(gap * 100, 0) +
+      ' 个百分点</b>——方向是对的，但同样还没强到能排除运气。' : '') +
     '<br><b style="color:#fbbf24">三点务必记住：</b>①"跑输大盘"<b>不等于"一定下跌"</b>——' +
     '历史上这批股票整体自身的收益是 ' + spct((legs.short_basket || {}).cagr) +
     '/年（同期大盘 ' + spct((legs.market || {}).cagr) + '）——' +
@@ -429,7 +487,7 @@ function moneyFlowPanel(r) {
     '再乘以成交额累加出来的（估算买卖压力，不是结算数据）；"被做空"是<b>澳洲法律要求机构每天申报的真实仓位</b>。' +
     '<br><b>⚠️ 重要：</b>板块排序是<b>对现在的测量</b>，不是"下个月这个板块会涨/跌"的预测——' +
     '实测显示板块层面的资金变化<b>落后</b>于价格（相关峰值在滞后4周），没有领先性。' +
-    '真正经过验证的是<b>板块内部哪只股票会跑输</b>（这个统计上显著）。</div>';
+    '相对最有依据的是<b>板块内部哪只股票会跑输</b>（' + shortEvidenceShort((r.validation || {}).ic_short) + '）。</div>';
 }
 
 /* 机构持股/董事公告存档 —— 只展示，不参与打分（历史不足以验证） */
@@ -506,9 +564,10 @@ function plainSummary(r) {
     (actTxt ? '<div class="pl"><div class="ico">🎯</div><div class="txt">' + actTxt + '</div></div>' : "") +
     (hotTxt ? '<div class="pl"><div class="ico">🔥</div><div class="txt">' + hotTxt + '</div></div>' : "") +
     (volTxt ? '<div class="pl"><div class="ico">🌊</div><div class="txt">' + volTxt + '</div></div>' : "") +
-    '<div class="warn-line"><b>最重要的一句：看空的建议靠谱，看多的建议只是参考。</b>' +
-    '系统"挑哪只该躲"过去4年半被证明有效，但"挑哪只该买"没被证明有效。而且看空≠预测下跌，只是"会跑输大盘"，' +
-    '真做空还得看大盘脸色、且名单要每月刷新。这是参考工具，不是投资建议，盈亏自负。</div></div>';
+    '<div class="warn-line"><b>最重要的一句：看空名单比看多名单有依据，但两边都还没被严格证明。</b>' +
+    '系统"挑哪只该躲"' + shortEvidenceShort((r.validation || {}).ic_short) + '；"挑哪只该买"完全没有证据。' +
+    '而且看空≠预测下跌，只是"可能跑输大盘"，真做空还得看大盘脸色、且名单要每月刷新。' +
+    '把它当"先回避、再研究"的线索，不是投资建议，盈亏自负。</div></div>';
 }
 
 function headCards(r) {
@@ -656,11 +715,13 @@ function validationSection(r) {
   }
   function icRow(nm, s, want) {
     if (!s) return "";
-    var good = want === "neg" ? (s.mean_ic < 0 && Math.abs(s.t_stat) >= 2) : (s.mean_ic > 0 && s.t_stat >= 2);
+    var good = want === "neg" ? (s.mean_ic < 0 && s.t_stat != null && s.t_stat <= -2) : (s.mean_ic > 0 && s.t_stat >= 2);
     return '<tr><td class="name">' + nm + '</td><td class="' + (good ? "up" : "mut") + '">' + num(s.mean_ic, 4) + '</td>' +
       '<td class="' + (good ? "up" : "mut") + '"><b>' + num(s.t_stat, 2) + '</b></td>' +
-      '<td class="mut">' + num(s.t_naive, 2) + '</td><td>' + pct(s.hit_rate, 1) + '</td>' +
-      '<td class="mut">' + s.n_days + '</td><td><span class="pill ' + esc(s.verdict || "none") + '">' +
+      '<td>' + num(s.p_value, 2) + '</td>' +
+      '<td class="mut">' + (s.phases_same_sign != null ? s.phases_same_sign + ' / ' + s.phases : "—") + '</td>' +
+      '<td class="mut">' + num(s.t_nw, 2) + '</td>' +
+      '<td class="mut">' + (s.n_nonoverlap != null ? s.n_nonoverlap + ' / ' : "") + s.n_days + '</td><td><span class="pill ' + esc(s.verdict || "none") + '">' +
       esc(s.verdict_cn || "—") + '</span></td></tr>';
   }
   return '<div class="grid" style="grid-template-columns:1.5fr 1fr">' +
@@ -678,12 +739,15 @@ function validationSection(r) {
     '<div style="height:14px"></div>' +
     '<table><thead><tr><th>这套打分</th><th class="term" title="' + GLOSSARY["IC"] + '">吻合度(IC)</th>' +
     '<th class="term" title="' + GLOSSARY["t值"] + '">是不是运气(t)</th>' +
-    '<th class="term" title="' + GLOSSARY["重叠样本"] + '">未修正的t</th>' +
-    '<th>每日猜对率</th><th>用了多少天</th><th>结论</th></tr></thead>' +
+    '<th class="term" title="' + GLOSSARY["p值"] + '">运气概率(p)</th>' +
+    '<th class="term" title="换不同的起始日（每20个交易日取一天的不同取法）重算，有几次方向是对的。全对说明方向稳定，但不等于显著。">换起点方向对几次</th>' +
+    '<th class="term" title="' + GLOSSARY["重叠样本"] + '">旧算法t(仅参考)</th>' +
+    '<th title="不重叠的天数 / 总天数">用了多少天</th><th>结论</th></tr></thead>' +
     '<tbody>' + icRow("挑该买的（看多分）", v.ic_long, "pos") + icRow("挑该躲的（看空分，越负越好）", v.ic_short, "neg") + '</tbody></table>' +
     '<div class="foot-note" style="margin-top:12px">一年换 <b>' + num(v.turnover_pa, 1) + '</b> 批，已扣手续费。可选股票约 ' + v.universe_median + ' 只。' +
-    '<b>"未修正的t"是把' + term("重叠样本", GLOSSARY["重叠样本"]) + '当成互相独立算出来的，会虚高 3–5 倍；请看加粗那一列。</b>' +
-    '修正后：看空分勉强达标，看多分依旧和运气差不多——这就是为什么上面说"看空名单可参考、看多名单只作研究线索"。</div></div></div>';
+    '<b>请看加粗那一列。</b>它只用互不重叠的日子来算（' + term("重叠样本", GLOSSARY["重叠样本"]) + '），' +
+    '"旧算法t"是 2026-10-15 之前用的 Newey-West 修正，模拟证明它会把运气误判成显著的机会翻倍，只留作对照。' +
+    '结论：看空分' + shortEvidenceShort(v.ic_short) + '；看多分和运气差不多——两边都只当研究线索。</div></div></div>';
 }
 
 function forecastTable(r) {
@@ -816,8 +880,9 @@ function methodology(r) {
   '· <b>做多评分未通过显著性检验</b>（IC t=' + num((v.ic_long || {}).t_stat, 2) +
   '）。做多篮子年化 ' + spct(((v.legs || {}).long || {}).cagr) + ' vs 等权市场 ' +
   spct(((v.legs || {}).market || {}).cagr) + '，超额接近零且波动更高<br>' +
-  '· <b>做空评分只是边缘显著</b>（修正重叠样本后 t=' + num((v.ic_short || {}).t_stat, 2) +
-  '，未修正时看起来是 ' + num((v.ic_short || {}).t_naive, 2) + '），<b>且衡量的是「跑输」而非「下跌」。</b>' +
+  '· <b>做空评分' + shortEvidenceShort(v.ic_short) + '</b>（只用不重叠日子算的 t=' + num((v.ic_short || {}).t_stat, 2) +
+  '，p=' + num((v.ic_short || {}).p_value, 2) + '；旧算法 t=' + num((v.ic_short || {}).t_nw, 2) +
+  '，完全不修正时看起来是 ' + num((v.ic_short || {}).t_naive, 2) + '），<b>且衡量的是「跑输」而非「下跌」。</b>' +
   '样本期内空头篮子自身的收益是 ' + spct(((v.legs || {}).short_basket || {}).cagr) +
   '/年（同期大盘 ' + spct(((v.legs || {}).market || {}).cagr) + '）。裸空需要额外的大盘方向判断<br>' +
   '· <b>空头信号衰减很快</b>：实测 20 日再平衡时空头篮子跑输约 10pp/年，40 日降到约 6pp，' +
@@ -959,9 +1024,11 @@ function render(r) {
 
     '<section><h2>建议：买哪个方向 / 空哪个方向 <span class="tag fcst">推荐</span></h2>' +
     '<p class="lead">👉 下面两张卡就是最终建议，每只股票都写清了"为什么选它"。' +
-    '<b>务必先看每张卡里的"可信度"那一行——看空的建议靠谱，看多的建议只是参考，两边差别很大。</b>' +
+    '<b>务必先看每张卡里的"可信度"那一行——看空名单' + shortEvidenceShort((r.validation || {}).ic_short) +
+    '，看多名单没有证据，两边都只当研究线索。</b>' +
     '数字都算过过去 ' + ((r.validation || {}).years || "—") + ' 年的实际表现。</p>' +
     verdictSection(r) + '</section>' +
+    forwardSection(r) +
 
     squeezeSection(r) +
 

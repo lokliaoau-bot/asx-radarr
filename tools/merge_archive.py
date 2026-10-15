@@ -44,6 +44,13 @@ def merge(ours, theirs):
     """Fold every row of `theirs` into `ours`. Returns rows added."""
     con = sqlite3.connect(ours)
     con.execute("ATTACH DATABASE ? AS other", (theirs,))
+    # 一边有、另一边还没有的表（新版本代码刚加的表）先照对方的建表语句建出来，
+    # 否则下面只遍历本边的表，对方新表里的行会在合并时整表丢掉。
+    mine = {t for (t,) in con.execute("SELECT name FROM main.sqlite_master WHERE type='table'")}
+    for name, sql in con.execute(
+            "SELECT name, sql FROM other.sqlite_master WHERE type='table' AND sql IS NOT NULL").fetchall():
+        if name not in mine and not name.startswith("sqlite_"):
+            con.execute(sql)
     added = 0
     tables = [t for (t,) in con.execute(
         "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")]

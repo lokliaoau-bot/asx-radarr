@@ -5,8 +5,9 @@
 同一套评分成分重建成完整时间序列，然后跑标准的横截面因子检验：
 
   * 信息系数 IC —— 评分与前瞻收益的每日秩相关。前瞻收益在**每个交易日**上都
-    测一次 `horizon` 天，所以相邻观测重叠，朴素 t 值会大 3-5 倍。这里报告的每个
-    t 都是 Newey-West 修正过的（见 `_overlap_stats`），朴素值仅作对照保留。
+    测一次 `horizon` 天，所以相邻观测重叠，朴素 t 值会大 3-5 倍。判决用的 t
+    （`t_stat`）是**固定起点的不重叠子样本** t（见 `_overlap_stats` 的说明：
+    Newey-West lag=h-1 在慢变评分上会把误报率翻倍，2026-10-15 起只作诊断）。
   * 分位价差 —— 评分最高与最低五分位的前瞻收益。
   * 多空组合 —— 多头前 N、空头前 N，定期再平衡，扣成本。
 
@@ -103,44 +104,71 @@ def _nw_variance(x, lag):
     return s, float(np.sqrt(s / g0))
 
 
+def _phase_t(s, horizon, phase):
+    """第 `phase` 个起点、每 `horizon` 个**日历槽**取一个 —— 互不重叠的子样本。
+
+    `s` 必须保留缺失日（NaN 占位）：先 dropna 再隔 h 取样，取到的两点之间可能
+    只隔几天，就不是不重叠了。返回 (t, n, 双侧 p)。
+    """
+    from scipy import stats as _st
+    w = s.iloc[phase::horizon].dropna()
+    n = len(w)
+    if n < 10:
+        return None, n, None
+    sd = float(w.std(ddof=1))
+    if not sd > 0:
+        return None, n, None
+    t = float(w.mean() / (sd / np.sqrt(n)))
+    return t, n, float(2 * _st.t.sf(abs(t), n - 1))
+
+
 def _overlap_stats(series, horizon):
     """对建立在**重叠**前瞻收益上的日频统计量做诚实推断。
 
     本项目在每个交易日都测一次 `horizon` 日前瞻收益，相邻观测共享
-    (horizon-1)/horizon 的收益窗口。教科书 t = mean/(sd/sqrt(n)) 假设独立抽样，
-    在这里严重放大：实测日频 IC 序列的一阶自相关约 +0.9，朴素标准误小 3-5 倍。
+    (horizon-1)/horizon 的收益窗口，朴素 t 会虚高 3-5 倍。
 
-    返回朴素 t，外加 Newey-West t（Bartlett 核，lag = horizon-1），以及一个
-    不依赖任何假设的交叉验证：把序列拆成 `horizon` 个交错子样本 —— 每一个都是
-    **不重叠**的 —— 并报告它们 t 值的范围。请读 Newey-West 那个，不要读朴素那个。
+    ⚠️ 2026-10-15 改了**判决用的统计量**。以前判决用 Newey-West t（Bartlett，
+    lag=h-1）。独立模拟（tools/experiments/fpr_check.py，400 次/格）显示：当评分
+    像空头持仓那样**变化很慢**、再加上板块联动时，在「评分与收益毫无关系」的零假设
+    下，|NW t|>1.96 的比例是 10-13%，名义值应为 5%——也就是会把运气错判成显著，
+    概率翻倍；把 lag 加到 3h 仍有 7-11%。改用**固定第 0 个起点的不重叠子样本**
+    （每 h 个交易日取一个，t 分布）在同样的模拟里是 4-7%，尺寸正确。
+    起点固定为 0 是预先定死的，**不许看完结果再挑起点**；全部 h 个起点的 t 值
+    范围另外列出，只作稳健性描述。NW 值保留为诊断，不再用于判决。
+    （ChatGPT 2026-10-15 那一轮最先指出这个问题；结论经上述独立模拟复核。）
     """
-    s = pd.Series(series).dropna()
-    n = len(s)
+    s = pd.Series(series, dtype=float).replace([np.inf, -np.inf], np.nan)
+    x = s.dropna()
+    n = len(x)
     if n < 60:
         return None
-    m, sd = float(s.mean()), float(s.std(ddof=0))
+    m, sd = float(x.mean()), float(x.std(ddof=0))
     naive = m / (sd / np.sqrt(n)) if sd > 0 else np.nan
-    lrv, infl = _nw_variance(s.values, max(1, horizon - 1))
+    lrv, infl = _nw_variance(x.values, max(1, horizon - 1))
     nw = m / np.sqrt(lrv / n) if np.isfinite(lrv) and lrv > 0 else np.nan
 
-    sub = []
-    for i in range(horizon):
-        w = s.iloc[i::horizon]
-        if len(w) > 30 and w.std(ddof=0) > 0:
-            sub.append(float(w.mean() / (w.std(ddof=0) / np.sqrt(len(w)))))
+    t0, n0, p0 = _phase_t(s, horizon, 0)
+    phases = [_phase_t(s, horizon, i) for i in range(horizon)]
+    sub = [t for t, _, _ in phases if t is not None]
 
-    def _r(x, d=2):
-        return round(float(x), d) if x is not None and np.isfinite(x) else None
+    def _r(v, d=2):
+        return round(float(v), d) if v is not None and np.isfinite(v) else None
 
     return {
         "mean": round(m, 5), "sd": round(sd, 5), "n_days": int(n),
-        "t_naive": _r(naive), "t_stat": _r(nw),      # t_stat 就是 Newey-West 那个
+        "t_stat": _r(t0), "p_value": _r(p0, 3), "n_nonoverlap": int(n0),
+        "inference": "fixed_phase0_nonoverlap",
+        "t_nw": _r(nw), "t_naive": _r(naive),          # 诊断用，不判决
         "se_inflation": _r(infl, 1),
-        "autocorr_1": _r(s.autocorr(1) if n > 2 else np.nan),
+        "autocorr_1": _r(x.autocorr(1) if n > 2 else np.nan),
         "t_nonoverlap_median": _r(np.median(sub)) if sub else None,
         "t_nonoverlap_lo": _r(min(sub)) if sub else None,
         "t_nonoverlap_hi": _r(max(sub)) if sub else None,
-        "verdict": _verdict(nw),
+        "phases": len(sub),
+        "phases_same_sign": (sum(1 for t in sub if np.sign(t) == np.sign(m)) if sub else None),
+        "phases_significant": sum(1 for _, _, p in phases if p is not None and p < 0.05),
+        "verdict": _verdict(t0) if t0 is not None else "insufficient",
     }
 
 
@@ -288,7 +316,11 @@ def _ic(score, fwd, min_names=20):
     """逐日横截面 Spearman IC。
 
     **先掩码，再求秩** —— v1 反过来做，算出来的不是 Spearman。
+
+    返回值**保留日历槽**（算不出 IC 的日子是 NaN，不删）：`_overlap_stats` 按日历
+    每 h 天取一个点做不重叠检验，先删掉缺失日再隔 h 取样就不再是不重叠了。
     """
+    fwd = fwd.reindex(index=score.index, columns=score.columns)
     valid = score.notna() & fwd.notna()
     s = score.where(valid).rank(axis=1)
     f = fwd.where(valid).rank(axis=1)
@@ -296,13 +328,14 @@ def _ic(score, fwd, min_names=20):
     sm, fm = s.mean(axis=1), f.mean(axis=1)
     cov = ((s.sub(sm, axis=0)) * (f.sub(fm, axis=0))).sum(axis=1)
     den = np.sqrt((s.sub(sm, axis=0) ** 2).sum(axis=1) * (f.sub(fm, axis=0) ** 2).sum(axis=1))
-    return (cov / den.replace(0, np.nan)).where(n >= min_names).dropna()
+    return (cov / den.replace(0, np.nan)).where(n >= min_names)
 
 
 def _ic_by_year(ic):
     """逐年 IC —— 暴露只在某一段有效的因子。"""
     if ic is None or not len(ic):
         return []
+    ic = ic.dropna()
     g = ic.groupby(ic.index.year)
     return [{"year": int(y), "mean_ic": round(float(v.mean()), 5),
              "n_days": int(len(v)), "hit_rate": round(float((v > 0).mean()), 3)}
@@ -359,7 +392,7 @@ def run_validation(px, short_pct, tickers, sector_map, horizon=20,
             return None
         st["mean_ic"] = st.pop("mean")
         st["ic_std"] = st.pop("sd")
-        st["hit_rate"] = round(float((ic > 0).mean()), 3)
+        st["hit_rate"] = round(float((ic.dropna() > 0).mean()), 3)
         st["verdict_cn"] = VERDICT_CN.get(st["verdict"], st["verdict"])
         st["by_year"] = _ic_by_year(ic)
         return st
@@ -368,17 +401,20 @@ def run_validation(px, short_pct, tickers, sector_map, horizon=20,
         q = score.rank(axis=1, pct=True)
         top = FW.where(q >= 0.8).mean(axis=1)
         bot = FW.where(q <= 0.2).mean(axis=1)
-        d = pd.concat([top.rename("top"), bot.rename("bot")], axis=1).dropna()
-        if len(d) < 60:
+        d = pd.concat([top.rename("top"), bot.rename("bot")], axis=1)
+        ok = d.dropna()
+        if len(ok) < 60:
             return None
+        # 价差序列保留日历槽（缺的日子 NaN），不重叠取样才是真的隔 h 天
         st = _overlap_stats(d["top"] - d["bot"], horizon) or {}
-        return {"top": round(float(d["top"].mean()), 5),
-                "bottom": round(float(d["bot"].mean()), 5),
-                "spread": round(float((d["top"] - d["bot"]).mean()), 5),
-                "t_stat": st.get("t_stat"), "t_naive": st.get("t_naive"),
+        return {"top": round(float(ok["top"].mean()), 5),
+                "bottom": round(float(ok["bot"].mean()), 5),
+                "spread": round(float((ok["top"] - ok["bot"]).mean()), 5),
+                "t_stat": st.get("t_stat"), "p_value": st.get("p_value"),
+                "t_nw": st.get("t_nw"), "t_naive": st.get("t_naive"),
                 "verdict": st.get("verdict"),
                 "verdict_cn": VERDICT_CN.get(st.get("verdict"), None),
-                "n": int(len(d))}
+                "n": int(len(ok))}
 
     # ---- 组合，每 `horizon` 天再平衡 -----------------------------------
     # 执行时点与 `fwd` 一致：d0 收盘出评分，d0+1 成交，所以收益从 d0+2 起计。

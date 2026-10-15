@@ -137,7 +137,7 @@ class Handler(BaseHTTPRequestHandler):
         from . import shortradar as SR
         if rel.startswith("data/"):
             name = rel[len("data/"):]
-            if name not in ("radar-5.json", "radar-10.json", "radar-20.json", "import.json"):
+            if name not in ("radar-5.json", "radar-10.json", "radar-20.json", "import.json", "forward.json"):
                 return self._send(404, json.dumps({"error": "not found"}))
             p = os.path.join(SHORT_DATA_PARENT, "data", name)
             if not os.path.exists(p):

@@ -256,13 +256,14 @@ async function loadEvidence(){
   const gap=ten.top_minus_bottom_pct,wrongWay=typeof gap==='number'&&gap>0;
   $('verdictText').textContent='我们用'+e.window?.[0]?.slice(0,4)+'到'+e.window?.[1]?.slice(0,4)+'年、'+e.universe+'只澳股的真实行情，按这个页面一模一样的公式回测：'+
    '分数最高的那五分之一股票，之后10个交易日平均比分数最低的五分之一'+(wrongWay?'还多涨了 ':'少涨了 ')+(typeof gap==='number'?Math.abs(gap).toFixed(2)+'%':'—')+
-   (wrongWay?'——方向是反的':'')+'，而且差距小到可以当作没有（可信度 t 只有 '+(ten.nw_t?.toFixed(1)??'—')+'）。'+
+   (wrongWay?'——方向是反的':'')+'，而且差距小到可以当作没有（可信度 t 只有 '+(ten.t?.toFixed(1)??'—')+'）。'+
    (e.verdict==='none'?'所以它不是做空信号，只是帮你找出“最近走势弱”的股票，再去查原因。':'');
-  const row=(label,key)=>{const r=pick(key);return `<tr><td>${label}</td><td>${r.mean_ic?.toFixed(3)??'—'}</td><td>${r.nw_t?.toFixed(2)??'—'}</td><td>${pct(r.top_minus_bottom_pct)}</td><td>${r.baseline_mom20_nw_t?.toFixed(2)??'—'}</td></tr>`;};
-  $('verdictBody').innerHTML='<div class="tableWrap"><table class="evidenceTable"><thead><tr><th>持有</th><th>相关性</th><th>可信度 t</th><th>最高组减最低组</th><th>对照：只看20天跌幅 t</th></tr></thead><tbody>'+
+  const row=(label,key)=>{const r=pick(key);return `<tr><td>${label}</td><td>${r.mean_ic?.toFixed(3)??'—'}</td><td><b>${r.t?.toFixed(2)??'—'}</b></td><td>${r.p?.toFixed(2)??'—'}</td><td>${pct(r.top_minus_bottom_pct)}</td><td>${r.baseline_mom20_t?.toFixed(2)??'—'}</td></tr>`;};
+  $('verdictBody').innerHTML='<div class="tableWrap"><table class="evidenceTable"><thead><tr><th>持有</th><th>相关性</th><th>可信度 t</th><th>运气概率 p</th><th>最高组减最低组</th><th>对照：只看20天跌幅 t</th></tr></thead><tbody>'+
    row('5个交易日','5')+row('10个交易日','10')+row('20个交易日','20')+'</tbody></table></div>'+
    '<ul class="plainList"><li><b>相关性</b>：分数高低和之后涨跌的关系，0 表示毫无关系，做空信号应该是负数。</li>'+
-   '<li><b>可信度 t</b>：绝对值到 2 左右才算“可能不是巧合”。这里已按重叠持有期修正过，不修正会虚高三到五倍。</li>'+
+   '<li><b>可信度 t</b>：绝对值到 2 左右才算“可能不是巧合”。只用互不重叠的日子来算（每隔几个交易日取一天），不会虚高。</li>'+
+   '<li><b>运气概率 p</b>：如果这个分数其实完全没用，纯靠运气也能得到这样结果的概率。小于 0.05 才算“不太像运气”。</li>'+
    '<li><b>最高组减最低组</b>：正数表示“最该看空”的那组反而涨得更多。</li>'+
    '<li><b>对照</b>：一条最朴素的规则（过去20天跌得多就排前面），这个分数并没有比它更好。</li></ul>'+
    '<p class="small">'+escapeHtml('计算方法：'+e.entry_exit+'；逐点与原程序公式核对 '+e.pointwise_crosscheck+' 次全部一致。'+e.holdout+'。注意：'+(e.caveats??[]).join('；')+'。检验日期 '+e.generated+'。')+'</p>';
@@ -283,6 +284,20 @@ async function loadImport(){
   ])+'<p>被拒或没有成交的日子，会让那只股票“漏了交易日”，按规则暂不排名，而不是跳过那天继续算。长期停牌的股票（例如 CTD）就是这样被挡下来的。</p>';
  }catch(error){$('importBody').textContent='今天的数据检查摘要暂时读不到。';}
 }
+// 前瞻成绩单：每天当场写进存档的排名（事后改不了），之后真实表现如何。asxquant/forward.py 打分。
+async function loadForward(){
+ const box=$('forwardBody');if(!box)return;
+ try{
+  const response=await fetch('data/forward.json',{cache:'no-store'});if(!response.ok)throw Error();
+  const f=await response.json(),s=f.short??{};
+  const pct=v=>typeof v==='number'?(v>0?'+':'')+(v*100).toFixed(2)+'%':'—';
+  const verdict={too_early:'还太早，不下结论',confirmed:'方向对，而且不太像运气',consistent:'方向对，但还不能排除运气',wrong_way:'方向是反的'};
+  const rows=['5','10','20'].map(h=>{const x=s[h]??{};return `<tr><td>${h}个交易日</td><td>${x.matured??0} 天${x.pending?'（另有 '+x.pending+' 天未满期）':''}</td><td>${pct(x.mean_excess)}</td><td>${x.hit_rate==null?'—':Math.round(x.hit_rate*100)+'%'}</td><td>${x.nonoverlap_n??0} 段</td><td>${escapeHtml(verdict[x.verdict]??'—')}</td></tr>`;}).join('');
+  box.innerHTML='<p>系统从 <b>'+escapeHtml(f.since??'—')+'</b> 起，每天收盘后把当天排名前五分之一的股票当场记下来（记录时间早于第二天开盘，随存档提交，事后改不了），再用之后的真实价格打分。已记录 '+(f.days_recorded??0)+' 天。</p>'+
+   '<div class="tableWrap"><table class="evidenceTable"><thead><tr><th>持有</th><th>已满期</th><th>平均比全池</th><th>跑输全池的天数比例</th><th>互不重叠的段数</th><th>判断</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
+   '<p class="small">“平均比全池”是负数才说明这份看空名单之后确实跑输。每天的名单大多重复、持有期互相重叠，所以只有“互不重叠的段数”才算独立证据；少于 10 段一律不下结论。</p>';
+ }catch(error){box.textContent='前瞻记录今天才开始，或者暂时读不到。最早要等第一批记录满 5 个交易日才会出第一笔结果。';}
+}
 $('beginnerGuide').innerHTML=P.guideHtml();
-loadEvidence();loadImport();
+loadEvidence();loadImport();loadForward();
 load();

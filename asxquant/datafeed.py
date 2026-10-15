@@ -38,8 +38,9 @@ def _cache_path(name):
 
 
 def _save(name, obj):
-    with open(_cache_path(name), "wb") as f:
-        pickle.dump({"ts": time.time(), "obj": obj}, f)
+    # 先完整序列化，再原子替换旧文件——写到一半被打断不会留下损坏的缓存
+    from .fileio import atomic_bytes
+    atomic_bytes(_cache_path(name), pickle.dumps({"ts": time.time(), "obj": obj}))
 
 
 def _load(name, max_age_sec=None):
@@ -54,6 +55,18 @@ def _load(name, max_age_sec=None):
     if max_age_sec is not None and (time.time() - blob["ts"]) > max_age_sec:
         return None
     return blob["obj"]
+
+
+def cache_timestamp(name):
+    """缓存写入时刻（epoch 秒）——就是这批数据被我们看到的时刻。"""
+    p = _cache_path(name)
+    if not os.path.exists(p):
+        return None
+    try:
+        with open(p, "rb") as f:
+            return float(pickle.load(f)["ts"])
+    except Exception:
+        return None
 
 
 def cache_age(name):

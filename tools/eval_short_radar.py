@@ -33,6 +33,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 from short_radar import engine  # noqa: E402
 from short_radar.engine import WEIGHTS  # noqa: E402
+from asxquant import validate as VAL  # noqa: E402
 
 EVAL_END = "2026-02-27"
 OUT = os.path.join(ROOT, "web", "short", "evidence.json")
@@ -103,12 +104,34 @@ def nw_t(x, lag):
 
 
 def daily_ic(X, Y, min_n=30):
+    """返回值保留日历槽（算不出的日子 NaN）：不重叠检验按日历每 h 天取一点。"""
     out = {}
     for d in X.index:
         ok = X.loc[d].notna() & Y.loc[d].notna()
         if ok.sum() >= min_n:   # 先掩码再求秩（asxquant/validate.py v2 修过的坑）
             out[d] = X.loc[d][ok].rank().corr(Y.loc[d][ok].rank())
-    return pd.Series(out)
+    return pd.Series(out, dtype=float).reindex(X.index)
+
+
+def quintiles(S, F, h):
+    """不重叠调仓日的五分组超额收益。
+
+    2026-10-15 修（ChatGPT 审查 H-EVAL-01，复核属实）：以前先按「未来收益有没有」
+    筛掉股票、再分五组——未来缺价（停牌、退市）会反过来改变当时的分组。现在**只按
+    当天的评分**分组，结果再附上去；组里没有结果的成员单独计数，不替补、不当 0。
+    """
+    qs, unresolved, members = [], 0, 0
+    for d in S.index[::h]:
+        x = S.loc[d].dropna()
+        if len(x) < 50:
+            continue
+        q = pd.qcut(x.rank(method="first"), 5, labels=False)
+        y = F.loc[d].reindex(x.index)
+        y = y - y.mean()                      # 相对同一批成员里有结果者的平均
+        members += len(x)
+        unresolved += int(y.isna().sum())
+        qs.append([y[q == k].mean() for k in range(5)])
+    return np.array(qs), members, unresolved
 
 
 def main():
@@ -125,30 +148,26 @@ def main():
         fwd = A.shift(-h) / entry - 1
         S, F = score.loc[sl], fwd.loc[sl]
         ic = daily_ic(S, F)
-        t, n = nw_t(ic.values, h - 1)
+        st = VAL._overlap_stats(ic, h)            # 判决用不重叠 t（与主站同一口径）
+        t, n = nw_t(ic.dropna().values, h - 1)  # 旧算法，只作诊断
         bic = daily_ic(mom.loc[sl], F)
-        bt, _ = nw_t(bic.values, h - 1)
-        qs = []
-        for d in S.index[::h]:
-            m = S.loc[d].notna() & F.loc[d].notna()
-            if m.sum() < 50:
-                continue
-            x, y = S.loc[d][m], F.loc[d][m] - F.loc[d][m].mean()
-            q = pd.qcut(x.rank(method="first"), 5, labels=False)
-            qs.append([y[q == k].mean() for k in range(5)])
-        qs = np.array(qs)
+        bst = VAL._overlap_stats(bic, h)
+        qs, members, unresolved = quintiles(S, F, h)
         spread = qs[:, 4] - qs[:, 0]
         res[str(h)] = {
-            "mean_ic": round(float(ic.mean()), 4), "nw_t": round(t, 2), "days": n,
-            "baseline_mom20_ic": round(float(bic.mean()), 4), "baseline_mom20_nw_t": round(bt, 2),
-            "rebalances": len(qs),
+            "mean_ic": round(float(ic.mean()), 4), "t": st["t_stat"], "p": st["p_value"],
+            "n_nonoverlap": st["n_nonoverlap"], "phases_same_sign": st["phases_same_sign"],
+            "phases": st["phases"], "nw_t": round(t, 2), "days": n,
+            "baseline_mom20_ic": round(float(bic.mean()), 4), "baseline_mom20_t": bst["t_stat"],
+            "baseline_mom20_nw_t": round(nw_t(bic.dropna().values, h - 1)[0], 2),
+            "rebalances": len(qs), "quintile_members": members, "quintile_unresolved": unresolved,
             "quintile_excess_pct": [round(float(v) * 100, 3) for v in qs.mean(0)],
             "top_minus_bottom_pct": round(float(spread.mean()) * 100, 3),
             "top_minus_bottom_t": round(float(spread.mean() / (spread.std(ddof=1) / np.sqrt(len(spread)))), 2),
             "top_quintile_underperform_rate": round(float((qs[:, 4] < 0).mean()), 3),
-            "ic_by_year": {str(k): round(float(v), 4) for k, v in ic.groupby(ic.index.year).mean().items()},
+            "ic_by_year": {str(k): round(float(v), 4) for k, v in ic.dropna().groupby(ic.dropna().index.year).mean().items()},
         }
-    worst = max(abs(r["nw_t"]) for r in res.values())
+    worst = max(abs(r["t"] or 0) for r in res.values())
     out = {
         "generated": dt.date.today().isoformat(),
         "formula": "technical-v1（趋势分 + 成交量分；公司财务/估值/消息三项未接入）",
@@ -156,6 +175,8 @@ def main():
         "holdout": "%s 之后的数据未看，留作以后的样本外检验" % EVAL_END,
         "universe": len(stocks), "pointwise_crosscheck": checked,
         "entry_exit": "t+1 开盘进场，第 h 个交易日收盘出场，复权价",
+        "inference": ("判决用固定第 0 个起点、每 h 个交易日取一天的不重叠 t（t 分布）；"
+                      "nw_t 是旧的 Newey-West(lag=h-1)，模拟证明它在慢变评分上误报翻倍，只作诊断"),
         "caveats": ["股票池是今天仍上市的公司（幸存者偏差，通常让「跌多了反弹」显得更强）",
                     "市场对照用 ^AXJO 价格指数代替 STW；IC 是横截面排序，不受影响"],
         "verdict": "none" if worst < 2 else "check",
@@ -163,8 +184,8 @@ def main():
     }
     with open(OUT, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, indent=1)
-    print(json.dumps({h: {k: r[k] for k in ("mean_ic", "nw_t", "top_minus_bottom_pct",
-                                              "baseline_mom20_nw_t")} for h, r in res.items()},
+    print(json.dumps({h: {k: r[k] for k in ("mean_ic", "t", "p", "nw_t", "top_minus_bottom_pct",
+                                              "quintile_unresolved", "baseline_mom20_t")} for h, r in res.items()},
                      ensure_ascii=False))
     print("crosscheck", checked, "->", OUT)
 

@@ -42,8 +42,9 @@ def build(report, out_dir=None, log=print):
         else:
             shutil.copy2(src, dst)
 
-    with open(os.path.join(out_dir, "report.json"), "w", encoding="utf-8") as f:
-        json.dump(report, f, ensure_ascii=False, separators=(",", ":"))
+    from .fileio import atomic_bytes
+    atomic_bytes(os.path.join(out_dir, "report.json"),
+                 json.dumps(report, ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
 
     # Pages would otherwise run the output through Jekyll and drop files it dislikes
     open(os.path.join(out_dir, ".nojekyll"), "w").close()
@@ -76,5 +77,14 @@ def copy_short_assets(out_dir):
 def build_short(out_dir, snap=None, log=print):
     from . import shortradar as SR
     copy_short_assets(out_dir)
-    SR.write_site(out_dir, snap or SR.build_from_cache(log=log))
+    production = snap is None
+    snap = snap or SR.build_from_cache(log=log)
+    SR.write_site(out_dir, snap)
+    if production:
+        # 前瞻记录：今天的排名写进存档（随存档提交进仓库，事后改不了），再给过去的记录打分。
+        # 只在生产路径做——测试传进来的合成 snap 绝不能写进真实存档。
+        try:
+            SR.record_and_score(out_dir, snap, log=log)
+        except Exception as e:
+            log("看空雷达前瞻记录失败(不影响页面): %s" % e)
     return out_dir

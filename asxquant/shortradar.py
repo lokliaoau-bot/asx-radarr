@@ -133,6 +133,8 @@ def fetch_extra(force=False, log=print):
     log("AI Short Radar: 从 Yahoo 下载 %d 个自选/对照标的 ..." % len(tickers))
     raw = yf.download(tickers, period="2y", interval="1d", progress=False,
                       auto_adjust=False, threads=True, group_by="column")
+    if raw is None or raw.empty:   # 抓到空数据时不覆盖上一份能用的缓存
+        raise RuntimeError("Yahoo 自选/STW 返回空数据，保留原缓存")
     out = {}
     for field, key in [("Close", "close"), ("Open", "open"), ("High", "high"),
                        ("Low", "low"), ("Volume", "volume")]:
@@ -146,10 +148,10 @@ def fetch_extra(force=False, log=print):
 def _fetched_at(cache_name):
     """缓存文件写入时刻 = 这批价格被我们看到的时刻（observation 时钟）。"""
     from . import datafeed as D
-    age = D.cache_age(cache_name)
-    if age is None:
+    ts = D.cache_timestamp(cache_name)   # 记录下来的那一刻，不用「现在减年龄」事后推算
+    if ts is None:
         return None
-    return dt.datetime.now(dt.timezone.utc) - dt.timedelta(seconds=age)
+    return dt.datetime.fromtimestamp(ts, dt.timezone.utc)
 
 
 # --------------------------------------------------------------------------
@@ -322,3 +324,27 @@ def write_site(out_dir, snap):
             json.dump(data, f, ensure_ascii=False, separators=(",", ":"), allow_nan=False)
     with open(os.path.join(d, "import.json"), "w", encoding="utf-8") as f:
         json.dump(snap["import"], f, ensure_ascii=False, separators=(",", ":"))
+
+
+def record_and_score(out_dir, snap, log=print):
+    """前瞻记录：把今天 10 日口径的排名写进存档，再给存档里所有过去的记录打分，
+    结果写成 data/forward.json 给页面读。
+
+    存档随每日流程提交进仓库，记录时刻早于结果——这是这个分数唯一不能被事后修饰的证据。
+    （ChatGPT 2026-10-15 那轮提出「前瞻反馈」的想法；它的实现需要用户提供授权原始行情
+    才算得出结果，而用户没有，所以这里改用澳股雷达本来就在抓的价格自动打分。）
+    """
+    from . import archive as AR
+    from . import datafeed as D
+    from . import forward as FW
+    rec = AR.record_shortradar(snap["radar"]["10"])
+    px = D.fetch_prices(log=lambda m: None)
+    uni = [t for t in all_stock_tickers() if t in px["close"].columns]
+    out = FW.from_shortradar_archive(px, uni)
+    out["recorded_today"] = rec
+    d = os.path.join(out_dir, "data")
+    os.makedirs(d, exist_ok=True)
+    with open(os.path.join(d, "forward.json"), "w", encoding="utf-8") as f:
+        json.dump(out, f, ensure_ascii=False, separators=(",", ":"))
+    log("看空雷达前瞻记录: 存档 %s 天，今天 %s" % (out["days_recorded"], rec))
+    return out

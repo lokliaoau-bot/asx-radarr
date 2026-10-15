@@ -59,8 +59,24 @@ jobs:
           restore-keys: |
             asx-cache-
 
+      # ⚠️ 上一步会把缓存里那份**旧的** cache/announcements.db 解压出来，盖掉刚 checkout
+      # 的仓库版本。仓库里的才是最全的（本地运行推上来的行也在里面），被盖掉就等于
+      # 悄悄丢掉那些行。所以恢复缓存后立刻把它换回仓库版本。
+      # （2026-10-15 ChatGPT 审查指出；这里用最小改法修，缓存键不变，避免一次冷启动重训。）
+      - name: 存档以仓库版本为准
+        run: git checkout -- cache/announcements.db
+
       - name: 运行分析并生成站点
         run: python run.py --publish
+
+      # 存档是唯一不能事后重建的东西：不管后面推送成不成功，先留一份构建产物备份（保留 90 天）。
+      - name: 备份当天存档
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: announcements-archive-${{ github.run_id }}
+          path: cache/announcements.db
+          if-no-files-found: warn
 
       # 把累积的存档写回仓库。Actions 缓存会过期，仓库不会——
       # 公告只能取到最近5条，漏掉就永久丢失，所以这一步是"日积月累"的关键。
@@ -68,6 +84,10 @@ jobs:
         run: |
           git config user.name  "asx-radar-bot"
           git config user.email "actions@github.com"
+          # 推送被拒、需要变基时，存档冲突要并集合并（见 .gitattributes）。git 不会自动
+          # 信任仓库里的驱动定义，云端每次都要配一遍——以前没配，冲突就直接变基失败、丢当天存档。
+          git config merge.archivedb.name "union-merge the announcements archive"
+          git config merge.archivedb.driver "python tools/merge_archive.py %O %A %B"
           git add -f cache/announcements.db
           if git diff --staged --quiet; then
             echo "存档无变化，跳过提交"

@@ -1,0 +1,63 @@
+{
+ "reps": 400,
+ "stocks": 150,
+ "days": 1150,
+ "nominal": 0.05,
+ "seed": 20261015,
+ "false_positive_rate": {
+  "iid_h5": {
+   "nw_lag_h-1": 0.077,
+   "nw_lag_2h": 0.075,
+   "nw_lag_3h": 0.075,
+   "phase0_nonoverlap": 0.072
+  },
+  "iid_h10": {
+   "nw_lag_h-1": 0.05,
+   "nw_lag_2h": 0.05,
+   "nw_lag_3h": 0.055,
+   "phase0_nonoverlap": 0.035
+  },
+  "iid_h20": {
+   "nw_lag_h-1": 0.058,
+   "nw_lag_2h": 0.065,
+   "nw_lag_3h": 0.062,
+   "phase0_nonoverlap": 0.068
+  },
+  "persistent_h5": {
+   "nw_lag_h-1": 0.092,
+   "nw_lag_2h": 0.055,
+   "nw_lag_3h": 0.052,
+   "phase0_nonoverlap": 0.04
+  },
+  "persistent_h10": {
+   "nw_lag_h-1": 0.07,
+   "nw_lag_2h": 0.048,
+   "nw_lag_3h": 0.043,
+   "phase0_nonoverlap": 0.033
+  },
+  "persistent_h20": {
+   "nw_lag_h-1": 0.113,
+   "nw_lag_2h": 0.095,
+   "nw_lag_3h": 0.09,
+   "phase0_nonoverlap": 0.048
+  },
+  "factor_h5": {
+   "nw_lag_h-1": 0.1,
+   "nw_lag_2h": 0.06,
+   "nw_lag_3h": 0.062,
+   "phase0_nonoverlap": 0.045
+  },
+  "factor_h10": {
+   "nw_lag_h-1": 0.125,
+   "nw_lag_2h": 0.092,
+   "nw_lag_3h": 0.087,
+   "phase0_nonoverlap": 0.065
+  },
+  "factor_h20": {
+   "nw_lag_h-1": 0.117,
+   "nw_lag_2h": 0.085,
+   "nw_lag_3h": 0.09,
+   "phase0_nonoverlap": 0.052
+  }
+ }
+}
