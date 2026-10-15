@@ -218,6 +218,64 @@ def to_rows(frames, tickers, meta, fetched_at, sessions=SESSIONS):
 # --------------------------------------------------------------------------
 # 跑它的导入 + 评分
 # --------------------------------------------------------------------------
+OVERRIDE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "calendar_overrides")
+
+
+def load_overrides(store, now):
+    """把仓库里经官方核对的日历补充说明，按 ChatGPT 原设计的路径（parse_override 严格校验 →
+    Store.save_calendar_override）存进本次运行的临时库。
+
+    为什么需要：它的 ASX 日历对 2025 年以后的提前收市日（平安夜、除夕）默认「收盘时段未核实」，
+    那根日线会被判成不可用，而规则是「历史窗口里有一根不可用就不排名」——2026-12-24 一过，
+    全部股票会连续一年不能排名（2026-10-15 代码审查用合成数据快进到 2027-01 证实）。
+    原设计的解法是录入官方核实过的补充说明，但没人负责录入；这里把它变成仓库里的文件，
+    每次运行自动加载。还没到「可用时刻」的、校验不过的，一律跳过并记原因，不硬塞。
+    """
+    import glob
+    from short_radar.models import ValidationError
+    out = {"applied": [], "skipped": []}
+    for f in sorted(glob.glob(os.path.join(OVERRIDE_DIR, "*.json"))):
+        with open(f, encoding="utf-8") as fh:
+            raw = fh.read()
+        try:
+            store.save_calendar_override(raw, now)
+            out["applied"].append(os.path.basename(f))
+        except (ValidationError, ValueError) as e:
+            out["skipped"].append({"file": os.path.basename(f), "reason": str(e)[:120]})
+    return out
+
+
+def calendar_readiness(today=None, horizon_days=120):
+    """往后看 horizon_days 天：有没有「提前收市但时段未核实、也没有补充说明」的交易日，
+    日历核查年份够不够用。用于提前报警——别等到那天才整页失效。"""
+    from short_radar import asx_calendar as AC
+    from short_radar.calendars import parse_override
+    import glob
+    today = today or dt.datetime.now(dt.timezone.utc).date()
+    now = dt.datetime.combine(today, dt.time(23, 59), dt.timezone.utc)
+    covered = set()
+    for f in glob.glob(os.path.join(OVERRIDE_DIR, "*.json")):
+        try:
+            with open(f, encoding="utf-8") as fh:
+                covered.add(parse_override(fh.read(), now)["session_date"])
+        except Exception:
+            continue
+    issues = []
+    for k in range(horizon_days + 1):
+        d = today + dt.timedelta(days=k)
+        try:
+            s = AC.session(d)
+        except ValueError:
+            issues.append({"date": d.isoformat(), "kind": "calendar_year_not_reviewed",
+                           "days_left": k, "what": "ASX %d 年交易日历还没录入" % d.year})
+            break
+        if s and s.get("early_close") and not s.get("phase_times_verified") and d.isoformat() not in covered:
+            issues.append({"date": d.isoformat(), "kind": "early_close_unverified", "days_left": k,
+                           "what": "%s 提前收市，收盘时段还没核实（缺补充说明）" % d.isoformat()})
+    return {"checked_through": (today + dt.timedelta(days=horizon_days)).isoformat(),
+            "overrides": sorted(covered), "issues": issues}
+
+
 def build(px=None, extra=None, now=None, log=print, px_fetched_at=None, extra_fetched_at=None):
     """返回 {'radar': {h: 它的 /v1/radar 结果}, 'import': 导入摘要}。不联网（数据由调用方给）。"""
     from short_radar.contracts import ACTIVE_MARKETS
@@ -239,6 +297,7 @@ def build(px=None, extra=None, now=None, log=print, px_fetched_at=None, extra_fe
                "states": {}, "issue_examples": [], "fetched_at": {}}
     try:
         store = Store(os.path.join(tmp, "radar.sqlite3"))
+        summary["calendar_overrides"] = load_overrides(store, now)
         for frames, tickers, fetched in jobs:
             summary["fetched_at"][SOURCE if frames is px else "extra"] = fetched.isoformat()
             for i in range(0, len(tickers), CHUNK):
@@ -264,6 +323,12 @@ def build(px=None, extra=None, now=None, log=print, px_fetched_at=None, extra_fe
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
     summary["seconds"] = round(time.time() - t0, 1)
+    summary["calendar_readiness"] = calendar_readiness(now.date())
+    summary["page_contract_violations"] = {h: check_snapshot(r, int(h)) for h, r in out.items()}
+    n_bad = sum(len(v) for v in summary["page_contract_violations"].values())
+    if n_bad:
+        log("AI Short Radar: ⚠️ %d 处不符合手机页面校验规则，页面会拒绝显示：%s"
+            % (n_bad, summary["page_contract_violations"]))
     r10 = out["10"]
     cov = r10["coverage"]["AU"]
     log("AI Short Radar: 导入 %d 行（拒 %d），%d 只股票，%d 只可排名，%.1fs" % (
@@ -348,3 +413,75 @@ def record_and_score(out_dir, snap, log=print):
         json.dump(out, f, ensure_ascii=False, separators=(",", ":"))
     log("看空雷达前瞻记录: 存档 %s 天，今天 %s" % (out["days_recorded"], rec))
     return out
+
+
+def check_snapshot(data, horizon):
+    """在生成数据时，先按手机页面（web/short/workbench.js 的 validateSnapshot）最关键的那批规则
+    自查一遍。页面是「有一行不合规就整页不显示」，这里把问题提前到构建时发现、记下来，
+    不用等用户打开手机才看到空白页。返回违规清单（空 = 通过）。2026-10-15 代码审查加。"""
+    import re
+    from short_radar.contracts import (STATE_LABELS, SECTORS, CLOSE_DEFINITIONS, ADJUSTMENT_STATES)
+    from short_radar.engine import WEIGHTS
+    bad = []
+
+    def err(row, msg):
+        if len(bad) < 30:
+            bad.append({"symbol": (row or {}).get("symbol_id"), "rule": msg})
+    w = WEIGHTS[horizon][:2]
+    cal = (data.get("calendars") or {}).get("AU") or {}
+    cov = (data.get("coverage") or {}).get("AU") or {}
+    rows = data.get("rows") or []
+    if data.get("mode") != "imported" or data.get("horizon") != horizon:
+        err(None, "mode/horizon mismatch")
+    if cal.get("historical_calendar_knowledge_verified") is not False:
+        err(None, "calendar knowledge flag must be false")
+    if cov.get("expected_session") != cal.get("expected_session") or cov.get("calendar_status") != cal.get("state"):
+        err(None, "coverage/calendar mismatch")
+    if cov.get("observed_instruments") != len(rows) or \
+            cov.get("technical_eligible") != sum(1 for r in rows if r.get("technical_eligible")):
+        err(None, "coverage counts differ from rows")
+    seen = set()
+    for r in rows:
+        if not re.fullmatch(r"AU\.[A-Z0-9]{3,6}", str(r.get("symbol_id"))) or r["symbol_id"] in seen:
+            err(r, "bad or duplicate symbol")
+        seen.add(r.get("symbol_id"))
+        if r.get("sector") not in SECTORS:
+            err(r, "sector not in contract")
+        if r.get("state") not in STATE_LABELS:
+            err(r, "unknown state")
+        if r.get("known_contribution_max") != w[0] + w[1]:
+            err(r, "known_contribution_max")
+        if (r.get("session_date") is None) != (r.get("close") is None):
+            err(r, "session_date/close presence")
+        if r.get("close") is not None and (r.get("close_definition") not in CLOSE_DEFINITIONS or r.get("basis") != "split"):
+            err(r, "close definition/basis")
+        if r.get("research_score") is not None or r.get("risk_adjusted_score") is not None:
+            err(r, "full scores must stay null")
+        if r.get("expected_session") != cal.get("expected_session") or r.get("calendar_version") != cal.get("calendar_version"):
+            err(r, "row calendar mismatch")
+        if r.get("adjustment_metadata_verified") is not False or r.get("adjustment_metadata_status") not in ADJUSTMENT_STATES:
+            err(r, "adjustment metadata flags")
+        f = r.get("factors") or {}
+        if any(f.get(k) is not None for k in ("fundamentals", "valuation", "catalyst")):
+            err(r, "unintegrated factors must be null")
+        t, d = f.get("trend"), f.get("distribution")
+        if any(v is not None and not 0 <= v <= 1 for v in (t, d)):
+            err(r, "factor outside 0..1")
+        cov_w = (w[0] if t is not None else 0) + (w[1] if d is not None else 0)
+        if r.get("coverage") != cov_w:
+            err(r, "coverage weight")
+        kc = r.get("known_contribution")
+        if cov_w and (kc is None or abs(kc - ((w[0] * t if t is not None else 0) + (w[1] * d if d is not None else 0))) > 0.005):
+            err(r, "known_contribution != weights x factors")
+        chart = r.get("chart") or []
+        if len(chart) > 100 or any(a["date"] >= b["date"] for a, b in zip(chart, chart[1:])):
+            err(r, "chart order/length")
+        if r.get("technical_eligible"):
+            if (r.get("state") != "valid" or (r.get("history_sessions") or 0) < 252 or kc is None
+                    or r.get("indicators") is None or not chart or chart[-1]["date"] != r.get("session_date")
+                    or chart[-1]["close"] != r.get("close") or r.get("session_date") != cal.get("expected_session")
+                    or cal.get("phase_times_verified") is not True):
+                err(r, "eligible row invariants")
+        if r.get("state") != "valid" and (r.get("indicators") is not None or t is not None or d is not None):
+            err(r, "invalid state must not carry indicators")
+    return bad

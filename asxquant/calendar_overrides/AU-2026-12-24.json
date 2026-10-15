@@ -1,0 +1,12 @@
+{
+  "market": "AU",
+  "session_date": "2026-12-24",
+  "status": "early",
+  "reason": "ASX 官方交易日历 2026 年：该日 CLOSE EARLY，脚注 'Normal trading ceases at 14:10 (Sydney time)'。收盘集合竞价按常规 11 分钟窗口取 14:21；14:52 为日线数据定型的工程等待窗口（与 asx_calendar 未核实时的保守取值相同）。2026-10-15 由 Claude Code 在官网核对录入；若 ASX 另发圣诞交易时段通知且时间不同，以通知为准更新本文件。",
+  "source_url": "https://www.asx.com.au/markets/market-resources/trading-hours-calendar/cash-market-trading-hours/trading-calendar",
+  "available_at": "2026-10-15T10:40:00+00:00",
+  "open": "2026-12-24T09:59:00+11:00",
+  "normal_end": "2026-12-24T14:10:00+11:00",
+  "auction_end": "2026-12-24T14:21:00+11:00",
+  "close": "2026-12-24T14:52:00+11:00"
+}

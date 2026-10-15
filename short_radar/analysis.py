@@ -33,16 +33,41 @@ def compatible_history(item):
     bars,state,_=select_history(item)
     return bars,state
 
+# 短暂停牌（2026-10-15 代码审查改，Claude Code）：停牌日 Yahoo 照给收盘价、成交量为 0，导入时
+# 被标为 no_trades。原规则「窗口里有一根不是 valid 就整只不排名」让只停牌一两天的大公司
+# （配股、发公告前的例行停牌）整整一年不能排名——2026-10-15 有 12/156 只因此出局；而本分数的
+# 真实数据实测（tools/eval_short_radar.py）本来就允许这种停牌，线上比实测更严，两边口径不一致。
+# 现在：连续不超过 MAX_HALT_RUN 个、窗口内合计不超过 MAX_HALT_DAYS 个的停牌日照常参与计算
+# （停牌期间价格不变，是真实状态）；当天停牌（最新一根）、长期停牌、其他任何不合格的记录照旧挡下。
+MAX_HALT_RUN=5
+MAX_HALT_DAYS=10
+
+
+def tolerated_halts(bars):
+    """窗口里可以照常使用的短暂停牌日（session_date 集合）；超限就一个都不放行。"""
+    days=[b['session_date'] for b in bars if b['quality']=='no_trades']
+    if not days or len(days)>MAX_HALT_DAYS or (bars and bars[-1]['quality']=='no_trades'):
+        return set()
+    run=longest=0
+    for b in bars:
+        run=run+1 if b['quality']=='no_trades' else 0
+        longest=max(longest,run)
+    return set(days) if longest<=MAX_HALT_RUN else set()
+
+
 def audit_history(item,mode,cutoff,calendar,overrides,count=252,context=None):
     selection=inspect_history(item,count if mode=='imported' else None)
     bs,state,conflicts=selection['bars'],selection['state'],selection['conflicts'];reasons=[]
     skips=selection['comparison_skips']
     if skips:reasons.append('peer_adjustment_not_comparable')
     context=context if context is not None else {'windows':{},'calendar_issues':{}}
-    history=[b for b in bs if b['quality']=='valid'];latest=bs[-1] if bs else None
+    halts=tolerated_halts(bs[-count:])
+    usable=lambda b:b['quality']=='valid' or (b['quality']=='no_trades' and b['session_date'] in halts)
+    if halts:reasons.append('short_halts_inside_history')
+    history=[b for b in bs if usable(b)];latest=bs[-1] if bs else None
     missing=[];issues=[]
     if state!='valid':reasons.append(state)
-    if any(b['quality']!='valid' for b in bs[-count:]):
+    if any(not usable(b) for b in bs[-count:]):
         reasons.append('invalid_session_inside_history')
         if state=='valid':state='invalid_history'
     if mode=='imported':
@@ -59,7 +84,7 @@ def audit_history(item,mode,cutoff,calendar,overrides,count=252,context=None):
                 if state=='valid':state='stale'
             checked=[]
             for b in bs[-count:]:
-                if b['quality']!='valid':continue
+                if not usable(b):continue
                 key=(item['market'],b['session_date'],b['session_open_utc'],b['session_close_utc'],b['available_at'],b['close_definition'])
                 cache=context['calendar_issues']
                 if key in cache:issue=cache[key]

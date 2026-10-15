@@ -281,7 +281,10 @@ async function loadImport(){
    ['今天读入的日线记录',(s.accepted??0).toLocaleString('zh-CN')+' 行'],
    ['被拒绝的记录',(s.rejected??0)+' 行'+(examples.length?'（'+examples.map(x=>names[x]??x).join('、')+'）':'')],
    ['当天没有成交的记录（停牌或交易暂停）',(states.no_trades??0)+' 行'],
-  ])+'<p>被拒或没有成交的日子，会让那只股票“漏了交易日”，按规则暂不排名，而不是跳过那天继续算。长期停牌的股票（例如 CTD）就是这样被挡下来的。</p>';
+  ])+'<p>被拒或没有成交的日子，会让那只股票“漏了交易日”，按规则暂不排名，而不是跳过那天继续算。长期停牌的股票（例如 CTD）就是这样被挡下来的。</p>'+
+   // 日历自检（asxquant/shortradar.calendar_readiness）：提前 120 天发现会让整页失效的日历缺口
+   ((s.calendar_readiness?.issues??[]).length?'<div class="reasons"><b>⚠️ 日历提醒</b><br>'+s.calendar_readiness.issues.map(i=>escapeHtml(i.what+'（还剩 '+i.days_left+' 天）')).join('<br>')+'<br>不处理的话，到那天之后这个页面会无法排名。已写进系统自我复盘的改进提案。</div>':'')+
+   ((s.calendar_overrides?.applied??[]).length?'<p class="small">已加载 '+s.calendar_overrides.applied.length+' 份经 ASX 官网核对的日历补充说明（提前收市日的收盘时段）。</p>':'');
  }catch(error){$('importBody').textContent='今天的数据检查摘要暂时读不到。';}
 }
 // 前瞻成绩单：每天当场写进存档的排名（事后改不了），之后真实表现如何。asxquant/forward.py 打分。

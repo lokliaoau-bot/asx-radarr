@@ -99,7 +99,13 @@ def data_health(px, report, now=None):
     sydney_today = now.astimezone(dt.timezone(dt.timedelta(hours=10))).date()
     price_age = (sydney_today - pd.Timestamp(report["as_of"]).date()).days if report.get("as_of") else None
     halted = len(((report.get("data_health") or {}).get("halted")) or [])
-    return {"asic_lag_trading_days": lag, "asic_normal_lag": ASIC_NORMAL_LAG,
+    try:
+        from . import shortradar as SR
+        cal = SR.calendar_readiness(now.date())
+    except Exception as e:      # 自检本身出错也要看得见
+        cal = {"issues": [{"kind": "readiness_check_failed", "what": str(e)[:80], "days_left": 0}]}
+    return {"calendar_readiness": cal,
+            "asic_lag_trading_days": lag, "asic_normal_lag": ASIC_NORMAL_LAG,
             "asic_stale": bool(lag is not None and lag > ASIC_STALE_LAG),
             "price_age_calendar_days": price_age,
             "price_stale": bool(price_age is not None and price_age > 4),
@@ -246,6 +252,15 @@ def make_proposals(misses, components, calibration, health):
                       "evidence": "综合把握 %.0f%%（实盘 %d 段）" % (tr["p_right"] * 100, tr["prospective_segments"]),
                       "test": "复查数据管道和成分；满 10 段后自动校准会决定是否暂停",
                       "earliest": "立即复查"})
+    for it in (health.get("calendar_readiness") or {}).get("issues", []):
+        props.append({"key": "calendar-" + it["kind"] + "-" + str(it.get("date", ""))[:4],
+                      "title": "看空雷达将在 %s 起失效：%s" % (it.get("date", "—"), it["what"]),
+                      "hypothesis": "不处理的话，到那天之后看空雷达会整页无法排名",
+                      "evidence": "日历自检：还剩 %s 天" % it.get("days_left"),
+                      "test": ("到 ASX 官网交易日历页核对（www.asx.com.au …/trading-calendar），"
+                               "按 asxquant/calendar_overrides/ 里现有文件的格式补录；"
+                               "新年份要在 short_radar/asx_calendar.py 的 HOLIDAYS 里加上全年休市日并注明核查日期"),
+                      "earliest": "立即"})
     if health.get("asic_stale"):
         props.append({"key": "asic-stale", "title": "ASIC 空头数据停更",
                       "hypothesis": "ASIC 网站或文件格式变了，抓取失败",
@@ -317,6 +332,8 @@ def _notes(health, misses, misses5, components, calibration, prev):
                  % (health["asic_lag_trading_days"], ASIC_NORMAL_LAG))
     elif health.get("asic_lag_trading_days") is not None:
         n.append("数据：空头数据晚了 %d 个交易日（正常 %d 天），正常。" % (health["asic_lag_trading_days"], ASIC_NORMAL_LAG))
+    for it in (health.get("calendar_readiness") or {}).get("issues", []):
+        n.append("⚠️ 日历自检：%s（还剩 %s 天），已写成改进提案。" % (it["what"], it.get("days_left")))
     if health.get("price_stale"):
         n.append("⚠️ 价格数据已经 %d 天没更新。" % health["price_age_calendar_days"])
     return n

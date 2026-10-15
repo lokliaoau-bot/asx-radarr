@@ -1,0 +1,32 @@
+name: 测试（Pull Request 必跑）
+
+# 给 AI 编程助手（ChatGPT / Codex / Claude Code）改代码用的安全通道：
+# 它们在分支上改、开 Pull Request，这里自动跑全部离线测试，全绿后用户再合并。
+# 只测试，不部署——部署只在 main 有新提交时由 daily.yml 做。
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: 安装依赖
+        run: pip install -r requirements.txt
+      - name: 全部离线测试（合成数据，不联网）
+        run: |
+          set -e
+          for t in test_step1 test_shortradar test_review test_round3 test_selfreview test_calibrate test_journal test_shortradar_review; do
+            echo "::group::$t"
+            python -m tests.$t
+            echo "::endgroup::"
+          done
