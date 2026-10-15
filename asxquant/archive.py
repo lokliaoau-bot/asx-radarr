@@ -73,8 +73,7 @@ def _recorded_now():
 
 
 def record_scores(asof, stock_rows, con=None):
-    """全部股票当天的多空评分。同一 asof 重跑会覆盖（以最后一次为准，recorded_at 跟着变，
-    forward.py 据此判断是否迟到）。"""
+    """全部股票当天的多空评分。同一 asof 重跑**不覆盖**——前瞻记录以第一次为准。"""
     own = con is None
     con = con or _connect()
     now = _recorded_now()
@@ -82,7 +81,7 @@ def record_scores(asof, stock_rows, con=None):
     for r in stock_rows or []:
         if r.get("short_score") is None and r.get("long_score") is None:
             continue
-        con.execute("INSERT OR REPLACE INTO score_snapshots VALUES (?,?,?,?,?,?,?)",
+        con.execute("INSERT OR IGNORE INTO score_snapshots VALUES (?,?,?,?,?,?,?)",
                     (asof, r["ticker"].replace(".AX", ""), r.get("long_score"), r.get("short_score"),
                      int(bool(r.get("liquid_long"))), int(bool(r.get("liquid_short"))), now))
         n += 1
@@ -103,7 +102,7 @@ def record_shortradar(radar10):
     con = _connect()
     now = _recorded_now()
     for i, r in enumerate(rows, 1):
-        con.execute("INSERT OR REPLACE INTO shortradar_snapshots VALUES (?,?,?,?,?,?)",
+        con.execute("INSERT OR IGNORE INTO shortradar_snapshots VALUES (?,?,?,?,?,?)",
                     (asof, r["symbol_id"].replace("AU.", ""), r["known_contribution"], i, len(rows), now))
     con.commit()
     con.close()
@@ -113,8 +112,10 @@ def record_shortradar(radar10):
 def record(report, log=print, stock_rows=None):
     """Store one point-in-time row per sector / highlighted stock / market. Idempotent.
 
-    Keyed on the data's own as-of date, so re-running the same day overwrites rather
-    than duplicating, and a run on a stale cache cannot invent a second observation.
+    Keyed on the data's own as-of date, so a re-run cannot invent a second observation.
+    Sector/stock rows are overwritten on re-run; the market row (the daily pick lists that
+    forward.py scores) and the score tables keep the FIRST record, so a late re-run cannot
+    move an on-time prediction past the next open.
     """
     asof = report.get("as_of")
     if not asof:
@@ -157,7 +158,11 @@ def record(report, log=print, stock_rows=None):
     L, S = rec.get("long") or {}, rec.get("short") or {}
     fc = {f["key"]: f for f in (report.get("forecasts") or [])}
     d = report.get("direction") or {}
-    con.execute("INSERT OR REPLACE INTO market_snapshots VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+    # 前瞻记录以**第一次**为准（INSERT OR IGNORE）。以前用 REPLACE：次日开盘后行情还没更新、
+    # as_of 仍是前一天的重跑，会把前一天准时记下的名单原样覆盖一遍，记录时刻变成开盘之后，
+    # 前瞻成绩单就把它误判成「迟到」。2026-08-28、09-25 两天就是这样被冤枉的（git 历史可证）。
+    # 板块/个股的资金快照仍按 REPLACE（不参与前瞻打分）。
+    con.execute("INSERT OR IGNORE INTO market_snapshots VALUES (?,?,?,?,?,?,?,?,?,?,?)",
                 (asof, (report.get("benchmark") or {}).get("last"),
                  (report.get("benchmark") or {}).get("rv20"),
                  d.get("p_up"), (fc.get("vol_up_20d") or {}).get("p_final"),

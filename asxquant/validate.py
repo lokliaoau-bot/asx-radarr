@@ -168,8 +168,22 @@ def _overlap_stats(series, horizon):
         "phases": len(sub),
         "phases_same_sign": (sum(1 for t in sub if np.sign(t) == np.sign(m)) if sub else None),
         "phases_significant": sum(1 for _, _, p in phases if p is not None and p < 0.05),
-        "verdict": _verdict(t0) if t0 is not None else "insufficient",
+        # 判决按 p 值，不按固定的 t 阈值：不重叠样本只有几十个，自由度小时 |t|=2 对应的 p 不到 0.05
+        "verdict": _verdict_p(p0) if t0 is not None else "insufficient",
     }
+
+
+def _verdict_p(p):
+    """与 _verdict 的 t 阈值（3 / 2 / 1.6）在大样本下等价的 p 阈值。"""
+    if p is None or not np.isfinite(p):
+        return "insufficient"
+    if p < 0.0027:
+        return "strong"
+    if p < 0.05:
+        return "marginal"
+    if p < 0.11:
+        return "weak"
+    return "none"
 
 
 def _verdict(t):
@@ -479,6 +493,27 @@ def run_validation(px, short_pct, tickers, sector_map, horizon=20,
     borrow = 0.5 * posS.sum(axis=1) * (borrow_bps_pa / 1e4) / 252.0
     ls_net = ls_gross - trade_cost - borrow
 
+    def _vs_market(g, side):
+        """篮子相对等权市场的超额，按 h 天一段切成**互不重叠**的段做 t 检验。
+
+        2026-10-15 自查补上：界面一直写着「空头篮子每年少涨约 N 个百分点」，却从没检验过
+        这个差距本身是不是运气。组合每 h 天换一次仓，按 h 天切段，每段是独立的一次持有。
+        """
+        from scipy import stats as _st
+        ex = (pd.Series(g) - mkt).fillna(0.0)
+        blocks = np.array([float(ex.iloc[i:i + horizon].sum())
+                           for i in range(0, len(ex) - horizon + 1, horizon)])
+        n = len(blocks)
+        if n < 10 or not blocks.std(ddof=1) > 0:
+            return {"n": n, "t": None, "p": None}
+        t = float(blocks.mean() / (blocks.std(ddof=1) / np.sqrt(n)))
+        right = (t < 0) if side == "short" else (t > 0)
+        return {"n": n, "mean_per_period": round(float(blocks.mean()), 5),
+                "annualized": round(float(blocks.mean() * 252 / horizon), 4),
+                "t": round(t, 2), "p": round(float(2 * _st.t.sf(abs(t), n - 1)), 3),
+                "right_direction": bool(right),
+                "hit_rate": round(float(np.mean(blocks < 0 if side == "short" else blocks > 0)), 3)}
+
     def _stats(r, label, trials=None):
         r = pd.Series(r).fillna(0.0)
         eq = (1 + r).cumprod()
@@ -533,6 +568,8 @@ def run_validation(px, short_pct, tickers, sector_map, horizon=20,
             "long_short_net": _stats(ls_net, "市场中性多空(扣交易成本+借券费)", trials=n_trials),
             "long_short_gross": _stats(ls_gross, "市场中性多空(毛)"),
         },
+        "short_vs_market": _vs_market(gS, "short"),
+        "long_vs_market": _vs_market(gL, "long"),
         "cost_drag_pa": {
             "trading": round(float(trade_cost.mean() * 252), 4),
             "borrow": round(float(borrow.mean() * 252), 4),

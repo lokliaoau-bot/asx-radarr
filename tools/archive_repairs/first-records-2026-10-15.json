@@ -1,0 +1,92 @@
+{
+ "run_at": "2026-10-15T10:07:04+00:00",
+ "applied": true,
+ "restored_recorded_at": [
+  {
+   "asof": "2026-08-28",
+   "current_recorded_at": "2026-08-31T16:18:54",
+   "first_recorded_at": "2026-08-28T20:19:34",
+   "first_recorded_utc": "2026-08-28T20:19:34+00:00",
+   "first_seen_commit": "e4e953f672139952e5791d67c832c15e59486d79",
+   "first_seen_commit_time": "2026-08-28T20:19:35Z",
+   "short_picks": "ARF,CHC,SGP",
+   "long_picks": "ANN,NEU,CSL",
+   "restored_to": "2026-08-28T20:19:34+00:00"
+  },
+  {
+   "asof": "2026-09-25",
+   "current_recorded_at": "2026-09-28T16:55:03",
+   "first_recorded_at": "2026-09-25T14:01:39",
+   "first_recorded_utc": "2026-09-25T14:01:39+00:00",
+   "first_seen_commit": "a7f8e839f16875e0623ad3aa92d06c12f81b89ba",
+   "first_seen_commit_time": "2026-09-25T14:01:40Z",
+   "short_picks": "XRO,WTC,NXT",
+   "long_picks": "AMP,CGF,SUN",
+   "restored_to": "2026-09-25T14:01:39+00:00"
+  }
+ ],
+ "not_restored_picks_changed": [],
+ "not_restored_timezone_ambiguous": [
+  {
+   "asof": "2026-08-21",
+   "current_recorded_at": "2026-08-23T11:34:17",
+   "first_recorded_at": "2026-08-23T21:26:56",
+   "first_recorded_utc": "2026-08-23T21:26:56+10:00",
+   "first_seen_commit": "40dbf556689fc86111bc7f88647780d74578ac3b",
+   "first_seen_commit_time": "2026-08-23T21:27:53+10:00",
+   "short_picks": "ARF,CHC,GPT",
+   "long_picks": "NEU,CSL,PME"
+  },
+  {
+   "asof": "2026-08-24",
+   "current_recorded_at": "2026-08-24T12:44:16",
+   "first_recorded_at": "2026-08-24T09:11:07",
+   "first_recorded_utc": "2026-08-24T09:11:07+00:00",
+   "first_seen_commit": "055621e995bce7dba9c0d7e3e4bf9375ac8bcce3",
+   "first_seen_commit_time": "2026-08-24T09:11:07Z",
+   "short_picks": "MTS,TWE,GNC",
+   "long_picks": "NEU,CSL,PME"
+  },
+  {
+   "asof": "2026-08-25",
+   "current_recorded_at": "2026-08-25T10:37:07",
+   "first_recorded_at": "2026-08-25T09:05:51",
+   "first_recorded_utc": "2026-08-25T09:05:51+00:00",
+   "first_seen_commit": "1d3977906ae8a5472f6ac9baa2efc2e7a496b494",
+   "first_seen_commit_time": "2026-08-25T09:05:51Z",
+   "short_picks": "TWE,MTS,A2M",
+   "long_picks": "NEU,CSL,ANN"
+  },
+  {
+   "asof": "2026-08-26",
+   "current_recorded_at": "2026-08-26T11:09:07",
+   "first_recorded_at": "2026-08-26T09:08:50",
+   "first_recorded_utc": "2026-08-26T09:08:50+00:00",
+   "first_seen_commit": "af19c765546a43d7d393ceeb56f37e47edbc8842",
+   "first_seen_commit_time": "2026-08-26T09:08:50Z",
+   "short_picks": "TWE,MTS,A2M",
+   "long_picks": "NEU,CSL,ANN"
+  },
+  {
+   "asof": "2026-08-27",
+   "current_recorded_at": "2026-08-27T19:14:00",
+   "first_recorded_at": "2026-08-27T20:17:51",
+   "first_recorded_utc": "2026-08-27T20:17:51+10:00",
+   "first_seen_commit": "23ea30110138b80df5e5ae7801d515769630ea6d",
+   "first_seen_commit_time": "2026-08-27T20:20:11+10:00",
+   "short_picks": "TWE,MTS,A2M",
+   "long_picks": "NEU,CSL,ANN"
+  },
+  {
+   "asof": "2026-10-14",
+   "current_recorded_at": "2026-10-14T13:53:19",
+   "first_recorded_at": "2026-10-14T10:42:03",
+   "first_recorded_utc": "2026-10-14T10:42:03+00:00",
+   "first_seen_commit": "8c4979bdedeec8aed496ff692f9041e3efb3db7b",
+   "first_seen_commit_time": "2026-10-14T10:42:20Z",
+   "short_picks": "XRO,WTC,MP1",
+   "long_picks": "DMP,PMV,LOV"
+  }
+ ],
+ "rule": "只在首次记录的名单与现在完全相同、且按 UTC 和悉尼两种读法首次记录都更早时，才把记录时刻恢复为首次记录（写成带时区的 UTC）；其余不动"
+}

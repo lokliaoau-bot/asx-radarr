@@ -352,23 +352,41 @@ function forwardSection(r) {
 
 /* 看空评分的证据，用大白话说。文字跟着判决走、不写死：2026-10-15 改用不重叠检验后，
    判决从「勉强达标」降到了「差一点」，以前写死的「看空靠谱」就成了过头话。 */
+/* 看空分「对的方向」是负数（分越高、之后越弱）。phases_same_sign 数的是和均值同号的起点，
+   不是「方向对」的起点——均值一旦变正，它数的就是反方向。所以这里先按看空的正确方向换算，
+   不能假设方向永远是对的（2026-10-15 自查发现：以前的文字会在方向反了时照样说「方向对」）。 */
+function shortDirection(ic) {
+  ic = ic || {};
+  var right = ic.mean_ic != null ? ic.mean_ic < 0 : null;
+  var k = (ic.phases_same_sign != null && ic.phases)
+    ? (right ? ic.phases_same_sign : ic.phases - ic.phases_same_sign) : null;
+  return {right: right, k: k, n: ic.phases || null,
+          always: k != null && k === ic.phases, mostly: k != null && ic.phases && k / ic.phases >= 0.75};
+}
 function shortEvidence(ic) {
   ic = ic || {};
-  var dir = (ic.phases_same_sign != null && ic.phases)
-    ? '换 ' + ic.phases + ' 种不同的起始日去算，有 ' + ic.phases_same_sign + ' 次方向是对的' : "";
+  var d = shortDirection(ic);
+  var dir = d.k != null ? '换 ' + d.n + ' 种不同的起始日去算，有 ' + d.k + ' 次方向是对的' : "";
   var pv = ic.p_value != null ? '（' + term("p值", GLOSSARY["p值"]) + ' ' + num(ic.p_value, 2) + '，门槛 0.05）' : "";
+  if (d.right === false)
+    return '系统挑"该躲哪只"的方法<b>方向是反的</b>——它挑出来的股票之后反而相对更强' +
+      (dir ? '（' + dir + '）' : "") + pv + '。';
   if (ic.verdict === "strong" || ic.verdict === "marginal")
     return '系统挑"该躲哪只"的方法<b>过了常规的统计门槛</b>' + (dir ? '（' + dir + '）' : "") + pv + '，但优势不大。';
   if (ic.verdict === "weak")
-    return '系统挑"该躲哪只"的方法<b>方向一直是对的</b>' + (dir ? '（' + dir + '）' : "") +
+    return '系统挑"该躲哪只"的方法<b>' + (d.always ? '方向一直是对的' : d.mostly ? '方向大多数时候是对的' : '方向时对时错') +
+      '</b>' + (dir ? '（' + dir + '）' : "") +
       '，但证据<b>还差一点</b>，按严格的' + term("t值", GLOSSARY["t值"]) + '检验还不能算"证明有效"' + pv + '。';
   return '系统挑"该躲哪只"的方法<b>目前没有可靠的统计证据</b>' + (dir ? '（' + dir + '）' : "") + pv + '。';
 }
 /* 同一判决的一句话版本，给顶部结论和说明文字用 */
 function shortEvidenceShort(ic) {
-  var vd = (ic || {}).verdict;
+  var vd = (ic || {}).verdict, d = shortDirection(ic);
+  if (d.right === false) return "方向是反的";
   return (vd === "strong" || vd === "marginal") ? "过了常规统计门槛，但优势不大"
-    : vd === "weak" ? "方向一直对，但证据还差一点，还不算证明有效" : "目前没有可靠的统计证据";
+    : vd === "weak" ? ((d.always ? "方向一直对" : d.mostly ? "方向大多数时候对" : "方向时对时错") +
+      "，但证据还差一点，还不算证明有效")
+    : "目前没有可靠的统计证据";
 }
 
 function verdictSection(r) {
@@ -402,8 +420,18 @@ function verdictSection(r) {
   }
 
   var L = rec.long, S = rec.short;
-  var gap = ((legs.market || {}).cagr != null && (legs.short_basket || {}).cagr != null)
-    ? (legs.market.cagr - legs.short_basket.cagr) : null;
+  // 篮子 vs 同池平均：用每 h 天一段的平均超额（不是两条复利年化相减——复利会把差距放大），
+  // 并且附上这个差距本身的检验结果（validate._vs_market）。
+  var svm = v.short_vs_market || {};
+  var gapTxt = "";
+  if (svm.annualized != null) {
+    var under = svm.annualized < 0;
+    gapTxt = '历史上照它挑的这批股票，按每 ' + (v.horizon || 20) + ' 个交易日一段算，平均每年比同一批可选股票的平均' +
+      (under ? '少涨' : '多涨') + '约 <b>' + num(Math.abs(svm.annualized) * 100, 0) + ' 个百分点</b>；' +
+      (svm.n ? svm.n + ' 段里有 ' + Math.round((svm.hit_rate || 0) * svm.n) + ' 段跑输，' : '') +
+      (svm.p != null && svm.p < 0.05 && under ? '这个差距不太像运气。'
+        : '这个差距<b>可能只是运气</b>（' + term("p值", GLOSSARY["p值"]) + ' ' + num(svm.p, 2) + '）。');
+  }
   return '<div class="verdict">' +
     '<div class="vcard long"><div class="vh"><span class="vside">建议看多方向</span>' +
     '<span class="vsec">' + esc(L.sector_name) + '</span>' +
@@ -425,8 +453,7 @@ function verdictSection(r) {
     '<div class="vnote">' + annotate(S.stage_note) +
     '<br><b style="color:#fbbf24">⚠️ 可信度：' + esc(icS.verdict_cn || "—") + '。</b>' +
     shortEvidence(icS) +
-    (gap != null ? '历史上照它挑的这批股票，平均每年比大盘少涨约 <b>' + num(gap * 100, 0) +
-      ' 个百分点</b>——方向是对的，但同样还没强到能排除运气。' : '') +
+    gapTxt +
     '<br><b style="color:#fbbf24">三点务必记住：</b>①"跑输大盘"<b>不等于"一定下跌"</b>——' +
     '历史上这批股票整体自身的收益是 ' + spct((legs.short_basket || {}).cagr) +
     '/年（同期大盘 ' + spct((legs.market || {}).cagr) + '）——' +
@@ -439,7 +466,7 @@ function verdictSection(r) {
     spct((legs.long_short_net || {}).cagr) + '（' + term("夏普", GLOSSARY["夏普"]) + ' ' +
     num((legs.long_short_net || {}).sharpe, 2) + '），一年要换 ' + num(v.turnover_pa, 0) +
     ' 批仓</b>。所以它的正确用法是<b>"回避 / 少配一点"，不是"靠它做空赚钱"</b>。' +
-    '③这种信号<b>大约每月就会失效一次，名单要经常刷新</b>，拿着不动一两个月反而可能被' +
+    '③这种信号就算有用也<b>衰减得很快，名单要每月刷新</b>，拿着不动一两个月反而可能被' +
     term("轧空", GLOSSARY["轧空"]) + '。</div>' +
     S.picks.map(function (p) { return pickHtml(p, "short"); }).join("") + '</div></div>';
 }
@@ -885,8 +912,11 @@ function methodology(r) {
   '，完全不修正时看起来是 ' + num((v.ic_short || {}).t_naive, 2) + '），<b>且衡量的是「跑输」而非「下跌」。</b>' +
   '样本期内空头篮子自身的收益是 ' + spct(((v.legs || {}).short_basket || {}).cagr) +
   '/年（同期大盘 ' + spct(((v.legs || {}).market || {}).cagr) + '）。裸空需要额外的大盘方向判断<br>' +
-  '· <b>空头信号衰减很快</b>：实测 20 日再平衡时空头篮子跑输约 10pp/年，40 日降到约 6pp，' +
-  '60 日及以上信号消失甚至反转（轧空）。<b>名单需要大约每月刷新一次</b><br>' +
+  '· <b>空头篮子相对同池平均</b>：按每 ' + (v.horizon || 20) + ' 天一段算，年化 ' +
+  spct((v.short_vs_market || {}).annualized) + '，' + ((v.short_vs_market || {}).n || '—') + ' 段里跑输的占 ' +
+  pct((v.short_vs_market || {}).hit_rate, 0) + '，p=' + num((v.short_vs_market || {}).p, 2) +
+  '——<b>这个差距本身也还不能排除运气</b>。2026-08 曾测得「持有越久信号越弱，60 日以上反转」，' +
+  '那次没做显著性检验，只当参考；名单仍建议每月刷新<br>' +
   '· 市场中性多空组合扣成本后年化 ' + spct(((v.legs || {}).long_short_net || {}).cagr) +
   '——换手成本吃掉了大部分毛收益<br>' +
   (v.day1_effect ?
