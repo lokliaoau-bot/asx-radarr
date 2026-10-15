@@ -7,6 +7,7 @@ import os
 import threading
 import traceback
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from urllib.parse import parse_qs, urlsplit
 
 from . import datafeed as D
 from . import engine as E
@@ -98,6 +99,22 @@ class Handler(BaseHTTPRequestHandler):
             return self._file("index.html", "text/html; charset=utf-8")
         if path == "/app.js":
             return self._file("app.js", "application/javascript; charset=utf-8")
+        if path == "/stock.js":
+            return self._file("stock.js", "application/javascript; charset=utf-8")
+        if path == "/api/stock":
+            from . import stock_lookup as SL
+            params = parse_qs(urlsplit(self.path).query, keep_blank_values=True)
+            if set(params) != {"ticker"} or len(params["ticker"]) != 1:
+                return self._send(400, json.dumps({"error": "请只提供一个 ticker 参数。"}, ensure_ascii=False))
+            try:
+                result = SL.lookup(params["ticker"][0])
+                return self._send(200, json.dumps(result, ensure_ascii=False, allow_nan=False))
+            except BlockingIOError as e:
+                return self._send(429, json.dumps({"error": str(e)}, ensure_ascii=False))
+            except ValueError as e:
+                return self._send(400, json.dumps({"error": str(e)}, ensure_ascii=False))
+            except Exception as e:
+                return self._send(502, json.dumps({"error": str(e)}, ensure_ascii=False))
         if path == "/style.css":
             return self._file("style.css", "text/css; charset=utf-8")
         if path == "/sw.js":

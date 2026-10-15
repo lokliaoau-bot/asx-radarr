@@ -1271,7 +1271,7 @@ function load() {
     }
   }).catch(function (e) {
     if (el("app").innerHTML.indexOf("对不上") >= 0) return;   // 上面已经报过了
-    el("app").innerHTML = '<div class="empty">尚无数据。<br><br>点击右上角 <b>更新全部指标</b> 开始。' +
+    el("app").innerHTML = '<div class="empty">全市场报告尚未生成。<br><br><b>上方单股查询可独立使用，无需先训练模型。</b><br>如需全市场报告，点击右上角 <b>更新全部指标</b>。' +
       '<br><span style="font-size:12px">首次运行需下载12年行情与5年ASIC空头数据并训练模型，约 3–5 分钟；之后每次约数秒。</span></div>';
   });
 }

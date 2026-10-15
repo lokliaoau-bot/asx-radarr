@@ -18,7 +18,7 @@ https://lokliaoau-bot.github.io/asx-radarr/ （主页） · /short/ （看空雷
 ## 本地验证（全部离线、合成数据，约 3–5 分钟）
 ```bash
 pip install -r requirements.txt
-for t in test_step1 test_shortradar test_review test_round3 test_selfreview test_calibrate test_journal test_shortradar_review; do python -m tests.$t || exit 1; done
+for t in test_step1 test_shortradar test_review test_round3 test_selfreview test_calibrate test_journal test_shortradar_review test_stock_lookup; do python -m tests.$t || exit 1; done
 ```
 Windows：所有文本读写写明 `encoding="utf-8"`；改 JS 文件不要用「heredoc 套 Python 字符串」，转义会写坏。
 
@@ -42,3 +42,4 @@ Windows：所有文本读写写明 `encoding="utf-8"`；改 JS 文件不要用�
   （来源：ASX 官网交易日历页）。**2027 年底前**要按官网补 2028 年（`short_radar/asx_calendar.py` 的 HOLIDAYS
   + 当年提前收市日的补充说明）。系统会提前 120 天在 self-review.md 里报警。
 - 不登录券商、不下单、不付费、不新建网站。
+- 单股入口：`python run.py --stock BHP` 或首页输入代码。本地按需抓取；手机用每日缓存；不改变主股票池或评分。报价与完整日线分开，数据过期暂停判断，借券/费用未知保持 null。
