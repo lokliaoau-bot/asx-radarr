@@ -409,6 +409,16 @@ def run(force=False, log=print, progress=None):
     if rec and rec.get("short") is not None:
         rec["short"]["model"] = cal_state.get("active_model", "champion")
         rec["short"]["paused"] = bool(cal_state.get("paused"))
+        # 数据过期守卫（journal.py，预先登记）：ASIC 空头数据比价格晚太多，看空分里的空头成分
+        # 都是旧的——当天给看空名单挂「暂停参考」。只影响当天，数据恢复就自动解除。
+        try:
+            from . import journal as JR
+            _lag = JR.asic_lag(px["close"].index,
+                               str(shorts["date"].max().date()) if len(shorts) else None, str(asof.date()))
+            rec["short"]["asic_lag"] = _lag
+            rec["short"]["data_stale"] = bool(_lag is not None and _lag > JR.ASIC_STALE_LAG)
+        except Exception:
+            log("数据过期检查失败: %s" % traceback.format_exc().splitlines()[-1])
 
     step("正在定位资金流入/流出的具体股票 ...", 30)
     try:
@@ -625,6 +635,16 @@ def run(force=False, log=print, progress=None):
     except Exception:
         log("自动校准失败(不影响本次结果): %s" % traceback.format_exc().splitlines()[-1])
         report["calibration"] = None
+
+    # 自我记录 + 每日复盘 + 改进提案（journal.py）。只描述、只提案，不自动改评分。
+    try:
+        from . import journal as JR
+        report["reflection"] = JR.reflect(px, spct, report, ticker_to_sector())
+        for line in report["reflection"]["notes"][:3]:
+            log("复盘: " + line)
+    except Exception:
+        log("每日复盘失败(不影响本次结果): %s" % traceback.format_exc().splitlines()[-1])
+        report["reflection"] = None
 
     step("完成 (%.1fs)" % report["runtime_sec"], 100)
     return _clean(report)

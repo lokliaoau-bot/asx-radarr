@@ -66,6 +66,19 @@ def _connect():
         PRIMARY KEY (asof, model, code))""")
     con.execute("""CREATE TABLE IF NOT EXISTS model_decisions (
         decided_at TEXT PRIMARY KEY, actions TEXT, state_json TEXT, evidence_json TEXT)""")
+    # 自我记录 / 自我复盘（journal.py）：
+    #   run_log           每次运行：用的哪版代码、哪天的数据、当时的把握和状态（每次一行）
+    #   component_snapshots 看空分 9 个成分当天的值（以第一次为准），以后能拆开看谁在拖后腿
+    #   reflection_log    每天的复盘（可重算的派生结果，同一天以最后一次为准）
+    #   proposals         复盘发现、但规则无权自动处理的改进提案（key 去重，状态可更新）
+    con.execute("""CREATE TABLE IF NOT EXISTS run_log (
+        run_at TEXT PRIMARY KEY, asof TEXT, json TEXT)""")
+    con.execute("""CREATE TABLE IF NOT EXISTS component_snapshots (
+        asof TEXT PRIMARY KEY, recorded_at TEXT, json TEXT)""")
+    con.execute("""CREATE TABLE IF NOT EXISTS reflection_log (
+        asof TEXT PRIMARY KEY, recorded_at TEXT, json TEXT)""")
+    con.execute("""CREATE TABLE IF NOT EXISTS proposals (
+        key TEXT PRIMARY KEY, created_at TEXT, updated_at TEXT, status TEXT, json TEXT)""")
     con.execute("CREATE INDEX IF NOT EXISTS ix_snap_sec ON sector_snapshots(sector, asof)")
     con.execute("CREATE INDEX IF NOT EXISTS ix_snap_stk ON stock_snapshots(code, asof)")
     con.commit()
@@ -127,6 +140,23 @@ def record_challengers(asof, scores, con=None):
     if own:
         con.close()
     return n
+
+
+def record_components(asof, stock_rows, con=None):
+    """看空分 9 个成分（权重 × z 分）当天的值，只存可做空的股票。以第一次为准。"""
+    data = {r["ticker"].replace(".AX", ""): r["short_parts"] for r in stock_rows or []
+            if r.get("liquid_short") and r.get("short_parts")}
+    if not data:
+        return 0
+    own = con is None
+    con = con or _connect()
+    import json as _json
+    con.execute("INSERT OR IGNORE INTO component_snapshots VALUES (?,?,?)",
+                (asof, _recorded_now(), _json.dumps(data, separators=(",", ":"))))
+    con.commit()
+    if own:
+        con.close()
+    return len(data)
 
 
 def record_shortradar(radar10):
@@ -212,6 +242,7 @@ def record(report, log=print, stock_rows=None):
     n_scores = record_scores(asof, stock_rows, con) if stock_rows else 0
     if stock_rows:
         record_challengers(asof, challenger_scores(stock_rows), con)
+        record_components(asof, stock_rows, con)
 
     days = con.execute("SELECT COUNT(*) FROM market_snapshots").fetchone()[0]
     first = con.execute("SELECT MIN(asof) FROM market_snapshots").fetchone()[0]

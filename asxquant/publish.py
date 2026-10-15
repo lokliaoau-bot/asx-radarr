@@ -46,6 +46,15 @@ def build(report, out_dir=None, log=print):
     atomic_bytes(os.path.join(out_dir, "report.json"),
                  json.dumps(report, ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
 
+    # 给编码助手读的系统自我复盘（journal.to_markdown）；复盘失败不影响主站
+    try:
+        from . import journal as JR
+        if report.get("reflection"):
+            atomic_bytes(os.path.join(out_dir, "self-review.md"),
+                         JR.to_markdown(report["reflection"], report.get("calibration")).encode("utf-8"))
+    except Exception as e:
+        log("自我复盘摘要生成失败(不影响主站): %s" % e)
+
     # Pages would otherwise run the output through Jekyll and drop files it dislikes
     open(os.path.join(out_dir, ".nojekyll"), "w").close()
 

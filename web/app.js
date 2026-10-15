@@ -350,6 +350,43 @@ function forwardSection(r) {
     '</div></div></section>';
 }
 
+/* 系统自我复盘（asxquant/journal.py）：每天记下自己做了什么、结果如何、可能错在哪、
+   有没有需要人或编码助手去检验的改进提案。只描述、只提案，不自动改评分。 */
+function selfReviewSection(r) {
+  var x = r.reflection;
+  if (!x) return "";
+  var notes = (x.notes || []).map(function (n) { return '<li>' + esc(n) + '</li>'; }).join("");
+  var m = x.misses_20d || {};
+  var eps = (m.recent_episodes || []).slice().reverse().map(function (e) {
+    var tags = (e.tags || []).map(function (t) {
+      return {covering: "空头在回补", jump: "有一天暴涨10%+", sector: "整个板块一起涨"}[t] || t; }).join("、");
+    return '<tr><td class="name">' + esc(e.code) + '</td><td>' + esc(e.first) + (e.days > 1 ? '（连续 ' + e.days + ' 天上榜）' : '') +
+      '</td><td class="dn">' + spct(e.max_excess) + '</td><td>' + esc(tags || "没找到明显原因") + '</td></tr>';
+  }).join("");
+  var props = (x.proposals || []).map(function (p) {
+    return '<li><b>' + esc(p.title) + '</b><br><span class="mut">假设：</span>' + esc(p.hypothesis) +
+      '<br><span class="mut">证据：</span>' + esc(p.evidence) + '<br><span class="mut">怎么检验：</span>' + esc(p.test) + '</li>';
+  }).join("");
+  var recent = (x.recent || []).slice(1, 6).map(function (d) {
+    return '<li><b>' + esc(d.as_of) + '</b>：' + esc((d.notes || [])[0] || "") + '</li>';
+  }).join("");
+  var code = x.code || {};
+  return '<section><h2>系统自我复盘 <span class="tag fcst">每天自动</span></h2>' +
+    '<p class="lead">系统每天收盘后自己检查一遍：今天哪些预测出了结果、对了还是错了、错了可能是什么原因、数据有没有问题。' +
+    '<b>它只记录和提出改进建议，不会自己去改评分公式</b>——信号太弱，几次失误里的"规律"多半是运气。</p>' +
+    '<div class="panel" style="padding:14px 16px"><ul class="plainList">' + notes + '</ul>' +
+    (eps ? '<div style="height:8px"></div><b>最近的大失误（看空名单里之后反而多涨 5% 以上的；同一只连着几天上榜算一次）</b>' +
+      '<table style="margin-top:6px"><thead><tr><th>股票</th><th>上榜日</th><th>比同池多涨</th><th>可能的原因</th></tr></thead><tbody>' +
+      eps + '</tbody></table>' : '') +
+    '<div style="height:10px"></div><b>改进提案</b>' +
+    (props ? '<ul class="plainList">' + props + '</ul>'
+      : '<div class="mut" style="margin:6px 0">目前没有。只有当同一种失误原因在至少 5 个独立事件里占六成以上、或某个成分在实盘里显著反着来时，系统才会写提案。</div>') +
+    (recent ? '<details style="margin-top:8px"><summary>前几天的复盘</summary><ul class="plainList">' + recent + '</ul></details>' : '') +
+    '<div class="foot-note" style="margin-top:8px">这份复盘由代码版本 ' + esc(String(code.commit || "—").slice(0, 7)) +
+    (code.dirty ? '（含未提交改动）' : '') + ' 生成；每次运行、每份预测用的是哪版代码、哪天的数据，都存在仓库的存档里。</div>' +
+    '</div></section>';
+}
+
 /* 自动校准（asxquant/calibrate.py）：拿实盘结果回来对账，按事先写死的规则调整自己。 */
 function calibrationSection(r) {
   var c = r.calibration;
@@ -494,6 +531,8 @@ function verdictSection(r) {
     '<span class="stage-pill stage-distribution">' + esc(S.stage) + '</span></div>' +
     '<div class="vstage">越来越多机构在赌它跌，同时资金在撤（' + sgn(S.flow_score, 2) +
     '），板块近20天 ' + spct(S.ret_20d) + '</div>' +
+    (S.data_stale ? '<div class="warn-line"><b>⛔ 今天暂停参考：空头数据过期了。</b>ASIC 的空头数据比价格晚了 ' +
+      esc(S.asic_lag) + ' 个交易日（正常 4 天），这份名单用的是旧的空头信息。数据恢复后会自动解除。</div>' : '') +
     (S.paused ? '<div class="warn-line"><b>⛔ 这份看空名单已被自动校准暂停：</b>实盘对账证明它挑的股票之后反而更强。' +
       '下面的名单只留作记录，不要参考。</div>' : '') +
     (S.model && S.model !== "champion" ? '<div class="warn-line"><b>🔁 这份名单已由自动校准改用「' +
@@ -1108,6 +1147,7 @@ function render(r) {
     verdictSection(r) + '</section>' +
     forwardSection(r) +
     calibrationSection(r) +
+    selfReviewSection(r) +
 
     squeezeSection(r) +
 
