@@ -158,6 +158,9 @@ def _overlap_stats(series, horizon):
     return {
         "mean": round(m, 5), "sd": round(sd, 5), "n_days": int(n),
         "t_stat": _r(t0), "p_value": _r(p0, 3), "n_nonoverlap": int(n0),
+        # 判决用的那组不重叠样本自己的均值和标准误（calibrate.py 的把握起点要用同一口径）
+        "mean_nonoverlap": _r(s.iloc[0::horizon].dropna().mean(), 5),
+        "se_nonoverlap": _r(s.iloc[0::horizon].dropna().std(ddof=1) / np.sqrt(max(n0, 1)), 5),
         "inference": "fixed_phase0_nonoverlap",
         "t_nw": _r(nw), "t_naive": _r(naive),          # 诊断用，不判决
         "se_inflation": _r(infl, 1),

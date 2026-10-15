@@ -374,6 +374,21 @@ def run(force=False, log=print, progress=None):
     panel = S.score_sectors(S.build_sector_panel(px, spct, ssha))
     stock_rows = PK.score_stocks(panel, halted=halted)
 
+    # 自动校准的状态（calibrate.py）：读**上一次**对账后定下的状态，作用到今天的名单上。
+    # 今天的对账结果在本次运行末尾才算，若改变状态，从下一次运行起生效——不在同一次运行里
+    # 一边对账一边改名单。
+    cal_state = {"active_model": "champion", "paused": False}
+    try:
+        from . import calibrate as CAL
+        _c = AR._connect()
+        _row = _c.execute("SELECT state_json FROM model_decisions ORDER BY decided_at DESC LIMIT 1").fetchone()
+        _c.close()
+        if _row:
+            cal_state = json.loads(_row[0])
+        stock_rows = CAL.apply_to_rows(stock_rows, cal_state, AR.challenger_scores(stock_rows))
+    except Exception:
+        log("自动校准状态读取失败(按原模型运行): %s" % traceback.format_exc().splitlines()[-1])
+
     # Where the short sellers got in, and whether they are under water.
     try:
         scost = SC.build(shorts, px, [t.replace(".AX", "") for t in tickers])
@@ -391,6 +406,9 @@ def run(force=False, log=print, progress=None):
 
     rec = PK.build_recommendations(panel, stock_rows, n=3, profiles=profiles,
                                    short_cost=scost)
+    if rec and rec.get("short") is not None:
+        rec["short"]["model"] = cal_state.get("active_model", "champion")
+        rec["short"]["paused"] = bool(cal_state.get("paused"))
 
     step("正在定位资金流入/流出的具体股票 ...", 30)
     try:
@@ -597,6 +615,16 @@ def run(force=False, log=print, progress=None):
     except Exception:
         log("前瞻成绩单失败(不影响本次结果): %s" % traceback.format_exc().splitlines()[-1])
         report["forward_track"] = None
+
+    # 自动校准：对账 → 更新把握刻度 → 按预先登记的规则决定（是否暂停 / 换将），见 calibrate.py。
+    try:
+        from . import calibrate as CAL
+        report["calibration"] = CAL.run(px, (report.get("validation") or {}).get("ic_short"))
+        if report["calibration"]["actions_today"]:
+            log("自动校准: 状态改变 %s（下次运行生效）" % report["calibration"]["actions_today"])
+    except Exception:
+        log("自动校准失败(不影响本次结果): %s" % traceback.format_exc().splitlines()[-1])
+        report["calibration"] = None
 
     step("完成 (%.1fs)" % report["runtime_sec"], 100)
     return _clean(report)

@@ -350,6 +350,50 @@ function forwardSection(r) {
     '</div></div></section>';
 }
 
+/* 自动校准（asxquant/calibrate.py）：拿实盘结果回来对账，按事先写死的规则调整自己。 */
+function calibrationSection(r) {
+  var c = r.calibration;
+  if (!c) return "";
+  var tr = c.trust || {}, ev = c.evidence || {}, st = c.state || {};
+  var nm = c.names || {};
+  var segs = tr.prospective_segments || 0, need = c.min_segments || 10;
+  var stateTxt = st.paused ? '<b class="dn">看空名单已暂停</b>（实盘证明方向反了）'
+    : st.active_model && st.active_model !== "champion"
+      ? '<b>看空名单已改用「' + esc(nm[st.active_model] || st.active_model) + '」排序</b>（实盘证明它更准）'
+      : '照常使用系统看空分（还没有任何规则被触发）';
+  function row(key, e) {
+    e = e || {};
+    return '<tr><td class="name">' + esc(nm[key] || key) + '</td><td>' + (e.segments != null ? e.segments : segs) + ' 段</td>' +
+      '<td>' + num(e.mean_ic, 3) + '</td>' +
+      '<td>' + (key === "champion" ? "—" : (e.diff_t == null ? "还算不了" : (e.diff_t < 0 ? "它更准" : "系统更准") +
+        '（' + term("p值", GLOSSARY["p值"]) + ' ' + num(e.diff_p_adj, 2) + '）')) + '</td></tr>';
+  }
+  var hist = (c.history || []).slice(-5).map(function (h) {
+    return '<li>' + esc(String(h.decided_at).slice(0, 10)) + '：' + esc(h.actions) + '</li>';
+  }).join("");
+  return '<section><h2>自动校准：拿实盘结果回来对账，按规则调整自己 <span class="tag fcst">自动</span></h2>' +
+    '<p class="lead">系统每天收盘后，把自己的看空评分和 3 个简单"对手"的评分一起记下来（事后改不了）。' +
+    '20 个交易日后用真实价格对账，看谁挑得准，再按<b>事先写死的规则</b>自动调整。</p>' +
+    '<div class="panel" style="padding:14px 16px">' +
+    '<div class="pl"><div class="ico">🎚️</div><div class="txt">现在的把握：<b>' + esc(tr.label || "—") + '</b>' +
+    (tr.p_right != null ? '（系统看空分真的有效的可能性约 <b>' + pct(tr.p_right, 0) + '</b>）' : '') +
+    '。起点是回测结果<b>打五折</b>（新信号上线后通常只剩一半效果），实盘每多一段，就往实盘结果靠一点。' +
+    '目前实盘已对账 <b>' + segs + '</b> 段。</div></div>' +
+    '<div class="pl"><div class="ico">🧭</div><div class="txt">现在的状态：' + stateTxt + '。</div></div>' +
+    '<div class="pl"><div class="ico">📏</div><div class="txt"><b>规则（' + esc(c.registered) + ' 定下，之后不改）：</b>' +
+    '① 实盘满 ' + need + ' 段后，如果系统看空分<b>方向反了</b>而且不太像运气 → 自动<b>暂停</b>看空名单；' +
+    '② 如果某个对手<b>明显比系统准</b>（对比后不太像运气），而且它自己也确实有效 → 看空名单<b>自动改用它排序</b>；' +
+    '③ 已经暂停或换掉的，要同样强的证据反过来才恢复，不会一两次就来回跳；' +
+    '④ <b>不会</b>根据最近成绩去改评分里的权重——信号这么弱，按最近成绩改权重，改的几乎全是运气。</div></div>' +
+    '<table style="margin-top:8px"><thead><tr><th>谁</th><th>已对账</th>' +
+    '<th title="评分和之后20天涨跌的关系；看空模型要负数才对">实盘吻合度</th><th>和系统比</th></tr></thead><tbody>' +
+    row("champion", ev.champion) + ["neg_mom20", "short_build", "technical_v1"].map(function (k) {
+      return row(k, (ev.challengers || {})[k]); }).join("") + '</tbody></table>' +
+    '<div class="foot-note" style="margin-top:10px">大白话：这类信号很弱，要攒很久才看得出谁准。' +
+    '按 20 天一段，满 ' + need + ' 段最早也要到 2027 年中；在那之前只有"把握"会慢慢变，不会触发暂停或换将。' +
+    (hist ? '<br>调整记录：<ul>' + hist + '</ul>' : '<br>调整记录：还没有。') + '</div></div></section>';
+}
+
 /* 看空评分的证据，用大白话说。文字跟着判决走、不写死：2026-10-15 改用不重叠检验后，
    判决从「勉强达标」降到了「差一点」，以前写死的「看空靠谱」就成了过头话。 */
 /* 看空分「对的方向」是负数（分越高、之后越弱）。phases_same_sign 数的是和均值同号的起点，
@@ -450,6 +494,10 @@ function verdictSection(r) {
     '<span class="stage-pill stage-distribution">' + esc(S.stage) + '</span></div>' +
     '<div class="vstage">越来越多机构在赌它跌，同时资金在撤（' + sgn(S.flow_score, 2) +
     '），板块近20天 ' + spct(S.ret_20d) + '</div>' +
+    (S.paused ? '<div class="warn-line"><b>⛔ 这份看空名单已被自动校准暂停：</b>实盘对账证明它挑的股票之后反而更强。' +
+      '下面的名单只留作记录，不要参考。</div>' : '') +
+    (S.model && S.model !== "champion" ? '<div class="warn-line"><b>🔁 这份名单已由自动校准改用「' +
+      esc(((r.calibration || {}).names || {})[S.model] || S.model) + '」排序</b>——实盘对账证明它比系统原来的看空分更准。</div>' : '') +
     '<div class="vnote">' + annotate(S.stage_note) +
     '<br><b style="color:#fbbf24">⚠️ 可信度：' + esc(icS.verdict_cn || "—") + '。</b>' +
     shortEvidence(icS) +
@@ -1059,6 +1107,7 @@ function render(r) {
     '数字都算过过去 ' + ((r.validation || {}).years || "—") + ' 年的实际表现。</p>' +
     verdictSection(r) + '</section>' +
     forwardSection(r) +
+    calibrationSection(r) +
 
     squeezeSection(r) +
 

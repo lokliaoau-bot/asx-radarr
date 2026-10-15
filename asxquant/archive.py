@@ -60,6 +60,12 @@ def _connect():
     con.execute("""CREATE TABLE IF NOT EXISTS shortradar_snapshots (
         asof TEXT, code TEXT, score REAL, rank INTEGER, eligible_n INTEGER,
         recorded_at TEXT, PRIMARY KEY (asof, code))""")
+    # 自动校准（calibrate.py）：对手模型每天的评分，和每次状态改变的记录。
+    con.execute("""CREATE TABLE IF NOT EXISTS challenger_snapshots (
+        asof TEXT, model TEXT, code TEXT, score REAL, recorded_at TEXT,
+        PRIMARY KEY (asof, model, code))""")
+    con.execute("""CREATE TABLE IF NOT EXISTS model_decisions (
+        decided_at TEXT PRIMARY KEY, actions TEXT, state_json TEXT, evidence_json TEXT)""")
     con.execute("CREATE INDEX IF NOT EXISTS ix_snap_sec ON sector_snapshots(sector, asof)")
     con.execute("CREATE INDEX IF NOT EXISTS ix_snap_stk ON stock_snapshots(code, asof)")
     con.commit()
@@ -82,9 +88,41 @@ def record_scores(asof, stock_rows, con=None):
         if r.get("short_score") is None and r.get("long_score") is None:
             continue
         con.execute("INSERT OR IGNORE INTO score_snapshots VALUES (?,?,?,?,?,?,?)",
-                    (asof, r["ticker"].replace(".AX", ""), r.get("long_score"), r.get("short_score"),
+                    (asof, r["ticker"].replace(".AX", ""), r.get("long_score"),
+                     # 换将后 short_score 是对手的分；存档里永远记看空分自己的，才能继续给它对账
+                     r.get("short_score_original", r.get("short_score")),
                      int(bool(r.get("liquid_long"))), int(bool(r.get("liquid_short"))), now))
         n += 1
+    con.commit()
+    if own:
+        con.close()
+    return n
+
+
+def challenger_scores(stock_rows):
+    """两个可换上场的对手，当天的分数（越高越看空）。公式 2026-10-15 写定。"""
+    out = {"neg_mom20": {}, "short_build": {}}
+    for r in stock_rows or []:
+        t = r.get("ticker")
+        if r.get("ret_20d") is not None:
+            out["neg_mom20"][t] = -float(r["ret_20d"])
+        if r.get("short_chg_20d") is not None:
+            out["short_build"][t] = float(r["short_chg_20d"])
+    return out
+
+
+def record_challengers(asof, scores, con=None):
+    own = con is None
+    con = con or _connect()
+    now = _recorded_now()
+    n = 0
+    for model, sc in scores.items():
+        for t, v in sc.items():
+            if v is None or not v == v:
+                continue
+            con.execute("INSERT OR IGNORE INTO challenger_snapshots VALUES (?,?,?,?,?)",
+                        (asof, model, t.replace(".AX", ""), float(v), now))
+            n += 1
     con.commit()
     if own:
         con.close()
@@ -172,6 +210,8 @@ def record(report, log=print, stock_rows=None):
                  now))
     con.commit()
     n_scores = record_scores(asof, stock_rows, con) if stock_rows else 0
+    if stock_rows:
+        record_challengers(asof, challenger_scores(stock_rows), con)
 
     days = con.execute("SELECT COUNT(*) FROM market_snapshots").fetchone()[0]
     first = con.execute("SELECT MIN(asof) FROM market_snapshots").fetchone()[0]
