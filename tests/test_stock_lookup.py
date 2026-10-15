@@ -143,6 +143,13 @@ class LookupTests(unittest.TestCase):
         for bar in f["bars"]: bar["volume"] = 1.
         self.assertEqual(S.analyze(f,fixture("STW.AX",0),NOW)["assessment"]["bias"],"observe")
 
+    def test_action_inside_return_window_not_just_last_week(self):
+        f=fixture(direction=-1)
+        f["events"]=[dict(kind="dividends",date="2026-10-01",amount=1.)]
+        out=S.analyze(f,fixture("STW.AX",0),NOW)
+        self.assertEqual(out["assessment"]["bias"],"observe")
+        self.assertTrue(out["recent_events"])
+
     def test_reviewed_early_close_and_expiration(self):
         f=fixture(end="2026-12-24")
         b=fixture("STW.AX",0,end="2026-12-24")

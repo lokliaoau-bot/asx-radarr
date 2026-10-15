@@ -256,7 +256,7 @@ def analyze(stock, benchmark=None, now=None, mode="local"):
                   "ma50": _number(ma50.loc[r["date"]]), "rsi14": _number(rsi.loc[r["date"]])}
                  for r in bars[-510:]]
     recent = [e for e in stock.get("events", []) if as_of and e["date"] <= as_of
-              and e["date"] >= (dt.date.fromisoformat(as_of) - dt.timedelta(days=7)).isoformat()]
+              and e["date"] >= required[20]]
     blockers = list(issues)
     if recent:
         blockers.append("近期有除息或拆合股事件，跌幅可能包含机械调整，先核对公告。")
