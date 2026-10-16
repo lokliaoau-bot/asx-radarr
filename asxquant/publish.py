@@ -17,7 +17,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WEB = os.path.join(ROOT, "web")
 SITE = os.path.join(ROOT, "site")
 
-ASSETS = ["index.html", "app.js", "style.css", "sw.js",
+ASSETS = ["index.html", "app.js", "stock.js", "style.css", "sw.js",
           "manifest.webmanifest", "icon-192.png", "icon-512.png"]
 
 
@@ -63,6 +63,12 @@ def build(report, out_dir=None, log=print):
         build_short(os.path.join(out_dir, "short"), log=log)
     except Exception as e:
         log("看空雷达页生成失败(不影响主站): %s" % e)
+
+    try:
+        from . import stock_lookup
+        stock_lookup.build_site(out_dir, log=log)
+    except Exception as e:
+        log("单股查询快照生成失败(不影响主站): %s" % e)
 
     size = sum(os.path.getsize(os.path.join(dp, f))
                for dp, _, fs in os.walk(out_dir) for f in fs)

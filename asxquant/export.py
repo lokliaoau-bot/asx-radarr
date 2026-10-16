@@ -40,6 +40,13 @@ def export(report, out_dir=None, filename=None):
     css = _read(os.path.join(WEB, "style.css"))
     js = _read(os.path.join(WEB, "app.js")).replace(
         "@@BUILD@@", dt.datetime.now().strftime("%Y-%m-%d %H:%M"))
+    from . import stock_lookup
+    try:
+        stocks = stock_lookup.cached_analyses(log=lambda _: None)
+    except Exception:
+        stocks = {}
+    stock_js = _read(os.path.join(WEB, "stock.js"))
+    js += "\n;window.__STOCKS__=" + _safe_json(stocks) + ";\n" + stock_js
     stamp = report.get("as_of", "")
     gen = dt.datetime.now().strftime("%Y-%m-%d %H:%M")
 
@@ -66,6 +73,7 @@ def export(report, out_dir=None, filename=None):
     </div>
     <div class="prog" id="prog"><div class="bar"><i id="progBar"></i></div><div class="msg" id="progMsg"></div></div>
   </header>
+  <section id="stockLookup"></section>
   <div id="app"></div>
   <div style="margin-top:34px;padding-top:16px;border-top:1px solid var(--line);
               font-size:11px;color:var(--mut);text-align:center">

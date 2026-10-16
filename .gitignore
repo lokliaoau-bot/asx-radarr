@@ -2,6 +2,7 @@ cache/*.pkl
 cache/*.log
 cache/report.json
 cache/short/
+cache/stock_lookup/
 site/
 export/
 __pycache__/

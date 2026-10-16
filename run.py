@@ -7,6 +7,7 @@
     python run.py --export     只生成云盘用的单文件 HTML 后退出
     python run.py --publish    生成 site/ 静态站点(手机/云端用)后退出
     python run.py --port 9000  指定端口
+    python run.py --stock BHP  只查询一只澳股，不训练全市场模型
 """
 import argparse
 import sys
@@ -22,12 +23,53 @@ def main():
     ap.add_argument("--export", action="store_true", help="生成云盘单文件HTML后退出")
     ap.add_argument("--publish", action="store_true", help="生成 site/ 静态站点(云端/手机用)后退出")
     ap.add_argument("--no-browser", action="store_true")
+    ap.add_argument("--stock", metavar="ASX_CODE", help="查询一只澳股的最新行情、历史技术面与条件判断")
     a = ap.parse_args()
 
     try:
         sys.stdout.reconfigure(encoding="utf-8")
     except Exception:
         pass
+
+    if a.stock:
+        if a.cli or a.refresh or a.export or a.publish:
+            ap.error("--stock 为独立单股查询，请勿与 --cli/--refresh/--export/--publish 合用。")
+        from asxquant.stock_lookup import lookup
+        try:
+            row = lookup(a.stock)
+        except (ValueError, RuntimeError, BlockingIOError) as e:
+            print("查询失败：%s" % e)
+            return 1
+        label = "完整日线截至" if row["quality"]["state"] == "single_source" else "来源日线到（分析暂停）"
+        print("\n%s · %s · %s %s" % (row["ticker"], row["name"], label, row["as_of"] or "未知"))
+        print(row["assessment"]["headline"])
+        print("买入：" + row["assessment"]["long"])
+        print("做空：" + row["assessment"]["short"])
+        s = row["scores"]
+        if s["state"] == "ready":
+            print("多头条件分 %d/%d | 空头条件分 %d/%d（满足项数，不是概率）" %
+                  (s["long"]["value"], s["max"], s["short"]["value"], s["max"]))
+        else:
+            print("多空条件分：暂停；" + "；".join(s["blockers"]))
+        f = row["facts"]
+        if f:
+            def shown(value, digits=4):
+                return "—" if value is None else format(value, ".%df" % digits)
+            print("收盘 A$%.4f | 20日涨跌 %+.2f%% | MA20 %.4f | MA50 %.4f | RSI14 %s" %
+                  (f["close"],f["return_20d"]*100,f["ma20"],f["ma50"],shown(f["rsi14"],1)))
+            print("MACD %s | 信号线 %s | 柱 %s | 量比 %s | 年化波动 %s%%" %
+                  (shown(f["macd"]),shown(f["macd_signal"]),shown(f["macd_hist"]),shown(f["volume_ratio20"],2),shown(f["volatility20_annualized"]*100,2)))
+        for reason in row["assessment"]["reasons"]:
+            print(" · " + reason)
+        if row.get("diagnostics"):
+            for card in row["diagnostics"]["cards"]:
+                print("%s：%s" % (card["title"], card["summary"]))
+            for conflict in row["diagnostics"]["conflicts"]:
+                print("指标冲突：" + conflict)
+        print("来源：%s | 抓取于 %s | SHA-256 %s" %
+              (row["source"]["source"],row["source"]["fetched_at"],row["source"]["sha256"]))
+        print("价格未独立核验；技术条件未经收益验证；借券、CFD及费用未知。图表请在网页中输入代码查看。")
+        return 0
 
     if a.cli or a.refresh or a.export or a.publish:
         from asxquant import engine as E
@@ -108,4 +150,4 @@ def _print(rep):
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
