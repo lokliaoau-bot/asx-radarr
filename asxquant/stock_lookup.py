@@ -180,6 +180,36 @@ def fetch_snapshot(ticker, now=None, cache_dir=None):
                            (ticker, type(e).__name__)) from e
 
 
+def _condition_scores(facts, blockers, as_of):
+    """Count the four EXISTING observation checks; no fitted or new weights.
+
+    These are independent long/short checklists, not probabilities, the frozen
+    cross-sectional picks scores, or technical-v1. Unknown/blocked is not zero.
+    """
+    result = {"method": "existing-observation-conditions-v1", "as_of": as_of,
+              "state": "paused", "max": 4, "long": None, "short": None,
+              "blockers": list(blockers),
+              "meaning": "每满足一个既有观察条件记1项，满分4项；不是上涨/下跌概率，也不是全市场排名。"}
+    if facts is None or blockers:
+        return result
+    f = facts
+    checks = {
+        "long": [("close_ma20", "收盘价高于20日均线", f["close"] > f["ma20"]),
+                 ("ma20_ma50", "20日均线高于50日均线", f["ma20"] > f["ma50"]),
+                 ("relative_stw", "20日价格表现强于STW", f["relative_stw_20d"] > 0),
+                 ("liquidity", "20日日均成交额至少A$300万", f["adv20_aud"] >= MIN_ADV_LONG)],
+        "short": [("close_ma20", "收盘价低于20日均线", f["close"] < f["ma20"]),
+                  ("ma20_ma50", "20日均线低于50日均线", f["ma20"] < f["ma50"]),
+                  ("relative_stw", "20日价格表现弱于STW", f["relative_stw_20d"] < 0),
+                  ("liquidity", "20日日均成交额至少A$800万", f["adv20_aud"] >= MIN_ADV_SHORT)]}
+    for side, rows in checks.items():
+        result[side] = {"value": sum(bool(met) for _, _, met in rows),
+                        "checks": [{"key": key, "label": label, "met": bool(met)}
+                                   for key, label, met in rows]}
+    result["state"] = "ready"
+    return result
+
+
 def analyze(stock, benchmark=None, now=None, mode="local"):
     """All measurements stop at a completed ASX session. No intraday backdating.
 
@@ -245,6 +275,8 @@ def analyze(stock, benchmark=None, now=None, mode="local"):
         close = f["close"].astype(float)
         ma20, ma50, ma200 = (close.rolling(n, min_periods=n).mean() for n in (20, 50, 200))
         rsi, atr = I.rsi(close), I.atr(f["high"], f["low"], close)
+        macd, macd_signal, macd_hist = I.macd(close)
+        volume_ref = f["volume"].iloc[-21:-1].mean()
         rs20 = None
         if benchmark and not benchmark.get("fetch_error"):
             bench = {r["date"]: r for r in benchmark["bars"]}
@@ -258,6 +290,11 @@ def analyze(stock, benchmark=None, now=None, mode="local"):
                  "relative_stw_20d": _number(rs20), "ma20": float(ma20.iloc[-1]),
                  "ma50": float(ma50.iloc[-1]), "ma200": _number(ma200.iloc[-1]),
                  "rsi14": _number(rsi.iloc[-1]), "atr14": _number(atr.iloc[-1]),
+                 "atr_pct": _number(atr.iloc[-1] / close.iloc[-1]),
+                 "macd": _number(macd.iloc[-1]), "macd_signal": _number(macd_signal.iloc[-1]),
+                 "macd_hist": _number(macd_hist.iloc[-1]),
+                 "volume_ratio20": _number(f["volume"].iloc[-1] / volume_ref),
+                 "volatility20_annualized": _number(I.realized_vol(close).iloc[-1]),
                  "adv20_aud": float((close * f["volume"]).tail(20).mean()),
                  "prior20_low": float(f["low"].iloc[-21:-1].min()),
                  "prior20_high": float(f["high"].iloc[-21:-1].max())}
@@ -271,10 +308,9 @@ def analyze(stock, benchmark=None, now=None, mode="local"):
         blockers.append("近期有除息或拆合股事件，跌幅可能包含机械调整，先核对公告。")
     if facts and facts["relative_stw_20d"] is None:
         blockers.append("缺少同日期 STW 对照，暂不作多空方向判断。")
-    long_setup = bool(facts and not blockers and facts["close"] > facts["ma20"] > facts["ma50"]
-                      and facts["relative_stw_20d"] > 0 and facts["adv20_aud"] >= MIN_ADV_LONG)
-    short_setup = bool(facts and not blockers and facts["close"] < facts["ma20"] < facts["ma50"]
-                       and facts["relative_stw_20d"] < 0 and facts["adv20_aud"] >= MIN_ADV_SHORT)
+    scores = _condition_scores(facts, blockers, as_of)
+    long_setup = bool(scores["long"] and scores["long"]["value"] == scores["max"])
+    short_setup = bool(scores["short"] and scores["short"]["value"] == scores["max"])
     reasons = list(blockers) + stock.get("normalization_notes", [])
     if facts:
         reasons.extend(["收盘价%s20日均线，20日均线%s50日均线。" %
@@ -286,6 +322,16 @@ def analyze(stock, benchmark=None, now=None, mode="local"):
             reasons.append("过去20日价格涨跌幅比 STW %s %.2f 个百分点（不含股息和费用）。" %
                            ("高" if facts["relative_stw_20d"] > 0 else "低",
                             abs(facts["relative_stw_20d"]) * 100))
+        if facts["macd_hist"] is not None:
+            reasons.append("MACD线%s信号线，柱值 %.4f；只描述当前动能，不单独决定方向。" %
+                           ("高于" if facts["macd_hist"] > 0 else "低于" if facts["macd_hist"] < 0 else "等于",
+                            facts["macd_hist"]))
+        if facts["rsi14"] is not None:
+            rsi_note = ("最近上涨较集中" if facts["rsi14"] >= 70 else
+                        "最近下跌较集中" if facts["rsi14"] <= 30 else "尚未进入常用的30/70极端区")
+            reasons.append("RSI %.1f：%s；不据此保证反转。" % (facts["rsi14"], rsi_note))
+        reasons.append("当日成交量为此前20个交易日平均的 %.2f 倍；ATR约为收盘价的 %.2f%%，用于了解日常波动幅度。" %
+                       (facts["volume_ratio20"], facts["atr_pct"] * 100))
         if facts["adv20_aud"] < MIN_ADV_LONG:
             reasons.append("成交金额不足买入观察门槛，先不考虑入场。")
         elif facts["adv20_aud"] < MIN_ADV_SHORT:
@@ -301,7 +347,7 @@ def analyze(stock, benchmark=None, now=None, mode="local"):
                         "adjustment_metadata_verified": False,
                         "calendar_version": AC.CALENDAR_VERSION,
                         "excluded_unfinished_bars": len(all_bars) - len(bars)},
-            "facts": facts, "chart": chart, "recent_events": recent,
+            "facts": facts, "chart": chart, "recent_events": recent, "scores": scores,
             "assessment": {"bias": "long_watch" if long_setup else "short_watch" if short_setup else "observe",
                            "headline": "偏多，可关注买入条件" if long_setup else
                                        "偏空，可关注做空条件" if short_setup else "先观察，当前条件不完整或方向不一致",

@@ -11,6 +11,10 @@ function fixture(ticker = 'BHP.AX') {
     as_of: '2026-10-15', valid_until: '2099-01-01T00:00:00Z',
     source: {source: 'synthetic_test', fetched_at: '2026-10-15T08:00:00Z', sha256: 'synthetic'},
     quote: {}, quality: {state: 'single_source', issues: [], excluded_unfinished_bars: 0},
+    scores: {method: 'existing-observation-conditions-v1', as_of: '2026-10-15', state: 'ready',
+      max: 4, blockers: [], meaning: '满足项数，不是概率',
+      long: {value: 1, checks: ['close_ma20','ma20_ma50','relative_stw','liquidity'].map((key,i)=>({key,label:'多头条件'+i,met:i===3}))},
+      short: {value: 4, checks: ['close_ma20','ma20_ma50','relative_stw','liquidity'].map((key,i)=>({key,label:'空头条件'+i,met:true}))}},
     facts: {close: 100, change_1d: -.01, return_20d: -.05, relative_stw_20d: -.04,
       ma20: 110, ma50: 120, rsi14: 30, atr14: 2, adv20_aud: 10_000_000,
       prior20_low: 98, prior20_high: 125},
@@ -55,6 +59,9 @@ test('valid source displays facts and technical curves without a market report',
   assert.match(ui.text(), /偏空，可关注/);
   assert.equal(ui.w.document.querySelectorAll('.stock-chart svg path').length, 3);
   assert.ok(ui.w.document.querySelectorAll('.stock-metrics b').length > 0);
+  assert.equal(ui.w.document.querySelectorAll('.stock-score-value').length, 2);
+  assert.match(ui.w.document.querySelector('[data-side="long"]').textContent, /1\s*\/\s*4/);
+  assert.match(ui.w.document.querySelector('[data-side="short"]').textContent, /4\s*\/\s*4/);
 });
 
 for (const state of ['unavailable', 'constructor', 'future_unknown_state']) {
@@ -67,6 +74,7 @@ for (const state of ['unavailable', 'constructor', 'future_unknown_state']) {
     assert.doesNotMatch(ui.text(), /偏空，可关注|合成测试：价格和均线偏弱/);
     assert.equal(ui.w.document.querySelectorAll('.stock-metrics b').length, 0);
     assert.equal(ui.w.document.querySelectorAll('.stock-chart svg path').length, 0);
+    assert.equal(ui.w.document.querySelectorAll('.stock-score-value').length, 0);
     assert.ok(ui.w.document.querySelectorAll('.stock-chart svg rect').length > 0);
   });
 }
@@ -80,6 +88,7 @@ test('expiry hides computed indicators, preserves historical candles and stays p
   assert.doesNotMatch(ui.text(), /偏空，可关注/);
   assert.equal(ui.w.document.querySelectorAll('.stock-chart svg path').length, 0);
   assert.equal(ui.w.document.querySelectorAll('.stock-metrics b').length, 0);
+  assert.equal(ui.w.document.querySelectorAll('.stock-score-value').length, 0);
   assert.ok(ui.w.document.querySelector('.stock-chart svg'));
 });
 
@@ -142,11 +151,54 @@ test('an exported snapshot uses embedded data without any fetch', async t => {
 test('provider HTML is escaped', async t => {
   const data = fixture(); data.name = '<img src=x onerror=alert(1)>';
   data.assessment.reasons = ['<svg onload=alert(1)>'];
+  data.scores.long.checks[0].label = '<img src=x onerror=alert(1)>';
   const ui = setup(t, async () => answer(data));
   ui.submit('BHP'); await ui.done();
   assert.equal(ui.w.document.querySelectorAll('img,svg[onload]').length, 0);
   assert.match(ui.text(), /<img src=x/);
 });
+
+test('old daily snapshots do not acquire invented scores in the browser', async t => {
+  const data = fixture(); delete data.scores;
+  const ui = setup(t, async () => answer(data));
+  ui.submit('BHP'); await ui.done();
+  assert.match(ui.text(), /旧快照尚未包含条件分/);
+  assert.equal(ui.w.document.querySelectorAll('.stock-score-value').length, 0);
+});
+
+test('scores and directional conclusion must agree before either is presented', async t => {
+  const data = fixture();
+  data.assessment.bias = 'long_watch';
+  data.assessment.headline = '偏多，可关注买入条件';
+  const ui = setup(t, async () => answer(data));
+  ui.submit('BHP'); await ui.done();
+  assert.doesNotMatch(ui.w.document.querySelector('.stock-verdict').textContent, /偏多，可关注/);
+  assert.equal(ui.w.document.querySelectorAll('.stock-score-value').length, 0);
+  assert.match(ui.w.document.querySelector('.stock-verdict').textContent, /暂停/);
+});
+
+for (const defect of ['zero', 'bad_count', 'bad_date', 'unknown_state', 'no_stw', 'action']) {
+  test(`${defect}: score display preserves zero and rejects inconsistent or blocked payloads`, async t => {
+    const data = fixture();
+    if (defect === 'zero') {
+      for (const side of ['long','short']) {
+        data.scores[side].value = 0;
+        for (const check of data.scores[side].checks) check.met = false;
+      }
+      data.assessment.bias = 'observe';
+    }
+    if (defect === 'bad_count') data.scores.long.value = 4;
+    if (defect === 'bad_date') data.scores.as_of = '2026-10-14';
+    if (defect === 'unknown_state') data.scores.state = 'constructor';
+    if (defect === 'no_stw') data.facts.relative_stw_20d = null;
+    if (defect === 'action') data.recent_events = [{kind:'dividends'}];
+    const ui = setup(t, async () => answer(data));
+    ui.submit('BHP'); await ui.done();
+    assert.equal(ui.w.document.querySelectorAll('.stock-score-value').length, defect === 'zero' ? 2 : 0);
+    if (defect === 'zero') assert.match(ui.w.document.querySelector('[data-side="long"]').textContent, /0\s*\/\s*4/);
+    else assert.match(ui.w.document.querySelector('.stock-verdict').textContent, /暂停/);
+  });
+}
 
 test('cold local report does not masquerade as static mode or disable first refresh', async t => {
   const dom = new JSDOM('<div id="asof">载入中 ...</div><div id="quote"></div><div id="app"></div>' +

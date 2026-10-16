@@ -5,7 +5,9 @@ import datetime as dt
 import hashlib
 import io
 import json
+import math
 import os
+import random
 import tempfile
 import threading
 import unittest
@@ -143,6 +145,77 @@ class LookupTests(unittest.TestCase):
         x = S.analyze(fixture(direction=-1), fixture("STW.AX", 0), NOW)
         self.assertIn("尚不能确认可执行", x["assessment"]["short"])
 
+    def test_condition_scores_count_existing_checks_without_complement_or_probability(self):
+        for direction, long_score, short_score in ((1, 4, 1), (-1, 1, 4), (0, 1, 1)):
+            out = S.analyze(fixture(direction=direction), fixture("STW.AX", 0), NOW)
+            s = out["scores"]
+            with self.subTest(direction=direction):
+                self.assertEqual(s["state"], "ready")
+                self.assertEqual((s["long"]["value"], s["short"]["value"]), (long_score, short_score))
+                self.assertEqual(s["max"], 4)
+                self.assertEqual(s["as_of"], out["as_of"])
+                self.assertEqual(len(s["long"]["checks"]), 4)
+                self.assertIsNone(out["assessment"]["predictive_accuracy"])
+        f = fixture(direction=1)
+        for row in f["bars"]: row["volume"] = 1.
+        out = S.analyze(f, fixture("STW.AX", 0), NOW)
+        self.assertEqual((out["scores"]["long"]["value"], out["scores"]["short"]["value"]), (3, 0))
+        self.assertEqual(out["assessment"]["bias"], "observe")
+
+    def test_missing_or_blocked_information_pauses_both_scores_instead_of_zero(self):
+        for defect in ("benchmark", "action", "fetch_error", "gap"):
+            f, b = fixture(), fixture("STW.AX", 0)
+            if defect == "benchmark": b = None
+            if defect == "action": f["events"] = [dict(kind="dividends", date="2026-10-01", amount=.5)]
+            if defect == "fetch_error": f["fetch_error"] = "合成来源失败"
+            if defect == "gap": del f["bars"][-4]
+            s = S.analyze(f, b, NOW)["scores"]
+            with self.subTest(defect=defect):
+                self.assertEqual(s["state"], "paused")
+                self.assertIsNone(s["long"])
+                self.assertIsNone(s["short"])
+                self.assertTrue(s["blockers"])
+
+    def test_macd_volume_and_volatility_match_independent_calculation(self):
+        f = fixture()
+        rng, price = random.Random(20261016), 40.
+        for row in f["bars"]:
+            price *= 1 + rng.uniform(-.025, .025)
+            row.update(open=price-.1, high=price+.2, low=price-.2, close=price,
+                       volume=float(rng.randrange(1_000_000, 3_000_000)))
+        facts = S.analyze(f, fixture("STW.AX", 0), NOW)["facts"]
+        cs = [r["close"] for r in f["bars"]]
+        def ema(values, span):
+            out = [values[0]]
+            for v in values[1:]: out.append(out[-1] + 2 / (span + 1) * (v - out[-1]))
+            return out
+        fast, slow = ema(cs, 12), ema(cs, 26)
+        line = [a-b for a, b in zip(fast, slow)][12:]  # Slow EMA emits after 13 observations.
+        signal = ema(line, 9)[-1]
+        self.assertAlmostEqual(facts["macd"], line[-1], places=10)
+        self.assertAlmostEqual(facts["macd_signal"], signal, places=10)
+        self.assertAlmostEqual(facts["macd_hist"], line[-1]-signal, places=10)
+        volume = [r["volume"] for r in f["bars"]]
+        self.assertAlmostEqual(facts["volume_ratio20"], volume[-1] / (sum(volume[-21:-1]) / 20))
+        returns = [b/a-1 for a, b in zip(cs[-21:-1], cs[-20:])]
+        mean = sum(returns)/20
+        expected = math.sqrt(sum((r-mean)**2 for r in returns)/20)*math.sqrt(252)
+        self.assertAlmostEqual(facts["volatility20_annualized"], expected)
+        self.assertAlmostEqual(facts["atr_pct"], facts["atr14"] / facts["close"])
+
+    def test_scores_and_new_indicators_are_prefix_invariant(self):
+        f, b = fixture(), fixture("STW.AX", 0)
+        for day in ("2026-09-30", "2026-10-06", "2026-10-12", "2026-10-15"):
+            now = dt.datetime.fromisoformat(day + "T08:00:00+00:00")
+            trimmed_f, trimmed_b = copy.deepcopy(f), copy.deepcopy(b)
+            trimmed_f["bars"] = [r for r in f["bars"] if r["date"] <= day]
+            trimmed_b["bars"] = [r for r in b["bars"] if r["date"] <= day]
+            full = S.analyze(f, b, now)
+            prefix = S.analyze(trimmed_f, trimmed_b, now)
+            with self.subTest(day=day):
+                for key in ("facts", "scores", "assessment"):
+                    self.assertEqual(full[key], prefix[key])
+
     def test_unfinished_extreme_bar_cannot_change_facts_or_conclusion(self):
         base = fixture()
         out = S.analyze(base, fixture("STW.AX",0), NOW)
@@ -170,6 +243,8 @@ class LookupTests(unittest.TestCase):
             y = S.analyze(x, fixture("STW.AX",0), NOW)
             with self.subTest(defect=defect):
                 self.assertIsNone(y["facts"])
+                self.assertEqual(y["scores"]["state"], "paused")
+                self.assertIsNone(y["scores"]["long"])
                 self.assertEqual(y["assessment"]["bias"],"observe")
                 self.assertNotEqual(y["quality"]["state"],"single_source")
 
@@ -272,6 +347,8 @@ class LookupTests(unittest.TestCase):
                 self.assertEqual(row["mode"],"daily_snapshot")
                 self.assertEqual(row["source"]["snapshot_kind"],"existing_cache_not_raw_http")
                 self.assertFalse(row["quality"]["adjustment_metadata_verified"])
+                self.assertEqual(row["scores"]["state"], "ready")
+                self.assertEqual(row["scores"]["long"]["value"], 4)
             with patch.object(S,"cached_analyses",return_value={"BHP.AX":row}), \
                  patch.object(PB,"build_short",return_value=None):
                 PB.build({"as_of":"2026-10-15"},out_dir=os.path.join(tmp,"site"),log=lambda _:None)
@@ -294,6 +371,8 @@ class LookupTests(unittest.TestCase):
             self.assertEqual(run.main(),0)
         self.assertIn("买入：",output.getvalue())
         self.assertIn("做空：",output.getvalue())
+        self.assertIn("多头条件分 4/4 | 空头条件分 1/4",output.getvalue())
+        self.assertIn("MACD",output.getvalue())
 
     def test_http_query_contract_and_no_global_refresh_required(self):
         from asxquant.server import Handler

@@ -26,7 +26,7 @@
     return !data.valid_until || !Number.isFinite(Date.parse(data.valid_until)) || Date.now() >= Date.parse(data.valid_until);
   }
   root.innerHTML = '<div class="stock-search"><div><h2>查一只澳股</h2>' +
-    '<p class="lead">输入代码，看行情、技术图，以及买入或做空的条件判断。</p></div>' +
+    '<p class="lead">输入澳股代码，看多空条件分、指标解释和技术图。</p></div>' +
     '<form id="stockForm"><label for="stockCode">ASX 股票代码</label><div class="stock-input">' +
     '<input id="stockCode" name="ticker" placeholder="例如 BHP / CSL / GYG / 360" maxlength="14" autocomplete="off" required>' +
     '<button class="refresh" id="stockSubmit" type="submit">查询分析</button></div></form>' +
@@ -35,6 +35,41 @@
     }).join(" ") + '</div><p id="stockMessage" role="status" aria-live="polite">' +
     '电脑本地版按需拉取；手机每日版读取已发布行情。报价和完整收盘分析分别标时。</p>' +
     '<div id="stockResult"></div></div>';
+
+  function validScores(data) {
+    var s=data.scores;
+    function validSide(side) {
+      var v=s[side];
+      return v && Number.isInteger(v.value) && v.value>=0 && v.value<=s.max &&
+        Array.isArray(v.checks) && v.checks.length===s.max &&
+        v.checks.every(function(c){return c && typeof c.key==="string" && typeof c.label==="string" && typeof c.met==="boolean";}) &&
+        new Set(v.checks.map(function(c){return c.key;})).size===s.max &&
+        v.checks.filter(function(c){return c.met;}).length===v.value;
+    }
+    if(!(s && s.method==="existing-observation-conditions-v1" && s.state==="ready" &&
+      s.as_of===data.as_of && s.max===4 &&
+      Array.isArray(s.blockers) && s.blockers.length===0 &&
+      !(data.recent_events || []).length && data.facts && Number.isFinite(data.facts.relative_stw_20d) &&
+      validSide("long") && validSide("short"))) return false;
+    var long=s.long.value===s.max, short=s.short.value===s.max;
+    return !(long && short) && data.assessment.bias===(long?"long_watch":short?"short_watch":"observe");
+  }
+
+  function scoreCards(data, usable) {
+    var s=data.scores, message="条件分不完整或与结论不一致，暂停评分；请更新数据。";
+    if(!s) message="这份旧快照尚未包含条件分，请更新程序和每日行情。";
+    else if(Array.isArray(s.blockers) && s.blockers.length) message=s.blockers.join("；");
+    if(!usable) message=expired(data)?"行情已过期，暂停评分。":"日线检查未通过，暂停评分。";
+    var ready=usable && validScores(data);
+    if(!ready) return '<section class="stock-scores paused" aria-label="多空条件分"><h4>多空条件分：—</h4><p>'+safe(message)+'</p></section>';
+    return '<section class="stock-scores" aria-label="多空技术条件评分"><h4>已满足多少个观察条件</h4><div class="stock-score-grid">'+
+      [["long","多头条件分"],["short","空头条件分"]].map(function(pair){
+        var v=s[pair[0]];
+        return '<article class="stock-score" data-side="'+pair[0]+'"><h5>'+pair[1]+'</h5>'+
+          '<strong class="stock-score-value">'+v.value+'<small> / '+s.max+'</small></strong><span>项已满足</span><ul>'+
+          v.checks.map(function(c){return '<li class="'+(c.met?'met':'unmet')+'"><span>'+(c.met?'✓ 已满足':'○ 未满足')+'</span> '+safe(c.label)+'</li>';}).join("")+'</ul></article>';
+      }).join("")+'</div><p>'+safe(s.meaning)+' 满分也要核对公告、成交价和费用；做空另需确认借券或CFD可用。</p></section>';
+  }
 
   function chart(data, size, technical) {
     var rows = (data.chart || []).slice(-size), W = 960, H = technical ? 400 : 305, L = 65, R = 18;
@@ -82,22 +117,25 @@
   function renderStock(data) {
     var a=data.assessment, old=expired(data), q=data.quote || {};
     var usable=!old && data.quality.state==="single_source" && data.facts!=null;
+    var directionUsable=usable && (!data.scores || validScores(data));
     var f=usable ? data.facts : null;
-    var paused=old ? "数据过期，暂停判断" : "日线检查未通过，暂停判断";
-    var headline=old ? "行情已超过下一次收盘时点，请先更新再判断" : !usable ? paused : a.headline;
-    var reasons=usable ? a.reasons : (data.quality.issues || []).concat([paused+"；保留历史价格供核对。"]);
+    var paused=old ? "数据过期，暂停判断" : !usable ? "日线检查未通过，暂停判断" : "条件分暂停，先核对数据与结论";
+    var headline=old ? "行情已超过下一次收盘时点，请先更新再判断" : !directionUsable ? paused : a.headline;
+    var reasons=directionUsable || (usable && data.scores && data.scores.state==="paused") ? a.reasons : (data.quality.issues || []).concat([paused+"；保留历史价格供核对。"]);
     var cell=function(label,value){return '<div><span>'+safe(label)+'</span><b>'+safe(value)+'</b></div>';};
     var metrics=f ? cell("完整收盘",price(f.close))+cell("当日涨跌",percent(f.change_1d))+cell("20日价格涨跌",percent(f.return_20d))+
       cell("相对STW · 20日",f.relative_stw_20d==null?"缺少对照":number(f.relative_stw_20d*100)+" 个百分点")+
-      cell("20日均线",price(f.ma20))+cell("50日均线",price(f.ma50))+cell("RSI14",number(f.rsi14,1))+
-      cell("ATR14 · 日波动",price(f.atr14))+cell("20日日均成交额",price(f.adv20_aud))+
+      cell("20日均线",price(f.ma20))+cell("50日均线",price(f.ma50))+cell("200日均线",price(f.ma200))+cell("RSI14",number(f.rsi14,1))+
+      cell("MACD线 / 信号线",number(f.macd,4)+" / "+number(f.macd_signal,4))+cell("MACD柱",number(f.macd_hist,4))+
+      cell("成交量 / 此前20日均量",number(f.volume_ratio20)+" 倍")+cell("20日波动 · 年化",percent(f.volatility20_annualized))+
+      cell("ATR14 · 日波动",price(f.atr14)+" / "+percent(f.atr_pct))+cell("20日日均成交额",price(f.adv20_aud))+
       cell("前20日低点 / 高点",price(f.prior20_low)+" / "+price(f.prior20_high)) : '<p>'+safe(paused)+'，不显示计算指标。</p>';
     byId("stockResult").innerHTML = '<div class="stock-heading"><div><h3>'+safe(data.ticker)+' <span>'+safe(data.name)+'</span></h3>' +
       '<p>完整日线截至 '+safe(data.as_of || "未知")+' · '+(data.mode==="local"?"按需读取":"每日快照")+'</p></div>' +
       (q.price!=null?'<div class="stock-quote"><b>'+price(q.price)+'</b><span>来源报价 · 延迟未核实<br>'+safe(time(q.as_of))+'<br>报价不参与完整日线结论</span></div>':"")+'</div>'+
-      '<div class="stock-verdict '+(usable&&a.bias==="long_watch"?"positive":usable&&a.bias==="short_watch"?"negative":"")+'"><strong>'+safe(headline)+'</strong>'+
-      '<div><b>买入：</b>'+safe(usable?a.long:paused)+'</div><div><b>做空：</b>'+safe(usable?a.short:paused)+'</div></div>'+
-      '<div class="stock-metrics">'+metrics+'</div><div class="stock-chart-controls">'+[63,126,252,510].map(function(n,i){
+      '<div class="stock-verdict '+(directionUsable&&a.bias==="long_watch"?"positive":directionUsable&&a.bias==="short_watch"?"negative":"")+'"><strong>'+safe(headline)+'</strong>'+
+      '<div><b>买入：</b>'+safe(directionUsable?a.long:paused)+'</div><div><b>做空：</b>'+safe(directionUsable?a.short:paused)+'</div></div>'+
+      scoreCards(data,usable)+'<div class="stock-metrics">'+metrics+'</div><div class="stock-chart-controls">'+[63,126,252,510].map(function(n,i){
         return '<button type="button" class="ghost '+(range===n?"selected":"")+'" data-range="'+n+'">'+["3个月","6个月","1年","2年"][i]+'</button>';
       }).join(" ")+'<span>'+(usable?'日线 · <i style="color:#fbbf24">MA20</i> / <i style="color:#60a5fa">MA50</i>':'历史价格 · 指标已暂停')+' · 鼠标停在蜡烛上查看价格</span></div>'+
       '<div class="stock-chart">'+chart(data,range,usable)+'</div><div class="stock-reasons"><h4>为什么这样判断</h4><ul>'+reasons.map(function(s){return '<li>'+safe(s)+'</li>';}).join("")+'</ul>'+
@@ -105,6 +143,7 @@
       '<details><summary>数据来源、口径与判断边界</summary><p>'+safe(data.source.source)+' · 抓取于 '+safe(time(data.source.fetched_at))+'</p>'+
       '<p>日线为来源所报拆股调整价，未由第二来源核价；股息及其他公司行动、调整声明仍需核实。涨跌幅不含股息、借券、融资或交易费。</p>'+
       '<p>均线是完整窗口简单平均；RSI/ATR沿用本项目递归平滑，以首个观察值初始化，可能与用初始简单平均的看盘软件略有差别。</p>'+
+      '<p>MACD为12/26/9 EMA（从最早历史价递推），柱值为MACD线减信号线；量比用当日成交量除以前20日均量，不含当日。年化波动为20日简单收益标准差（ddof=0）乘√252。</p>'+
       '<p>'+safe(a.method)+' 借券 / CFD可用性、净预期收益、预测准确率均未知；本页没有生成胜率。</p>'+
       '<p>日历 '+safe(data.quality.calendar_version)+' · 独立核价：未完成 · 已排除未收盘日线 '+safe(data.quality.excluded_unfinished_bars)+' 根</p>'+
       '<p class="stock-hash">快照 SHA-256：'+safe(data.source.sha256 || "未提供")+'</p></details>';
