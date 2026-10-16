@@ -114,6 +114,15 @@
     return svg+'</svg>';
   }
 
+  function diagnosticCards(data, usable) {
+    var d=data.diagnostics;
+    if(!usable || !d || !Array.isArray(d.cards) || !Array.isArray(d.conflicts)) return "";
+    return '<section class="stock-diagnostics"><h4>把指标放在一起看</h4>'+
+      d.conflicts.map(function(s){return '<p class="stock-conflict">'+safe(s)+'</p>';}).join("")+
+      '<div class="stock-diagnostic-grid">'+d.cards.map(function(c){return '<article><h5>'+safe(c.title)+'</h5><p>'+safe(c.summary)+'</p></article>';}).join("")+
+      '</div><p class="stock-scope">'+safe(d.scope)+'</p></section>';
+  }
+
   function renderStock(data) {
     var a=data.assessment, old=expired(data), q=data.quote || {};
     var usable=!old && data.quality.state==="single_source" && data.facts!=null;
@@ -127,6 +136,8 @@
       cell("相对STW · 20日",f.relative_stw_20d==null?"缺少对照":number(f.relative_stw_20d*100)+" 个百分点")+
       cell("20日均线",price(f.ma20))+cell("50日均线",price(f.ma50))+cell("200日均线",price(f.ma200))+cell("RSI14",number(f.rsi14,1))+
       cell("MACD线 / 信号线",number(f.macd,4)+" / "+number(f.macd_signal,4))+cell("MACD柱",number(f.macd_hist,4))+
+      cell("ADX14 / DI+ / DI−",number(f.adx14,1)+" / "+number(f.di_plus14,1)+" / "+number(f.di_minus14,1))+
+      cell("CMF20 · 价量估算",number(f.cmf20,3))+cell("20日跌/涨日成交量比",number(f.down_up_volume20))+
       cell("成交量 / 此前20日均量",number(f.volume_ratio20)+" 倍")+cell("20日波动 · 年化",percent(f.volatility20_annualized))+
       cell("ATR14 · 日波动",price(f.atr14)+" / "+percent(f.atr_pct))+cell("20日日均成交额",price(f.adv20_aud))+
       cell("前20日低点 / 高点",price(f.prior20_low)+" / "+price(f.prior20_high)) : '<p>'+safe(paused)+'，不显示计算指标。</p>';
@@ -135,7 +146,7 @@
       (q.price!=null?'<div class="stock-quote"><b>'+price(q.price)+'</b><span>来源报价 · 延迟未核实<br>'+safe(time(q.as_of))+'<br>报价不参与完整日线结论</span></div>':"")+'</div>'+
       '<div class="stock-verdict '+(directionUsable&&a.bias==="long_watch"?"positive":directionUsable&&a.bias==="short_watch"?"negative":"")+'"><strong>'+safe(headline)+'</strong>'+
       '<div><b>买入：</b>'+safe(directionUsable?a.long:paused)+'</div><div><b>做空：</b>'+safe(directionUsable?a.short:paused)+'</div></div>'+
-      scoreCards(data,usable)+'<div class="stock-metrics">'+metrics+'</div><div class="stock-chart-controls">'+[63,126,252,510].map(function(n,i){
+      scoreCards(data,usable)+diagnosticCards(data,usable)+'<div class="stock-metrics">'+metrics+'</div><div class="stock-chart-controls">'+[63,126,252,510].map(function(n,i){
         return '<button type="button" class="ghost '+(range===n?"selected":"")+'" data-range="'+n+'">'+["3个月","6个月","1年","2年"][i]+'</button>';
       }).join(" ")+'<span>'+(usable?'日线 · <i style="color:#fbbf24">MA20</i> / <i style="color:#60a5fa">MA50</i>':'历史价格 · 指标已暂停')+' · 鼠标停在蜡烛上查看价格</span></div>'+
       '<div class="stock-chart">'+chart(data,range,usable)+'</div><div class="stock-reasons"><h4>为什么这样判断</h4><ul>'+reasons.map(function(s){return '<li>'+safe(s)+'</li>';}).join("")+'</ul>'+

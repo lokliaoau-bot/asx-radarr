@@ -283,7 +283,7 @@ def analyze(stock, benchmark=None, now=None, mode="local"):
                 valid_until = s["close"].isoformat()
                 break
     calculation_warnings = []
-    facts, chart = None, bars[-510:]
+    facts, chart, diagnostics = None, bars[-510:], None
     if not issues:
         f = pd.DataFrame(bars).set_index("date")
         close = f["close"].astype(float)
@@ -325,6 +325,9 @@ def analyze(stock, benchmark=None, now=None, mode="local"):
                  "adv20_aud": float((close * f["volume"]).tail(20).mean()),
                  "prior20_low": float(f["low"].iloc[-21:-1].min()),
                  "prior20_high": float(f["high"].iloc[-21:-1].max())}
+        from .stock_diagnostics import describe
+        extra, diagnostics = describe(f, facts, range_history_ok)
+        facts.update(extra)
         chart = [{**r, "ma20": _number(ma20.loc[r["date"]]),
                   "ma50": _number(ma50.loc[r["date"]]), "rsi14": _number(rsi.loc[r["date"]])}
                  for r in bars[-510:]]
@@ -396,7 +399,7 @@ def analyze(stock, benchmark=None, now=None, mode="local"):
                         "adjustment_metadata_verified": False,
                         "calendar_version": AC.CALENDAR_VERSION,
                         "excluded_unfinished_bars": len(all_bars) - len(bars)},
-            "facts": facts, "chart": chart, "recent_events": recent, "scores": scores,
+            "facts": facts, "chart": chart, "recent_events": recent, "scores": scores, "diagnostics": diagnostics,
             "assessment": {"bias": "long_watch" if long_setup else "short_watch" if short_setup else "observe",
                            "headline": "偏多，可关注买入条件" if long_setup else
                                        "偏空，可关注做空条件" if short_setup else "先观察，当前条件不完整或方向不一致",

@@ -78,6 +78,40 @@ class LookupTests(unittest.TestCase):
         self.assertIsNone(out["facts"]["relative_stw_20d"])
         self.assertEqual(out["scores"]["state"], "paused")
 
+    def test_diagnostics_cmf_and_volume_have_independent_window_calculation(self):
+        f = fixture()
+        for i, row in enumerate(f["bars"]):
+            p = 40 + (i % 3)*.2
+            row.update(open=p-.03, high=p+.2, low=p-.1, close=p, volume=1_000_000.+i*1000)
+        out = S.analyze(f, fixture("STW.AX", 0), NOW)
+        rows = f["bars"][-20:]
+        expected = sum(((2*r["close"]-r["low"]-r["high"])/(r["high"]-r["low"]))*r["volume"] for r in rows)/sum(r["volume"] for r in rows)
+        self.assertAlmostEqual(out["facts"]["cmf20"], expected)
+        up = down = 0
+        for prev, row in zip(f["bars"][-21:-1], rows):
+            if row["close"] > prev["close"]: up += row["volume"]
+            elif row["close"] < prev["close"]: down += row["volume"]
+        self.assertEqual(out["facts"]["up_volume20"], up)
+        self.assertEqual(out["facts"]["down_volume20"], down)
+        self.assertAlmostEqual(out["facts"]["down_up_volume20"], down/up)
+        self.assertIn("不能当作真实资金流", out["diagnostics"]["cards"][2]["summary"])
+        monotonic = S.analyze(fixture(), fixture("STW.AX", 0), NOW)["facts"]
+        self.assertAlmostEqual(monotonic["adx14"], 100.)
+        self.assertEqual(monotonic["di_minus14"], 0.)
+
+    def test_conflicting_momentum_is_explained_without_changing_condition_score(self):
+        f = fixture(direction=-1)
+        price = f["bars"][-6]["close"]
+        for i, row in enumerate(f["bars"][-5:]):
+            p = price + (i+1)*.025
+            row.update(open=p-.01, high=p+.1, low=p-.1, close=p)
+        out = S.analyze(f, fixture("STW.AX", 0), NOW)
+        self.assertLess(out["facts"]["close"], out["facts"]["ma20"])
+        self.assertGreater(out["facts"]["macd_hist"], 0)
+        self.assertTrue(out["diagnostics"]["conflicts"])
+        self.assertEqual(out["scores"]["short"]["value"], 4)
+        self.assertEqual(out["assessment"]["bias"], "short_watch")
+
     def test_ticker_boundary(self):
         for value in ("bhp", " BHP.ax ", "ASX:BHP"):
             self.assertEqual(S.normalize_ticker(value), "BHP.AX")
@@ -246,7 +280,7 @@ class LookupTests(unittest.TestCase):
             prefix = S.analyze(trimmed_f, trimmed_b, now)
             with self.subTest(day=day):
                 self.assertIsNotNone(full["facts"])
-                for key in ("facts", "scores", "assessment"):
+                for key in ("facts", "scores", "assessment", "diagnostics"):
                     self.assertEqual(full[key], prefix[key])
 
     def test_quote_and_company_action_times_are_not_assumed_current(self):
@@ -289,6 +323,7 @@ class LookupTests(unittest.TestCase):
                 self.assertIsNone(y["facts"])
                 self.assertEqual(y["scores"]["state"], "paused")
                 self.assertIsNone(y["scores"]["long"])
+                self.assertIsNone(y["diagnostics"])
                 self.assertEqual(y["assessment"]["bias"],"observe")
                 self.assertNotEqual(y["quality"]["state"],"single_source")
 

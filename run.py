@@ -60,6 +60,11 @@ def main():
                   (shown(f["macd"]),shown(f["macd_signal"]),shown(f["macd_hist"]),shown(f["volume_ratio20"],2),shown(f["volatility20_annualized"]*100,2)))
         for reason in row["assessment"]["reasons"]:
             print(" · " + reason)
+        if row.get("diagnostics"):
+            for card in row["diagnostics"]["cards"]:
+                print("%s：%s" % (card["title"], card["summary"]))
+            for conflict in row["diagnostics"]["conflicts"]:
+                print("指标冲突：" + conflict)
         print("来源：%s | 抓取于 %s | SHA-256 %s" %
               (row["source"]["source"],row["source"]["fetched_at"],row["source"]["sha256"]))
         print("价格未独立核验；技术条件未经收益验证；借券、CFD及费用未知。图表请在网页中输入代码查看。")
