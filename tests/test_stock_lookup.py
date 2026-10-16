@@ -78,6 +78,14 @@ class LookupTests(unittest.TestCase):
         self.assertIsNone(out["facts"]["relative_stw_20d"])
         self.assertEqual(out["scores"]["state"], "paused")
 
+    def test_intraday_snapshot_does_not_become_eod_just_because_time_passes(self):
+        f = fixture(); f["fetched_at"] = "2026-10-15T04:00:00+00:00"
+        out = S.analyze(f, fixture("STW.AX", 0), NOW)
+        self.assertIsNone(out["facts"])
+        self.assertEqual(out["scores"]["state"], "paused")
+        b = fixture("STW.AX", 0); b["fetched_at"] = f["fetched_at"]
+        self.assertIsNone(S.analyze(fixture(), b, NOW)["facts"]["relative_stw_20d"])
+
     def test_diagnostics_cmf_and_volume_have_independent_window_calculation(self):
         f = fixture()
         for i, row in enumerate(f["bars"]):
@@ -395,6 +403,7 @@ class LookupTests(unittest.TestCase):
         f=fixture(end="2026-12-24")
         b=fixture("STW.AX",0,end="2026-12-24")
         after=dt.datetime(2026,12,24,8,tzinfo=dt.timezone.utc)
+        f["fetched_at"] = b["fetched_at"] = after.isoformat()
         out=S.analyze(f,b,after)
         self.assertEqual(out["as_of"],"2026-12-24")
         self.assertEqual(out["quality"]["state"],"single_source")

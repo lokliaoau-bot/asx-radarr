@@ -72,6 +72,16 @@ def _complete_traded_bar(row):
         and values["high"] >= max(values["open"], values["close"]))
 
 
+def _source_completed(snapshot, cutoff):
+    if not _observed_by(snapshot, cutoff):
+        return None
+    observed = dt.datetime.fromisoformat(snapshot["fetched_at"])
+    try:
+        return latest_completed("AU", observed, _overrides(observed))["date"]
+    except ValueError:
+        return None
+
+
 def _overrides(now):
     from .shortradar import OVERRIDE_DIR
     out = {}
@@ -277,6 +287,9 @@ def analyze(stock, benchmark=None, now=None, mode="local"):
     if dates != sorted(set(dates)):
         issues.append("日线日期重复或顺序异常，暂不判断。")
     as_of = bars[-1]["date"] if bars else None
+    source_completed = _source_completed(stock, now)
+    if as_of and (source_completed is None or as_of > source_completed):
+        issues.append("快照抓取时该日收盘整理尚未结束，不能因时间过去就当成完整日线；请重新获取来源数据。")
     if as_of != expected:
         issues.append("尚未拿到最近完整交易日 %s 的收盘行情。" % expected)
     if stock.get("fetch_error"):
@@ -338,7 +351,7 @@ def analyze(stock, benchmark=None, now=None, mode="local"):
             calculation_warnings.append("较早历史价格区间缺失或异常，ATR暂停；近期均线与价格条件另行检查。")
         volume_ref = f["volume"].iloc[-21:-1].mean()
         rs20 = None
-        if benchmark and not benchmark.get("fetch_error") and _observed_by(benchmark, now):
+        if benchmark and not benchmark.get("fetch_error") and (_source_completed(benchmark, now) or "") >= expected:
             benchmark_bars = [r for r in benchmark["bars"] if r["date"] <= expected]
             benchmark_dates = [r["date"] for r in benchmark_bars]
             bench = {r["date"]: r for r in benchmark_bars} if benchmark_dates == sorted(set(benchmark_dates)) else {}
@@ -431,6 +444,7 @@ def analyze(stock, benchmark=None, now=None, mode="local"):
                         "quote_issue": quote_issue,
                         "history_revision": stock.get("revision"),
                         "latest_complete_traded_session": latest_complete,
+                        "source_completed_session": source_completed,
                         "corporate_actions_state": stock.get("events_status", "not_supplied"),
                         "benchmark_events_in_window": benchmark_events,
                         "adjustment_metadata_verified": False,
