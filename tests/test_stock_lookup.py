@@ -38,7 +38,7 @@ def fixture(ticker="BHP.AX", direction=1, end="2026-10-15"):
         bars.append(dict(date=day, open=p-.01, high=p+.1, low=p-.1, close=p, volume=1_000_000.))
     return dict(ticker=ticker, name="合成测试，非真实股票行情", bars=bars, events=[], quote={},
                 source="synthetic_test", source_url=None, fetched_at=NOW.isoformat(), sha256="fixture",
-                snapshot_kind="synthetic", fetch_error=None)
+                snapshot_kind="synthetic", fetch_error=None, events_status="provider_reported")
 
 
 def response():
@@ -62,6 +62,18 @@ class LookupTests(unittest.TestCase):
     def test_reference_benchmark_duplicates_are_not_silently_overwritten(self):
         b = fixture("STW.AX", 0)
         b["bars"].append({**b["bars"][-1], "close": 100.})
+        out = S.analyze(fixture(), b, NOW)
+        self.assertIsNone(out["facts"]["relative_stw_20d"])
+        self.assertEqual(out["scores"]["state"], "paused")
+
+    def test_future_or_unknown_observation_times_cannot_enter_current_analysis(self):
+        for timestamp in (None, "2026-10-15T09:00:00+00:00", "2026-10-15T08:00:00"):
+            f = fixture(); f["fetched_at"] = timestamp
+            out = S.analyze(f, fixture("STW.AX", 0), NOW)
+            with self.subTest(timestamp=timestamp):
+                self.assertIsNone(out["facts"])
+                self.assertEqual(out["scores"]["state"], "paused")
+        b = fixture("STW.AX", 0); b["fetched_at"] = "2026-10-15T09:00:00+00:00"
         out = S.analyze(fixture(), b, NOW)
         self.assertIsNone(out["facts"]["relative_stw_20d"])
         self.assertEqual(out["scores"]["state"], "paused")
@@ -115,6 +127,7 @@ class LookupTests(unittest.TestCase):
             v.append(59.375 if k == "close" else v[-1])
         raw = json.dumps(x)
         parsed = S.parse_chart(raw, "BHP.AX")
+        parsed["fetched_at"] = quote_at.isoformat()  # Explicit synthetic observation receipt.
         self.assertEqual(len(parsed["bars"]), len(rows))
         self.assertIsNone(parsed["bars"][-1]["close"])
         self.assertEqual(parsed["bars"][-1]["volume"], 5601864.)
@@ -227,11 +240,25 @@ class LookupTests(unittest.TestCase):
             trimmed_f, trimmed_b = copy.deepcopy(f), copy.deepcopy(b)
             trimmed_f["bars"] = [r for r in f["bars"] if r["date"] <= day]
             trimmed_b["bars"] = [r for r in b["bars"] if r["date"] <= day]
-            full = S.analyze(f, b, now)
+            full_f, full_b = copy.deepcopy(f), copy.deepcopy(b)
+            for snapshot in (full_f, full_b, trimmed_f, trimmed_b): snapshot["fetched_at"] = now.isoformat()
+            full = S.analyze(full_f, full_b, now)
             prefix = S.analyze(trimmed_f, trimmed_b, now)
             with self.subTest(day=day):
+                self.assertIsNotNone(full["facts"])
                 for key in ("facts", "scores", "assessment"):
                     self.assertEqual(full[key], prefix[key])
+
+    def test_quote_and_company_action_times_are_not_assumed_current(self):
+        f, b = fixture(), fixture("STW.AX", 0)
+        f["quote"] = {"price": 999., "as_of": "2026-10-15T09:00:00+00:00"}
+        b["events"] = [{"kind": "dividends", "date": "2026-10-01", "amount": 1.}]
+        out = S.analyze(f, b, NOW)
+        self.assertIsNone(out["quote"]["price"])
+        self.assertTrue(out["quality"]["quote_issue"])
+        self.assertTrue(out["quality"]["benchmark_events_in_window"])
+        b["events"][0]["date"] = "2026-10-16"
+        self.assertFalse(S.analyze(f, b, NOW)["quality"]["benchmark_events_in_window"])
 
     def test_unfinished_extreme_bar_cannot_change_facts_or_conclusion(self):
         base = fixture()

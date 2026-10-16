@@ -57,6 +57,14 @@ def _json_bytes(value):
                       allow_nan=False).encode("utf-8")
 
 
+def _observed_by(snapshot, cutoff):
+    try:
+        observed = dt.datetime.fromisoformat(snapshot["fetched_at"])
+        return observed.utcoffset() is not None and observed <= cutoff
+    except (KeyError, TypeError, ValueError):
+        return False
+
+
 def _overrides(now):
     from .shortradar import OVERRIDE_DIR
     out = {}
@@ -125,6 +133,7 @@ def parse_chart(raw, ticker):
                 "split_ratio": value.get("splitRatio")})
     return {"ticker": ticker, "name": meta.get("longName") or meta.get("shortName") or ticker,
             "bars": sorted(rows, key=lambda r: r["date"]), "events": events,
+            "events_status": "provider_reported",
             "normalization_notes": notes,
             "quote": {"price": _number(meta.get("regularMarketPrice")),
                       "as_of": dt.datetime.fromtimestamp(meta["regularMarketTime"],
@@ -218,11 +227,15 @@ def analyze(stock, benchmark=None, now=None, mode="local"):
     and relative STW change use split-adjusted Close, NOT total/net returns.
     """
     now = now or dt.datetime.now(dt.timezone.utc)
+    if now.utcoffset() is None:
+        raise ValueError("分析时刻必须带时区。")
     overrides = _overrides(now)
     expected = latest_completed("AU", now, overrides)["date"]
     all_bars = stock["bars"]
     bars = [r for r in all_bars if r["date"] <= expected]
     issues = []
+    if not _observed_by(stock, now):
+        issues.append("行情抓取时间缺失、无时区或晚于分析时刻，暂停指标和评分。")
     dates = [r["date"] for r in bars]
     if dates != sorted(set(dates)):
         issues.append("日线日期重复或顺序异常，暂不判断。")
@@ -290,7 +303,7 @@ def analyze(stock, benchmark=None, now=None, mode="local"):
             calculation_warnings.append("较早历史价格区间缺失或异常，ATR暂停；近期均线与价格条件另行检查。")
         volume_ref = f["volume"].iloc[-21:-1].mean()
         rs20 = None
-        if benchmark and not benchmark.get("fetch_error"):
+        if benchmark and not benchmark.get("fetch_error") and _observed_by(benchmark, now):
             benchmark_bars = [r for r in benchmark["bars"] if r["date"] <= expected]
             benchmark_dates = [r["date"] for r in benchmark_bars]
             bench = {r["date"]: r for r in benchmark_bars} if benchmark_dates == sorted(set(benchmark_dates)) else {}
@@ -317,6 +330,8 @@ def analyze(stock, benchmark=None, now=None, mode="local"):
                  for r in bars[-510:]]
     recent = [e for e in stock.get("events", []) if as_of and e["date"] <= as_of
               and e["date"] >= required[20]]
+    benchmark_events = [e for e in (benchmark or {}).get("events", []) if as_of
+                        and required[20] <= e["date"] <= as_of]
     blockers = list(issues)
     if recent:
         blockers.append("近期有除息或拆合股事件，跌幅可能包含机械调整，先核对公告。")
@@ -326,6 +341,10 @@ def analyze(stock, benchmark=None, now=None, mode="local"):
     long_setup = bool(scores["long"] and scores["long"]["value"] == scores["max"])
     short_setup = bool(scores["short"] and scores["short"]["value"] == scores["max"])
     reasons = list(blockers) + calculation_warnings + stock.get("normalization_notes", [])
+    if stock.get("events_status") == "not_supplied":
+        reasons.append("本快照未提供公司行动明细，条件分只作价格观察，需核对除息、配股和公告。")
+    if benchmark_events:
+        reasons.append("STW在比较窗口内有来源报告的公司行动；相对强弱只比价格，未消除股息影响。")
     if facts:
         reasons.extend(["收盘价%s20日均线，20日均线%s50日均线。" %
                         ("高于" if facts["close"] > facts["ma20"] else "未高于",
@@ -351,15 +370,29 @@ def analyze(stock, benchmark=None, now=None, mode="local"):
             reasons.append("成交金额不足买入观察门槛，先不考虑入场。")
         elif facts["adv20_aud"] < MIN_ADV_SHORT:
             reasons.append("成交金额不足做空观察门槛，先不考虑做空。")
+    quote = dict(stock.get("quote", {}))
+    quote_issue = None
+    if quote.get("price") is not None:
+        try:
+            quote_at = dt.datetime.fromisoformat(quote["as_of"])
+            observed_at = dt.datetime.fromisoformat(stock["fetched_at"])
+            if quote_at.utcoffset() is None or observed_at.utcoffset() is None or not quote_at <= observed_at <= now:
+                raise ValueError("quote time inconsistent")
+        except (KeyError, TypeError, ValueError):
+            quote_issue = "报价时刻缺失或晚于抓取/分析时刻；原文保留，页面不显示该报价。"
+            quote["price"] = None
     return {"schema_version": 1, "ticker": stock["ticker"], "name": stock["name"],
             "market": "AU", "currency": "AUD", "mode": mode, "as_of": as_of,
             "expected_session": expected, "analyzed_at": now.isoformat(), "valid_until": valid_until,
             "source": {k: stock.get(k) for k in ("source", "source_url", "fetched_at", "sha256", "snapshot_kind")},
             "benchmark_source": {k: (benchmark or {}).get(k) for k in ("fetched_at", "sha256", "source")},
-            "quote": {**stock.get("quote", {}), "delay": "unknown", "used_in_analysis": False},
+            "quote": {**quote, "delay": "unknown", "used_in_analysis": False},
             "quality": {"state": "unavailable" if issues else "single_source",
                         "issues": issues, "source_verified": False,
                         "calculation_warnings": calculation_warnings,
+                        "quote_issue": quote_issue,
+                        "corporate_actions_state": stock.get("events_status", "not_supplied"),
+                        "benchmark_events_in_window": benchmark_events,
                         "adjustment_metadata_verified": False,
                         "calendar_version": AC.CALENDAR_VERSION,
                         "excluded_unfinished_bars": len(all_bars) - len(bars)},
@@ -410,6 +443,7 @@ def cached_analyses(now=None, log=print):
                      if k in px and ticker in px[k] and d in px[k].index else None
                      for k in ("open", "high", "low", "close", "volume")}} for d in s.index]
             snapshots[ticker] = {"ticker": ticker, "name": name, "bars": bars, "events": [],
+                                 "events_status": "not_supplied",
                                  "source": "Yahoo Finance / 每日行情缓存", "source_url": None,
                                  "fetched_at": dt.datetime.fromtimestamp(timestamp, dt.timezone.utc).isoformat(),
                                  "sha256": sha, "snapshot_kind": "existing_cache_not_raw_http", "quote": {}}
