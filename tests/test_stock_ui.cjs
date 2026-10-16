@@ -166,6 +166,31 @@ test('old daily snapshots do not acquire invented scores in the browser', async 
   assert.equal(ui.w.document.querySelectorAll('.stock-score-value').length, 0);
 });
 
+test('a malformed optional diagnostic cannot blank a valid stock result', async t => {
+  const data = fixture(); data.diagnostics = {cards:[null],conflicts:[],scope:'test'};
+  const ui = setup(t, async () => answer(data));
+  ui.submit('BHP'); await ui.done();
+  assert.ok(ui.w.document.querySelector('.stock-chart svg'));
+  assert.match(ui.text(), /解读明细不完整/);
+});
+
+test('future source observation cannot display scores or calculated indicators', async t => {
+  const data = fixture(); data.source.fetched_at = '2100-01-01T00:00:00Z';
+  const ui = setup(t, async () => answer(data));
+  ui.submit('BHP'); await ui.done();
+  assert.equal(ui.w.document.querySelectorAll('.stock-score-value,.stock-metrics b').length, 0);
+  assert.match(ui.text(), /抓取时刻/);
+});
+
+test('a dated but incomplete provider bar is not labelled as a complete daily bar', async t => {
+  const data = fixture(); data.quality.state = 'unavailable';
+  data.quality.latest_complete_traded_session = '2026-10-14';
+  const ui = setup(t, async () => answer(data));
+  ui.submit('BHP'); await ui.done();
+  assert.doesNotMatch(ui.w.document.querySelector('.stock-heading').textContent, /完整日线截至/);
+  assert.match(ui.w.document.querySelector('.stock-heading').textContent, /来源日线到/);
+});
+
 test('scores and directional conclusion must agree before either is presented', async t => {
   const data = fixture();
   data.assessment.bias = 'long_watch';

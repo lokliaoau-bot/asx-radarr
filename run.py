@@ -40,7 +40,8 @@ def main():
         except (ValueError, RuntimeError, BlockingIOError) as e:
             print("查询失败：%s" % e)
             return 1
-        print("\n%s · %s · 完整日线截至 %s" % (row["ticker"], row["name"], row["as_of"] or "未知"))
+        label = "完整日线截至" if row["quality"]["state"] == "single_source" else "来源日线到（分析暂停）"
+        print("\n%s · %s · %s %s" % (row["ticker"], row["name"], label, row["as_of"] or "未知"))
         print(row["assessment"]["headline"])
         print("买入：" + row["assessment"]["long"])
         print("做空：" + row["assessment"]["short"])

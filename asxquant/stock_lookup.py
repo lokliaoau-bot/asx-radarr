@@ -65,6 +65,13 @@ def _observed_by(snapshot, cutoff):
         return False
 
 
+def _complete_traded_bar(row):
+    values = {k: _number(row.get(k)) for k in ("open", "high", "low", "close", "volume")}
+    return all(v is not None and v > 0 for v in values.values()) and (
+        values["low"] <= min(values["open"], values["close"])
+        and values["high"] >= max(values["open"], values["close"]))
+
+
 def _overrides(now):
     from .shortradar import OVERRIDE_DIR
     out = {}
@@ -140,6 +147,30 @@ def parse_chart(raw, ticker):
                           dt.timezone.utc).isoformat() if meta.get("regularMarketTime") else None}}
 
 
+def _revision_summary(previous, current, observed_at):
+    summary = {"state": "first_observation", "previous_sha256": None,
+               "changed_sessions": None, "examples": []}
+    if not previous:
+        return summary
+    summary.update(state="not_comparable", previous_sha256=previous["sha256"])
+    if not _observed_by(previous, observed_at):
+        return summary
+    try:
+        prior_at = dt.datetime.fromisoformat(previous["fetched_at"])
+        completed = latest_completed("AU", prior_at, _overrides(prior_at))["date"]
+    except ValueError:
+        return summary
+    old = {r["date"]: r for r in previous["bars"] if r["date"] <= completed}
+    changes = []
+    for row in current["bars"]:
+        prior = old.get(row["date"])
+        if prior:
+            fields = [k for k in ("open", "high", "low", "close", "volume") if prior[k] != row[k]]
+            if fields: changes.append({"date": row["date"], "fields": fields})
+    summary.update(state="compared", changed_sessions=len(changes), examples=changes[:5])
+    return summary
+
+
 def fetch_snapshot(ticker, now=None, cache_dir=None):
     """60-second cache, immutable raw HTTP revisions + hash, explicit stale fallback."""
     ticker = normalize_ticker(ticker)
@@ -151,11 +182,16 @@ def fetch_snapshot(ticker, now=None, cache_dir=None):
     try:
         with open(pointer, encoding="utf-8") as f:
             cached = json.load(f)
+        if not isinstance(cached, dict) or not isinstance(cached.get("sha256"), str) or not re.fullmatch(r"[0-9a-f]{64}", cached["sha256"]):
+            raise ValueError("invalid snapshot hash")
         with open(os.path.join(folder, cached["sha256"] + ".json"), "rb") as f:
             raw = f.read()
         if hashlib.sha256(raw).hexdigest() != cached["sha256"]:
             raise ValueError("snapshot hash mismatch")
-        cached = {**parse_chart(raw, ticker), **cached}
+        # A receipt supplies provenance, never bars or identity. Hash-checked raw
+        # bytes remain authoritative even if a pointer contains extra fields.
+        metadata = {k: cached[k] for k in ("sha256", "fetched_at", "source_url", "source", "snapshot_kind", "revision") if k in cached}
+        cached = {**parse_chart(raw, ticker), **metadata}
         age = (now - dt.datetime.fromisoformat(cached["fetched_at"])).total_seconds()
         if 0 <= age < 60:
             return {**cached, "cached": True, "fetch_error": None}
@@ -179,6 +215,7 @@ def fetch_snapshot(ticker, now=None, cache_dir=None):
             atomic_bytes(path, raw)
             atomic_bytes(os.path.join(folder, sha + ".first.json"), _json_bytes(receipt))
         parsed = parse_chart(raw, ticker)
+        receipt["revision"] = _revision_summary(cached, parsed, observed_at)
         atomic_bytes(pointer, _json_bytes(receipt))
         return {**parsed, **receipt, "cached": False, "fetch_error": None}
     except Exception as e:
@@ -263,13 +300,11 @@ def analyze(stock, benchmark=None, now=None, mode="local"):
         if r is None:
             issues.append("近期日线漏日：%s；没有补价格或跳过后继续判断。" % day)
             break
-        if (any(r.get(k) is None or not np.isfinite(r[k]) or r[k] <= 0
-                for k in ("open", "high", "low", "close"))
-                or r.get("volume") is None or r["volume"] <= 0
-                or r["low"] > min(r["open"], r["close"])
-                or r["high"] < max(r["open"], r["close"]) or r["low"] > r["high"]):
-            issues.append("近期有缺失、无成交或异常日线：%s；暂不判断。" % day)
+        if not _complete_traded_bar(r):
+            issues.append("来源尚未提供 %s 的日线收盘价；报价另列，不能替代收盘。" % day if r.get("close") is None
+                          else "近期有缺失、无成交或异常日线：%s；暂不判断。" % day)
             break
+    latest_complete = next((r["date"] for r in reversed(bars) if _complete_traded_bar(r)), None)
     valid_until = None
     if as_of:
         day = dt.date.fromisoformat(as_of)
@@ -394,6 +429,8 @@ def analyze(stock, benchmark=None, now=None, mode="local"):
                         "issues": issues, "source_verified": False,
                         "calculation_warnings": calculation_warnings,
                         "quote_issue": quote_issue,
+                        "history_revision": stock.get("revision"),
+                        "latest_complete_traded_session": latest_complete,
                         "corporate_actions_state": stock.get("events_status", "not_supplied"),
                         "benchmark_events_in_window": benchmark_events,
                         "adjustment_metadata_verified": False,
@@ -401,10 +438,10 @@ def analyze(stock, benchmark=None, now=None, mode="local"):
                         "excluded_unfinished_bars": len(all_bars) - len(bars)},
             "facts": facts, "chart": chart, "recent_events": recent, "scores": scores, "diagnostics": diagnostics,
             "assessment": {"bias": "long_watch" if long_setup else "short_watch" if short_setup else "observe",
-                           "headline": "偏多，可关注买入条件" if long_setup else
+                           "headline": "资料待核对，暂停方向判断" if blockers else "偏多，可关注买入条件" if long_setup else
                                        "偏空，可关注做空条件" if short_setup else "先观察，当前条件不完整或方向不一致",
-                           "long": "技术条件符合，下一交易时段再核对成交价" if long_setup else "暂不符合本页的买入观察条件",
-                           "short": "技术条件符合；借券及费用未确认，尚不能确认可执行" if short_setup else "暂不符合本页的做空观察条件",
+                           "long": "资料待核对，暂停判断" if blockers else "技术条件符合，下一交易时段再核对成交价" if long_setup else "暂不符合本页的买入观察条件",
+                           "short": "资料待核对，暂停判断" if blockers else "技术条件符合；借券及费用未确认，尚不能确认可执行" if short_setup else "暂不符合本页的做空观察条件",
                            "reasons": reasons, "borrow_available": None, "cfd_available": None,
                            "net_expected_return": None, "predictive_accuracy": None,
                            "method": "仅描述均线排列、相对STW强弱及既有流动性门槛；没有训练或调参，不代表已验证的交易优势。",

@@ -120,6 +120,45 @@ class LookupTests(unittest.TestCase):
             with self.subTest(value=value), self.assertRaises(ValueError):
                 S.normalize_ticker(value)
 
+    def test_cache_receipt_cannot_replace_hash_bound_price_payload(self):
+        class Reply:
+            def __enter__(self): return self
+            def __exit__(self, *args): pass
+            def read(self, *args): return json.dumps(response()).encode()
+        with tempfile.TemporaryDirectory() as tmp, patch.object(S.urllib.request, "urlopen", return_value=Reply()):
+            S.fetch_snapshot("BHP", NOW, tmp)
+            path = os.path.join(tmp, "ticker-BHP.AX", "latest.json")
+            with open(path, encoding="utf-8") as f: pointer = json.load(f)
+            pointer["bars"] = [{"date": "2026-10-15", "close": 999.}]
+            with open(path, "w", encoding="utf-8") as f: json.dump(pointer, f)
+            row = S.fetch_snapshot("BHP", NOW+dt.timedelta(seconds=30), tmp)
+            self.assertEqual(row["bars"][0]["close"], 10.)
+
+    def test_provider_revisions_are_compared_only_for_previously_completed_days(self):
+        class Reply:
+            def __init__(self, raw): self.raw = raw
+            def __enter__(self): return self
+            def __exit__(self, *args): pass
+            def read(self, *args): return self.raw
+        first = json.dumps(response()).encode()
+        revised = response(); revised["chart"]["result"][0]["indicators"]["quote"][0]["close"][0] = 10.1
+        with tempfile.TemporaryDirectory() as tmp:
+            with patch.object(S.urllib.request, "urlopen", return_value=Reply(first)):
+                a = S.fetch_snapshot("BHP", NOW, tmp)
+            with patch.object(S.urllib.request, "urlopen", return_value=Reply(json.dumps(revised).encode())):
+                b = S.fetch_snapshot("BHP", NOW+dt.timedelta(minutes=2), tmp)
+            self.assertIsNone(a["revision"]["changed_sessions"])
+            self.assertEqual(b["revision"]["changed_sessions"], 1)
+            self.assertEqual(b["revision"]["previous_sha256"], a["sha256"])
+            self.assertEqual(b["revision"]["examples"][0]["fields"], ["close"])
+        with tempfile.TemporaryDirectory() as tmp:
+            with patch.object(S.urllib.request, "urlopen", return_value=Reply(first)):
+                S.fetch_snapshot("BHP", NOW-dt.timedelta(hours=4), tmp)
+            with patch.object(S.urllib.request, "urlopen", return_value=Reply(json.dumps(revised).encode())):
+                completed = S.fetch_snapshot("BHP", NOW, tmp)
+            self.assertEqual(completed["revision"]["changed_sessions"], 0,
+                             "Completing today's bar is not a historical revision")
+
     def test_metadata_identity(self):
         for key, value in (("symbol","CSL.AX"), ("currency","USD"), ("exchangeName","NYSE"),
                            ("exchangeTimezoneName","America/New_York")):
@@ -324,6 +363,7 @@ class LookupTests(unittest.TestCase):
                 self.assertEqual(y["scores"]["state"], "paused")
                 self.assertIsNone(y["scores"]["long"])
                 self.assertIsNone(y["diagnostics"])
+                self.assertIn("暂停", y["assessment"]["headline"])
                 self.assertEqual(y["assessment"]["bias"],"observe")
                 self.assertNotEqual(y["quality"]["state"],"single_source")
 

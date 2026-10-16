@@ -25,6 +25,10 @@
   function expired(data) {
     return !data.valid_until || !Number.isFinite(Date.parse(data.valid_until)) || Date.now() >= Date.parse(data.valid_until);
   }
+  function observed(data) {
+    var t=data.source && data.source.fetched_at;
+    return typeof t==="string" && /(?:Z|[+-]\d{2}:\d{2})$/.test(t) && Number.isFinite(Date.parse(t)) && Date.parse(t)<=Date.now();
+  }
   root.innerHTML = '<div class="stock-search"><div><h2>查一只澳股</h2>' +
     '<p class="lead">输入澳股代码，看多空条件分、指标解释和技术图。</p></div>' +
     '<form id="stockForm"><label for="stockCode">ASX 股票代码</label><div class="stock-input">' +
@@ -117,18 +121,34 @@
   function diagnosticCards(data, usable) {
     var d=data.diagnostics;
     if(!usable || !d || !Array.isArray(d.cards) || !Array.isArray(d.conflicts)) return "";
+    if(!d.cards.every(function(c){return c && typeof c.title==="string" && typeof c.summary==="string";}))
+      return '<p class="stock-scope">解读明细不完整，暂不显示；价格图与已通过检查的指标保留。</p>';
     return '<section class="stock-diagnostics"><h4>把指标放在一起看</h4>'+
       d.conflicts.map(function(s){return '<p class="stock-conflict">'+safe(s)+'</p>';}).join("")+
       '<div class="stock-diagnostic-grid">'+d.cards.map(function(c){return '<article><h5>'+safe(c.title)+'</h5><p>'+safe(c.summary)+'</p></article>';}).join("")+
       '</div><p class="stock-scope">'+safe(d.scope)+'</p></section>';
   }
 
+  function dataHealth(data) {
+    var q=data.quality, revision=q.history_revision, warnings=(q.issues || []).concat(q.calculation_warnings || []);
+    if(q.quote_issue) warnings.push(q.quote_issue);
+    if(!observed(data)) warnings.push("抓取时刻缺失、无时区或晚于当前时刻，需要核对设备时间和来源记录。");
+    var changed=revision && revision.state==="compared" && Number.isInteger(revision.changed_sessions) && revision.changed_sessions>=0;
+    var revisionText=changed ? "与上次已完成日线比较，历史行有 "+revision.changed_sessions+" 个交易日发生变化；原文均保留。" : "本快照尚未完成历史修订比较。";
+    var actions=q.corporate_actions_state==="provider_reported" ? "来源报告了公司行动，尚未独立核实。" : "公司行动明细未提供或状态未知，需核对公告。";
+    return '<details class="stock-data-health"'+(warnings.length?' open':'')+'><summary>数据检查：单一来源，独立核价未完成</summary>'+
+      '<p>抓取于 '+safe(time(data.source.fetched_at))+'。报价时点与完整日线分别显示。</p>'+
+      '<p>市场最近应有完整交易日：'+safe(data.expected_session || "未知")+'；最近字段完整且有成交的日线：'+safe(q.latest_complete_traded_session || "未知")+'。</p><p>'+safe(actions)+'</p><p>'+safe(revisionText)+'</p>'+
+      warnings.map(function(s){return '<p>'+safe(s)+'</p>';}).join("")+
+      '<p><a href="https://www.asx.com.au/markets/company/'+encodeURIComponent(data.ticker.replace(/\.AX$/,""))+'" target="_blank" rel="noopener noreferrer">打开ASX官网核对标的 ↗</a>；先核对报价日期、币种和收盘口径，数值相似不等于完成核价。</p></details>';
+  }
+
   function renderStock(data) {
     var a=data.assessment, old=expired(data), q=data.quote || {};
-    var usable=!old && data.quality.state==="single_source" && data.facts!=null;
+    var usable=!old && observed(data) && data.quality.state==="single_source" && data.facts!=null;
     var directionUsable=usable && (!data.scores || validScores(data));
     var f=usable ? data.facts : null;
-    var paused=old ? "数据过期，暂停判断" : !usable ? "日线检查未通过，暂停判断" : "条件分暂停，先核对数据与结论";
+    var paused=old ? "数据过期，暂停判断" : !observed(data) ? "抓取时刻未能核对，暂停判断" : !usable ? "日线检查未通过，暂停判断" : "条件分暂停，先核对数据与结论";
     var headline=old ? "行情已超过下一次收盘时点，请先更新再判断" : !directionUsable ? paused : a.headline;
     var reasons=directionUsable || (usable && data.scores && data.scores.state==="paused") ? a.reasons : (data.quality.issues || []).concat([paused+"；保留历史价格供核对。"]);
     var cell=function(label,value){return '<div><span>'+safe(label)+'</span><b>'+safe(value)+'</b></div>';};
@@ -142,9 +162,9 @@
       cell("ATR14 · 日波动",price(f.atr14)+" / "+percent(f.atr_pct))+cell("20日日均成交额",price(f.adv20_aud))+
       cell("前20日低点 / 高点",price(f.prior20_low)+" / "+price(f.prior20_high)) : '<p>'+safe(paused)+'，不显示计算指标。</p>';
     byId("stockResult").innerHTML = '<div class="stock-heading"><div><h3>'+safe(data.ticker)+' <span>'+safe(data.name)+'</span></h3>' +
-      '<p>完整日线截至 '+safe(data.as_of || "未知")+' · '+(data.mode==="local"?"按需读取":"每日快照")+'</p></div>' +
+      '<p>'+(usable?'完整日线截至 ':'来源日线到 ')+safe(data.as_of || "未知")+(usable?'':' · 分析暂停')+' · '+(data.mode==="local"?"按需读取":"每日快照")+'</p></div>' +
       (q.price!=null?'<div class="stock-quote"><b>'+price(q.price)+'</b><span>来源报价 · 延迟未核实<br>'+safe(time(q.as_of))+'<br>报价不参与完整日线结论</span></div>':"")+'</div>'+
-      '<div class="stock-verdict '+(directionUsable&&a.bias==="long_watch"?"positive":directionUsable&&a.bias==="short_watch"?"negative":"")+'"><strong>'+safe(headline)+'</strong>'+
+      dataHealth(data)+'<div class="stock-verdict '+(directionUsable&&a.bias==="long_watch"?"positive":directionUsable&&a.bias==="short_watch"?"negative":"")+'"><strong>'+safe(headline)+'</strong>'+
       '<div><b>买入：</b>'+safe(directionUsable?a.long:paused)+'</div><div><b>做空：</b>'+safe(directionUsable?a.short:paused)+'</div></div>'+
       scoreCards(data,usable)+diagnosticCards(data,usable)+'<div class="stock-metrics">'+metrics+'</div><div class="stock-chart-controls">'+[63,126,252,510].map(function(n,i){
         return '<button type="button" class="ghost '+(range===n?"selected":"")+'" data-range="'+n+'">'+["3个月","6个月","1年","2年"][i]+'</button>';
@@ -155,6 +175,7 @@
       '<p>日线为来源所报拆股调整价，未由第二来源核价；股息及其他公司行动、调整声明仍需核实。涨跌幅不含股息、借券、融资或交易费。</p>'+
       '<p>均线是完整窗口简单平均；RSI/ATR沿用本项目递归平滑，以首个观察值初始化，可能与用初始简单平均的看盘软件略有差别。</p>'+
       '<p>MACD为12/26/9 EMA（从最早历史价递推），柱值为MACD线减信号线；量比用当日成交量除以前20日均量，不含当日。年化波动为20日简单收益标准差（ddof=0）乘√252。</p>'+
+      '<p>ADX/DI沿用本项目Wilder递推；CMF20按20个完整日线的收盘位置乘成交量估算，高低相同的日线贡献定义为0。跌/涨日成交量比只计最近20日涨跌日，平盘不计；无上涨日时比值留空。它们不参与条件分。</p>'+
       '<p>'+safe(a.method)+' 借券 / CFD可用性、净预期收益、预测准确率均未知；本页没有生成胜率。</p>'+
       '<p>日历 '+safe(data.quality.calendar_version)+' · 独立核价：未完成 · 已排除未收盘日线 '+safe(data.quality.excluded_unfinished_bars)+' 根</p>'+
       '<p class="stock-hash">快照 SHA-256：'+safe(data.source.sha256 || "未提供")+'</p></details>';
@@ -197,7 +218,8 @@
       if(id!==requestId) return;
       if(d.ticker!==code || d.market!=="AU" || d.currency!=="AUD" || !d.assessment || !d.quality) throw new Error("返回的股票或数据格式不符，停止显示判断。");
       current=d; renderStock(d);
-      message.textContent=(d.mode==="local"?"已读取行情。":"这是每日发布的行情快照，无法实时按需刷新。")+" 完整日线截至 "+(d.as_of||"未知")+"；抓取于 "+time(d.source.fetched_at)+"。";
+      message.textContent=(d.mode==="local"?"已读取来源数据。":"这是每日发布的行情快照，无法实时按需刷新。")+
+        (d.quality.state==="single_source"&&d.facts&&observed(d)&&!expired(d)?" 完整日线截至 ":" 来源日线到 ")+(d.as_of||"未知")+"；抓取于 "+time(d.source.fetched_at)+"。";
       try { localStorage.setItem("asx-last-ticker",code); } catch(e) { /* Storage may be disabled. */ }
     }).catch(function(e){
       if(id!==requestId) return;
