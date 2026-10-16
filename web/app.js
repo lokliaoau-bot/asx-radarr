@@ -1106,12 +1106,10 @@ function squeezeSection(r) {
 
 function render(r) {
   R = r;
-  if (STATIC_MODE) {
-    ["btnExport", "btnHard"].forEach(function (id) {
-      var b = el(id); if (b) b.style.display = "none";
-    });
-    var br = el("btnRefresh"); if (br) br.textContent = "⟳ 获取最新";
-  }
+  ["btnExport", "btnHard"].forEach(function (id) {
+    var b = el(id); if (b) b.style.display = STATIC_MODE ? "none" : "";
+  });
+  var br = el("btnRefresh"); if (br) br.textContent = STATIC_MODE ? "⟳ 获取最新" : "⟳ 更新全部指标";
   renderQuote(r.benchmark);
   el("asof").textContent = "行情截至 " + r.as_of + " · ASIC空头截至 " + (r.short_as_of || "—") +
     " · 生成于 " + r.generated_at + " · 界面 " + buildLabel() +
@@ -1251,12 +1249,23 @@ function load() {
   var bust = "?t=" + Date.now();
   fetch("api/report" + bust).then(function (x) {
     if (!x.ok) throw new Error("no api");
+    STATIC_MODE = false;
     return x.json();
   }).catch(function () {
-    STATIC_MODE = true;                       // 云端静态托管：直接取发布好的 report.json
-    return fetch("report.json" + bust).then(function (x) {
-      if (!x.ok) throw new Error("no report");
+    // A local cold start returns 404 for the report too. Check the server before
+    // treating that as static hosting, otherwise the first refresh never runs.
+    return fetch("api/status" + bust).then(function (x) {
+      if (!x.ok) throw new Error("no local server");
       return x.json();
+    }).then(function () {
+      STATIC_MODE = false;
+      throw new Error("local report not ready");
+    }, function () {
+      STATIC_MODE = true;
+      return fetch("report.json" + bust).then(function (x) {
+        if (!x.ok) throw new Error("no report");
+        return x.json();
+      });
     });
   }).then(function (d) {
     try {
@@ -1271,7 +1280,8 @@ function load() {
     }
   }).catch(function (e) {
     if (el("app").innerHTML.indexOf("对不上") >= 0) return;   // 上面已经报过了
-    el("app").innerHTML = '<div class="empty">全市场报告尚未生成。<br><br><b>上方单股查询可独立使用，无需先训练模型。</b><br>如需全市场报告，点击右上角 <b>更新全部指标</b>。' +
+    el("asof").textContent = "全市场报告暂未载入 · 单股查询可直接使用";
+    el("app").innerHTML = '<div class="empty">全市场报告暂未载入。<br><br><b>上方单股查询可独立使用，无需先训练模型。</b><br>如需全市场报告，点击右上角 <b>更新全部指标</b>。' +
       '<br><span style="font-size:12px">首次运行需下载12年行情与5年ASIC空头数据并训练模型，约 3–5 分钟；之后每次约数秒。</span></div>';
   });
 }

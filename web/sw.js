@@ -9,7 +9,7 @@
    · 只清理自己名下（asx-radar-*）的旧缓存，不碰同源上别的缓存；
    · 离线时打开看空雷达页，回落到看空雷达页本身，而不是错跳到主页；
    · 缺的数据文件离线时明确返回 503，而不是把主页 HTML 当 JSON 塞给页面。 */
-var CACHE = "asx-radar-v12";    // v12：单股查询；v11 预留给独立复盘修复
+var CACHE = "asx-radar-v13";    // v13：无效/过期数据不输出指标；查询中不复活旧股票
 var SHELL = ["./", "./index.html", "./app.js", "./stock.js", "./style.css", "./manifest.webmanifest"];
 
 self.addEventListener("install", function (e) {

@@ -36,10 +36,10 @@
     '电脑本地版按需拉取；手机每日版读取已发布行情。报价和完整收盘分析分别标时。</p>' +
     '<div id="stockResult"></div></div>';
 
-  function chart(data, size) {
-    var rows = (data.chart || []).slice(-size), W = 960, H = 400, L = 65, R = 18;
+  function chart(data, size, technical) {
+    var rows = (data.chart || []).slice(-size), W = 960, H = technical ? 400 : 305, L = 65, R = 18;
     var values = [];
-    rows.forEach(function (r) { [r.low, r.high, r.ma20, r.ma50].forEach(function (v) { if (v != null && Number.isFinite(v)) values.push(v); }); });
+    rows.forEach(function (r) { (technical ? [r.low, r.high, r.ma20, r.ma50] : [r.low, r.high]).forEach(function (v) { if (v != null && Number.isFinite(v)) values.push(v); }); });
     if (!values.length) return '<p>暂无可绘制的日线。</p>';
     var lo = Math.min.apply(null, values), hi = Math.max.apply(null, values), pad = (hi-lo) * .06 || 1;
     lo -= pad; hi += pad;
@@ -47,7 +47,7 @@
     var Y = function (v) { return 15 + (hi-v) / (hi-lo) * 204; };
     var maxVol = Math.max.apply(null, rows.map(function (r) { return r.volume || 0; })) || 1;
     var bar = Math.max(.8, Math.min(7, (W-L-R) / rows.length * .65));
-    var svg = '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+safe(data.ticker)+' 日线蜡烛图、20及50日均线、成交量与RSI">';
+    var svg = '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+safe(data.ticker)+(technical?' 日线蜡烛图、20及50日均线、成交量与RSI':' 历史价格与成交量，指标已暂停')+'">';
     for (var g=0; g<=4; g++) {
       var v = lo + (hi-lo)*g/4, y = Y(v);
       svg += '<line class="gl" x1="'+L+'" x2="'+(W-R)+'" y1="'+y+'" y2="'+y+'"/>' +
@@ -62,41 +62,45 @@
       }
       if (r.volume != null && r.volume > 0) svg += '<rect x="'+(x-bar/2)+'" y="'+(280-r.volume/maxVol*42)+'" width="'+bar+'" height="'+(r.volume/maxVol*42)+'" fill="'+color+'" opacity=".6"/>';
     });
-    [["ma20","#fbbf24",Y],["ma50","#60a5fa",Y],["rsi14","#a78bfa",function(v){return 372-v*.72;}]].forEach(function (s) {
+    (technical ? [["ma20","#fbbf24",Y],["ma50","#60a5fa",Y],["rsi14","#a78bfa",function(v){return 372-v*.72;}]] : []).forEach(function (s) {
       var path="", pen=false;
       rows.forEach(function(r,i){ var v=r[s[0]]; if(v==null || !Number.isFinite(v)){pen=false;return;} path+=(pen?"L":"M")+X(i)+" "+s[2](v)+" "; pen=true; });
       svg += '<path d="'+path+'" fill="none" stroke="'+s[1]+'" stroke-width="1.7"/>';
     });
-    [30,70].forEach(function (v) {
+    (technical ? [30,70] : []).forEach(function (v) {
       var y=372-v*.72;
       svg+='<line class="gl" x1="'+L+'" x2="'+(W-R)+'" y1="'+y+'" y2="'+y+'" stroke-dasharray="4 4"/><text class="tick" x="'+(L-7)+'" y="'+(y+4)+'" text-anchor="end">'+v+'</text>';
     });
-    svg += '<text class="tick" x="8" y="248">成交量</text><text class="tick" x="8" y="314">RSI14</text>';
+    svg += '<text class="tick" x="8" y="248">成交量</text>'+(technical?'<text class="tick" x="8" y="314">RSI14</text>':'');
     for (var t=0;t<5;t++) {
       var i=Math.round(t/4*(rows.length-1));
-      svg+='<text class="tick" x="'+X(i)+'" y="395" text-anchor="middle">'+safe(rows[i].date)+'</text>';
+      svg+='<text class="tick" x="'+X(i)+'" y="'+(H-5)+'" text-anchor="'+(t===0?'start':t===4?'end':'middle')+'">'+safe(rows[i].date)+'</text>';
     }
     return svg+'</svg>';
   }
 
   function renderStock(data) {
-    var a=data.assessment, f=data.facts, old=expired(data), q=data.quote || {};
-    var headline=old ? "行情已超过下一次收盘时点，请先更新再判断" : a.headline;
+    var a=data.assessment, old=expired(data), q=data.quote || {};
+    var usable=!old && data.quality.state==="single_source" && data.facts!=null;
+    var f=usable ? data.facts : null;
+    var paused=old ? "数据过期，暂停判断" : "日线检查未通过，暂停判断";
+    var headline=old ? "行情已超过下一次收盘时点，请先更新再判断" : !usable ? paused : a.headline;
+    var reasons=usable ? a.reasons : (data.quality.issues || []).concat([paused+"；保留历史价格供核对。"]);
     var cell=function(label,value){return '<div><span>'+safe(label)+'</span><b>'+safe(value)+'</b></div>';};
     var metrics=f ? cell("完整收盘",price(f.close))+cell("当日涨跌",percent(f.change_1d))+cell("20日价格涨跌",percent(f.return_20d))+
       cell("相对STW · 20日",f.relative_stw_20d==null?"缺少对照":number(f.relative_stw_20d*100)+" 个百分点")+
       cell("20日均线",price(f.ma20))+cell("50日均线",price(f.ma50))+cell("RSI14",number(f.rsi14,1))+
       cell("ATR14 · 日波动",price(f.atr14))+cell("20日日均成交额",price(f.adv20_aud))+
-      cell("前20日低点 / 高点",price(f.prior20_low)+" / "+price(f.prior20_high)) : '<p>日线检查未通过，暂停输出指标和方向。</p>';
+      cell("前20日低点 / 高点",price(f.prior20_low)+" / "+price(f.prior20_high)) : '<p>'+safe(paused)+'，不显示计算指标。</p>';
     byId("stockResult").innerHTML = '<div class="stock-heading"><div><h3>'+safe(data.ticker)+' <span>'+safe(data.name)+'</span></h3>' +
       '<p>完整日线截至 '+safe(data.as_of || "未知")+' · '+(data.mode==="local"?"按需读取":"每日快照")+'</p></div>' +
-      (q.price!=null?'<div class="stock-quote"><b>'+price(q.price)+'</b><span>来源最新报价 · 延迟未核实<br>'+safe(time(q.as_of))+'<br>报价不参与完整日线结论</span></div>':"")+'</div>'+
-      '<div class="stock-verdict '+(!old&&a.bias==="long_watch"?"positive":!old&&a.bias==="short_watch"?"negative":"")+'"><strong>'+safe(headline)+'</strong>'+
-      '<div><b>买入：</b>'+safe(old?"数据过期，暂停判断":a.long)+'</div><div><b>做空：</b>'+safe(old?"数据过期，暂停判断":a.short)+'</div></div>'+
+      (q.price!=null?'<div class="stock-quote"><b>'+price(q.price)+'</b><span>来源报价 · 延迟未核实<br>'+safe(time(q.as_of))+'<br>报价不参与完整日线结论</span></div>':"")+'</div>'+
+      '<div class="stock-verdict '+(usable&&a.bias==="long_watch"?"positive":usable&&a.bias==="short_watch"?"negative":"")+'"><strong>'+safe(headline)+'</strong>'+
+      '<div><b>买入：</b>'+safe(usable?a.long:paused)+'</div><div><b>做空：</b>'+safe(usable?a.short:paused)+'</div></div>'+
       '<div class="stock-metrics">'+metrics+'</div><div class="stock-chart-controls">'+[63,126,252,510].map(function(n,i){
         return '<button type="button" class="ghost '+(range===n?"selected":"")+'" data-range="'+n+'">'+["3个月","6个月","1年","2年"][i]+'</button>';
-      }).join(" ")+'<span>日线 · <i style="color:#fbbf24">MA20</i> / <i style="color:#60a5fa">MA50</i> · 鼠标停在蜡烛上查看价格</span></div>'+
-      '<div class="stock-chart">'+chart(data,range)+'</div><div class="stock-reasons"><h4>为什么这样判断</h4><ul>'+a.reasons.map(function(s){return '<li>'+safe(s)+'</li>';}).join("")+'</ul>'+
+      }).join(" ")+'<span>'+(usable?'日线 · <i style="color:#fbbf24">MA20</i> / <i style="color:#60a5fa">MA50</i>':'历史价格 · 指标已暂停')+' · 鼠标停在蜡烛上查看价格</span></div>'+
+      '<div class="stock-chart">'+chart(data,range,usable)+'</div><div class="stock-reasons"><h4>为什么这样判断</h4><ul>'+reasons.map(function(s){return '<li>'+safe(s)+'</li>';}).join("")+'</ul>'+
       '<p>'+safe(a.next_step)+'</p><p>观察位：前20日低点与高点是历史价位，ATR是日波动幅度，均不是保证可成交的入场或止损价。</p></div>'+
       '<details><summary>数据来源、口径与判断边界</summary><p>'+safe(data.source.source)+' · 抓取于 '+safe(time(data.source.fetched_at))+'</p>'+
       '<p>日线为来源所报拆股调整价，未由第二来源核价；股息及其他公司行动、调整声明仍需核实。涨跌幅不含股息、借券、融资或交易费。</p>'+
@@ -109,6 +113,7 @@
 
   function query(value) {
     var code, id=++requestId;
+    current=null; // The expiry timer must never redraw a previous ticker while this query waits.
     try { code=ticker(value); } catch(e) {
       current=null; byId("stockResult").innerHTML=""; byId("stockMessage").textContent=e.message;
       byId("stockSubmit").disabled=false; byId("stockSubmit").textContent="查询分析"; return;

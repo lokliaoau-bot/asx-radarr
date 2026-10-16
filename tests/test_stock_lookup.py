@@ -77,6 +77,53 @@ class LookupTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             S.parse_chart(json.dumps(x), "BHP.AX")
 
+    def test_intraday_null_close_keeps_quote_separate_and_completed_history_unchanged(self):
+        # Synthetic reproduction of the provider's live-session shape: today's
+        # 10:00 daily close is null, followed by a timestamped current quote.
+        base = fixture()
+        x = response()
+        obj = x["chart"]["result"][0]
+        rows = base["bars"] + [dict(date="2026-10-16", open=59.6, high=60.03,
+                                    low=59.26, close=None, volume=5601864.)]
+        obj["timestamp"] = [int(dt.datetime.combine(dt.date.fromisoformat(r["date"]),
+                             dt.time(10), S.SYDNEY).timestamp()) for r in rows]
+        q = {k: [r[k] for r in rows] for k in ("open", "high", "low", "close", "volume")}
+        obj["indicators"]["quote"] = [q]
+        quote_at = dt.datetime(2026, 10, 16, 1, 49, tzinfo=dt.timezone.utc)
+        obj["meta"].update(regularMarketTime=int(quote_at.timestamp()), regularMarketPrice=59.375)
+        obj["timestamp"].append(int(quote_at.timestamp()))
+        for k, v in q.items():
+            v.append(59.375 if k == "close" else v[-1])
+        raw = json.dumps(x)
+        parsed = S.parse_chart(raw, "BHP.AX")
+        self.assertEqual(len(parsed["bars"]), len(rows))
+        self.assertIsNone(parsed["bars"][-1]["close"])
+        self.assertEqual(parsed["bars"][-1]["volume"], 5601864.)
+        self.assertEqual(parsed["quote"]["price"], 59.375)
+        before = S.analyze(base, fixture("STW.AX", 0), NOW)
+        during = S.analyze(parsed, fixture("STW.AX", 0), quote_at)
+        self.assertEqual(during["facts"], before["facts"])
+        for key in ("bias", "long", "short"):
+            self.assertEqual(during["assessment"][key], before["assessment"][key])
+        self.assertEqual(during["quality"]["excluded_unfinished_bars"], 1)
+        after = S.analyze(parsed, fixture("STW.AX", 0),
+                          dt.datetime(2026, 10, 16, 8, tzinfo=dt.timezone.utc))
+        self.assertIsNone(after["facts"])
+        self.assertEqual(after["quality"]["state"], "unavailable")
+        decimal_quote = copy.deepcopy(x)
+        decimal_obj = decimal_quote["chart"]["result"][0]
+        decimal_obj["meta"]["regularMarketPrice"] = 59.37
+        decimal_obj["indicators"]["quote"][0]["close"][-1] = 59.369998931884766
+        self.assertIsNone(S.parse_chart(json.dumps(decimal_quote), "BHP.AX")["bars"][-1]["close"])
+        for k in ("open", "high", "low"):
+            conflict = copy.deepcopy(x)
+            conflict["chart"]["result"][0]["indicators"]["quote"][0][k][-1] += 1
+            with self.subTest(conflict=k), self.assertRaises(ValueError):
+                S.parse_chart(json.dumps(conflict), "BHP.AX")
+        obj["meta"]["regularMarketPrice"] = 60.
+        with self.assertRaises(ValueError):
+            S.parse_chart(json.dumps(x), "BHP.AX")
+
     def test_missing_field_not_zero(self):
         x = response()
         for bad in (None,True,False,"not-a-number",float("inf")):

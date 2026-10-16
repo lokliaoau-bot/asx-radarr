@@ -94,15 +94,24 @@ def parse_chart(raw, ticker):
              **{k: _number(quote[k][i]) for k in fields}}
             for i, t in enumerate(stamps)]
     notes = []
+    market_price = _number(meta.get("regularMarketPrice"))
     # Yahoo appends its latest quote after the canonical daily bar. Its timestamp
     # equals regularMarketTime; its volume can be an earlier quote snapshot.
-    # Treat only this explicit, price-identical tail as a QUOTE, never as a second
-    # session. Any other duplicate (including conflicting OHLC) still fails.
+    # Its canonical intraday Close can still be null. Keep that null rather than
+    # filling it from the quote; analyze() excludes unfinished sessions and will
+    # reject a missing completed-session Close. Conflicting OHLC still fails.
     if (len(rows) > 1 and rows[-1]["date"] == rows[-2]["date"]
             and stamps[-1] == meta.get("regularMarketTime")
             and stamps[-1] > stamps[-2]
             and dt.datetime.fromtimestamp(stamps[-2], SYDNEY).time() == dt.time(10)
-            and all(rows[-1][k] == rows[-2][k] for k in ("open", "high", "low", "close"))):
+            and rows[-1]["close"] is not None
+            and market_price is not None
+            # Chart OHLC is float32-expanded; metadata may be decimal (e.g.
+            # 59.369998931884766 vs 59.37). Accept only that encoding difference.
+            and rows[-1]["close"] in (market_price, float(np.float32(market_price)))
+            and all(rows[-1][k] is not None and rows[-1][k] == rows[-2][k]
+                    for k in ("open", "high", "low"))
+            and (rows[-2]["close"] is None or rows[-1]["close"] == rows[-2]["close"])):
         rows = rows[:-1]
         notes.append("来源在日线末尾追加了同日最新报价，已单独展示报价；日线保留原始日线成交量，没有相加。")
     if len({r["date"] for r in rows}) != len(rows):

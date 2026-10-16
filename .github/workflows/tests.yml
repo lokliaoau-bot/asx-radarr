@@ -20,6 +20,9 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
       - name: 安装依赖
         run: pip install -r requirements.txt
       - name: 全部离线测试（合成数据，不联网）
@@ -30,3 +33,7 @@ jobs:
             python -m tests.$t
             echo "::endgroup::"
           done
+      - name: 单股前端状态检查（仅开发依赖，不进每日更新）
+        run: |
+          npm install --prefix "$RUNNER_TEMP/asx-ui" --no-save --no-package-lock jsdom@30.1.3
+          NODE_PATH="$RUNNER_TEMP/asx-ui/node_modules" node --test tests/test_stock_ui.cjs
