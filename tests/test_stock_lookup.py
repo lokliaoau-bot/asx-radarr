@@ -49,6 +49,23 @@ def response():
 
 
 class LookupTests(unittest.TestCase):
+    def test_old_bad_prices_cannot_silently_feed_recursive_indicators(self):
+        f = fixture()
+        f["bars"][-80]["close"] = None
+        out = S.analyze(f, fixture("STW.AX", 0), NOW)
+        self.assertIsNone(out["facts"]["rsi14"])
+        self.assertIsNone(out["facts"]["macd"])
+        self.assertIsNone(out["facts"]["atr14"])
+        self.assertTrue(out["quality"]["calculation_warnings"])
+        self.assertIsNotNone(out["facts"]["ma50"])
+
+    def test_reference_benchmark_duplicates_are_not_silently_overwritten(self):
+        b = fixture("STW.AX", 0)
+        b["bars"].append({**b["bars"][-1], "close": 100.})
+        out = S.analyze(fixture(), b, NOW)
+        self.assertIsNone(out["facts"]["relative_stw_20d"])
+        self.assertEqual(out["scores"]["state"], "paused")
+
     def test_ticker_boundary(self):
         for value in ("bhp", " BHP.ax ", "ASX:BHP"):
             self.assertEqual(S.normalize_ticker(value), "BHP.AX")

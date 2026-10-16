@@ -269,17 +269,31 @@ def analyze(stock, benchmark=None, now=None, mode="local"):
             if s:
                 valid_until = s["close"].isoformat()
                 break
+    calculation_warnings = []
     facts, chart = None, bars[-510:]
     if not issues:
         f = pd.DataFrame(bars).set_index("date")
         close = f["close"].astype(float)
         ma20, ma50, ma200 = (close.rolling(n, min_periods=n).mean() for n in (20, 50, 200))
-        rsi, atr = I.rsi(close), I.atr(f["high"], f["low"], close)
-        macd, macd_signal, macd_hist = I.macd(close)
+        empty = pd.Series(np.nan, index=f.index)
+        close_history_ok = bool(close.notna().all() and np.isfinite(close).all() and (close > 0).all())
+        range_history_ok = bool(close_history_ok and all(
+            all((_number(r.get(k)) or 0) > 0 for k in ("open", "high", "low"))
+            and r["low"] <= min(r["open"], r["close"])
+            and r["high"] >= max(r["open"], r["close"]) for r in bars))
+        rsi = I.rsi(close) if close_history_ok else empty
+        atr = I.atr(f["high"], f["low"], close) if range_history_ok else empty
+        macd, macd_signal, macd_hist = I.macd(close) if close_history_ok else (empty, empty, empty)
+        if not close_history_ok:
+            calculation_warnings.append("较早历史收盘缺失或异常，RSI/MACD暂停；没有跨缺口递推。")
+        if not range_history_ok:
+            calculation_warnings.append("较早历史价格区间缺失或异常，ATR暂停；近期均线与价格条件另行检查。")
         volume_ref = f["volume"].iloc[-21:-1].mean()
         rs20 = None
         if benchmark and not benchmark.get("fetch_error"):
-            bench = {r["date"]: r for r in benchmark["bars"]}
+            benchmark_bars = [r for r in benchmark["bars"] if r["date"] <= expected]
+            benchmark_dates = [r["date"] for r in benchmark_bars]
+            bench = {r["date"]: r for r in benchmark_bars} if benchmark_dates == sorted(set(benchmark_dates)) else {}
             dates = list(reversed(required[:21]))
             if all(d in bench and (_number(bench[d].get("close")) or 0) > 0
                    and (_number(bench[d].get("volume")) or 0) > 0 for d in dates):
@@ -311,7 +325,7 @@ def analyze(stock, benchmark=None, now=None, mode="local"):
     scores = _condition_scores(facts, blockers, as_of)
     long_setup = bool(scores["long"] and scores["long"]["value"] == scores["max"])
     short_setup = bool(scores["short"] and scores["short"]["value"] == scores["max"])
-    reasons = list(blockers) + stock.get("normalization_notes", [])
+    reasons = list(blockers) + calculation_warnings + stock.get("normalization_notes", [])
     if facts:
         reasons.extend(["收盘价%s20日均线，20日均线%s50日均线。" %
                         ("高于" if facts["close"] > facts["ma20"] else "未高于",
@@ -330,8 +344,9 @@ def analyze(stock, benchmark=None, now=None, mode="local"):
             rsi_note = ("最近上涨较集中" if facts["rsi14"] >= 70 else
                         "最近下跌较集中" if facts["rsi14"] <= 30 else "尚未进入常用的30/70极端区")
             reasons.append("RSI %.1f：%s；不据此保证反转。" % (facts["rsi14"], rsi_note))
-        reasons.append("当日成交量为此前20个交易日平均的 %.2f 倍；ATR约为收盘价的 %.2f%%，用于了解日常波动幅度。" %
-                       (facts["volume_ratio20"], facts["atr_pct"] * 100))
+        reasons.append("当日成交量为此前20个交易日平均的 %.2f 倍。" % facts["volume_ratio20"])
+        if facts["atr_pct"] is not None:
+            reasons.append("ATR约为收盘价的 %.2f%%，用于了解日常波动幅度。" % (facts["atr_pct"] * 100))
         if facts["adv20_aud"] < MIN_ADV_LONG:
             reasons.append("成交金额不足买入观察门槛，先不考虑入场。")
         elif facts["adv20_aud"] < MIN_ADV_SHORT:
@@ -344,6 +359,7 @@ def analyze(stock, benchmark=None, now=None, mode="local"):
             "quote": {**stock.get("quote", {}), "delay": "unknown", "used_in_analysis": False},
             "quality": {"state": "unavailable" if issues else "single_source",
                         "issues": issues, "source_verified": False,
+                        "calculation_warnings": calculation_warnings,
                         "adjustment_metadata_verified": False,
                         "calendar_version": AC.CALENDAR_VERSION,
                         "excluded_unfinished_bars": len(all_bars) - len(bars)},

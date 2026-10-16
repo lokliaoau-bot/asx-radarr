@@ -52,10 +52,12 @@ def main():
             print("多空条件分：暂停；" + "；".join(s["blockers"]))
         f = row["facts"]
         if f:
-            print("收盘 A$%.4f | 20日涨跌 %+.2f%% | MA20 %.4f | MA50 %.4f | RSI14 %.1f" %
-                  (f["close"],f["return_20d"]*100,f["ma20"],f["ma50"],f["rsi14"]))
-            print("MACD %.4f | 信号线 %.4f | 柱 %.4f | 量比 %.2f | 年化波动 %.2f%%" %
-                  (f["macd"],f["macd_signal"],f["macd_hist"],f["volume_ratio20"],f["volatility20_annualized"]*100))
+            def shown(value, digits=4):
+                return "—" if value is None else format(value, ".%df" % digits)
+            print("收盘 A$%.4f | 20日涨跌 %+.2f%% | MA20 %.4f | MA50 %.4f | RSI14 %s" %
+                  (f["close"],f["return_20d"]*100,f["ma20"],f["ma50"],shown(f["rsi14"],1)))
+            print("MACD %s | 信号线 %s | 柱 %s | 量比 %s | 年化波动 %s%%" %
+                  (shown(f["macd"]),shown(f["macd_signal"]),shown(f["macd_hist"]),shown(f["volume_ratio20"],2),shown(f["volatility20_annualized"]*100,2)))
         for reason in row["assessment"]["reasons"]:
             print(" · " + reason)
         print("来源：%s | 抓取于 %s | SHA-256 %s" %
