@@ -361,3 +361,10 @@ details.sec > summary:hover{background:rgba(255,255,255,.026)}
   .ncard h3{font-size:17px}
   .nwhat{font-size:15px}
 }
+.ndeep{margin-top:11px}
+.nbtn{display:block;text-align:center;background:linear-gradient(180deg,#2563eb,#1d4ed8);color:#fff;
+  border-radius:10px;padding:12px 14px;font-size:15px;font-weight:640;text-decoration:none;letter-spacing:.3px;
+  box-shadow:0 3px 14px rgba(37,99,235,.3)}
+.nbtn:active{transform:translateY(1px)}
+.nhint{font-size:13px;color:var(--mut);line-height:1.6;margin-top:8px;padding:0 2px}
+.nhint b{color:var(--tx)}

@@ -8,6 +8,8 @@
     页面只认通过 validate() 的简报，没通过的直接跳过。
   · 股价涨跌不信手写的数字：发布时按收盘价用代码重算并覆盖（fill_moves），停牌单独标出。
   · 影响方向只有五档：空 / 偏空 / 中性 / 偏多 / 多。这是 Claude 的判断，没有回测过，页面上照实写明。
+  · 两个阶段：stage=headlines（每日自动，只有标题 + 发生了什么）→ stage=analysis（用户点按钮后补上影响和分析）。
+    同一天已经有分析版时，标题版不能把它盖掉（accept_brief）。
 
 命令行（Claude 云端任务用。除 moves 外只用标准库，不用装依赖）：
   python -m asxquant.news today                           # 悉尼今天的日期，以及 ASX 开不开市
@@ -15,6 +17,7 @@
   python -m asxquant.news lead <AFR 链接>                  # 文章开头几段（订阅墙前公开的部分，只供自己读，不上页面）
   python -m asxquant.news moves 2026-10-20 NAB CGF XJO    # 按收盘价算当天涨跌（XJO = ASX 200 指数；需要 yfinance）
   python -m asxquant.news check news/briefs/2026-10-20.json
+  python -m asxquant.news accept <git 引用> <文件…>        # news-intake.yml 用：校验 + 不许标题版盖掉分析版
 """
 from __future__ import annotations
 
@@ -34,6 +37,10 @@ BRIEFS = os.path.join(ROOT, "news", "briefs")
 
 SCHEMA = "afr-brief-v1"
 DIRECTIONS = ("空", "偏空", "中性", "偏多", "多")
+# 两个阶段（2026-10-20 用户要求）：每天收盘后 Opus 5.5（中）自动抓标题、写「发生了什么」= headlines；
+# 用户在页面上点「深度分析」才由 Opus 5.5（高）补上影响和分析 = analysis。
+STAGES = ("headlines", "analysis")
+EFFORTS = ("low", "medium", "high")
 AFR = "https://www.afr.com"
 AFR_RSS = AFR + "/rss/feed.xml"
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
@@ -179,6 +186,13 @@ def validate(b):
     P = []
     if b.get("schema") != SCHEMA:
         P.append("schema 必须是 %s" % SCHEMA)
+    stage = stage_of(b)
+    if stage not in STAGES:
+        P.append("stage 只能是 headlines（只抓标题和内容）或 analysis（含影响分析）")
+    if b.get("model") is not None and not _str(b.get("model"), 1, 40):
+        P.append("model 要是模型名")
+    if b.get("effort") is not None and b.get("effort") not in EFFORTS:
+        P.append("effort 只能是 " + "/".join(EFFORTS))
     d = _date(b.get("date"))
     if d is None:
         P.append("date 必须是 YYYY-MM-DD（悉尼日期）")
@@ -219,12 +233,15 @@ def validate(b):
                 P.append(w + "AFR 发稿日期 %s 不在简报日期前 7 天内" % sd)
         if not _str(it.get("what_zh"), 20, 400):
             P.append(w + "what_zh（发生了什么）要 20–400 字")
-        if not _str(it.get("why_zh"), 8, 240):
-            P.append(w + "why_zh（为什么这样判断）要 8–240 字")
-        imp = it.get("impact")
-        if not isinstance(imp, list) or not 1 <= len(imp) <= 5:
-            P.append(w + "impact 要 1–5 个对象（股票或板块）")
-            imp = []
+        if stage == "headlines" and "impact" not in it and "why_zh" not in it:
+            imp = []                           # 标题版：还没有分析，正常
+        else:
+            if not _str(it.get("why_zh"), 8, 240):
+                P.append(w + "why_zh（为什么这样判断）要 8–240 字")
+            imp = it.get("impact")
+            if not isinstance(imp, list) or not 1 <= len(imp) <= 5:
+                P.append(w + "impact 要 1–5 个对象（股票或板块）")
+                imp = []
         for t in imp:
             if not isinstance(t, dict):
                 P.append(w + "impact 里有非对象")
@@ -260,6 +277,33 @@ def _sym(code):
     return "^AXJO" if code == "XJO" else code + ".AX"
 
 
+def stage_of(b):
+    return b.get("stage", "analysis") if isinstance(b, dict) else None
+
+
+def accept_brief(name, new_text, old_text=None):
+    """news-intake.yml 收简报时的把关：(能不能收, 原因)。
+    规则：通过校验、文件名和日期一致；同一天 main 上已经是分析版时，不收标题版（不然每日自动抓标题会把
+    用户点按钮换来的分析盖掉）。分析版可以覆盖任何版本（用户又点了一次深度分析）。"""
+    try:
+        b = json.loads(new_text)
+    except Exception as e:
+        return False, "不是合法 JSON: %s" % e
+    P = validate(b)
+    if isinstance(b, dict) and b.get("date") != os.path.basename(name)[:10]:
+        P.append("文件名和 date 对不上")
+    if P:
+        return False, "没过校验: " + "；".join(P[:5])
+    if old_text:
+        try:
+            old = json.loads(old_text)
+        except Exception:
+            old = None
+        if stage_of(old) == "analysis" and stage_of(b) == "headlines":
+            return False, "main 上这一天已经有分析版，标题版不覆盖（不是错误）"
+    return True, stage_of(b)
+
+
 def _yahoo(codes, start, log):
     try:
         import yfinance as yf
@@ -289,7 +333,7 @@ def fill_moves(briefs, prices=None, log=print):
     """按收盘价重算每个股票代码在简报当天的涨跌，覆盖简报里手写的数字。
     当天成交量为 0 记为停牌。取不到行情就保留原数字并标 move_checked=False（页面显示「约」）。
     prices: {code: [(date, close, volume), ...]}；测试直接给，不给就用 yfinance 取。"""
-    codes = sorted({t["code"] for b in briefs for it in b["items"] for t in it["impact"]
+    codes = sorted({t["code"] for b in briefs for it in b["items"] for t in it.get("impact") or []
                     if t.get("code")})
     if not codes:
         return 0
@@ -300,7 +344,7 @@ def fill_moves(briefs, prices=None, log=print):
     for b in briefs:
         d = b["date"]
         for it in b["items"]:
-            for t in it["impact"]:
+            for t in it.get("impact") or []:
                 rows = sorted(prices.get(t.get("code")) or []) if t.get("code") else []
                 today = [r for r in rows if r[0] == d]
                 before = [r for r in rows if r[0] < d]
@@ -360,7 +404,7 @@ def build_site(out_dir, briefs_dir=BRIEFS, log=print, fetch=True, prices=None):
     for b in briefs:
         _write(os.path.join(nd, "briefs", b["date"] + ".json"), b)
     _write(os.path.join(nd, "index.json"),
-           {"briefs": [{"date": b["date"], "n": len(b["items"])} for b in reversed(briefs)]})
+           {"briefs": [{"date": b["date"], "n": len(b["items"]), "stage": stage_of(b)} for b in reversed(briefs)]})
     if briefs:
         _write(os.path.join(nd, "brief.json"), briefs[-1])
     heads = []
@@ -421,6 +465,23 @@ def main(argv=None):
             for p in P:
                 print("  - " + p)
             bad += bool(P)
+        return 1 if bad else 0
+    if cmd == "accept" and len(a) >= 2:
+        # 标准输出只打印收下的文件路径（给 shell 用），说明都写到标准错误
+        import subprocess
+        ref, bad = a[0], 0
+        for path in a[1:]:
+            new = subprocess.run(["git", "show", "%s:%s" % (ref, path)], capture_output=True,
+                                 text=True, encoding="utf-8").stdout
+            old = io.open(path, encoding="utf-8").read() if os.path.exists(path) else None
+            ok, why = accept_brief(path, new, old)
+            print("%s: %s" % (path, ("收下（%s）" % why) if ok else why), file=sys.stderr)
+            if ok:
+                with io.open(path, "w", encoding="utf-8", newline="") as f:
+                    f.write(new)
+                print(path)
+            elif not why.startswith("main 上这一天已经有分析版"):
+                bad += 1
         return 1 if bad else 0
     print(__doc__)
     return 2

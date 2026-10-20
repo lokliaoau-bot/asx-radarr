@@ -1,6 +1,8 @@
 {
   "schema": "afr-brief-v1",
   "date": "2026-10-20",
+  "stage": "analysis",
+  "model": "claude-opus-5-5",
   "generated_at": "2026-10-20T20:52:00+11:00",
   "generated_by": "Claude (claude-opus-5-5)",
   "market": {
@@ -16,14 +18,32 @@
       "afr_section": "Companies / Financial services",
       "what_zh": "国民银行（NAB）宣布到明年 6 月裁掉约 2500 个岗位，约占员工 6%：今年底前先裁 1500 人，明年初再裁 1000 人，主要是管理和后台岗位，同时少用外部顾问和合同工，称面向客户的岗位基本不受影响。重组要在 FY27 计入约 3 亿澳元税前费用。银行给的理由是经济放缓、企业和消费者信心弱、房价下跌、成本上升。两周后 NAB 公布年度业绩，市场预期现金利润约 91 亿澳元。",
       "impact": [
-        {"name": "国民银行", "code": "NAB", "direction": "偏空", "move_pct": -1.75},
-        {"name": "银行板块", "code": null, "direction": "偏空"}
+        {
+          "name": "国民银行",
+          "code": "NAB",
+          "direction": "偏空",
+          "move_pct": -1.75
+        },
+        {
+          "name": "银行板块",
+          "code": null,
+          "direction": "偏空"
+        }
       ],
       "why_zh": "长远看省成本是好事，但银行自己把原因说成「经济放缓、房价下跌」，等于提前打招呼：贷款增长和坏账都不乐观，再加 3 亿重组费，短线偏空。西太、澳新当天各跌约 0.8%，CBA 小涨，市场主要在罚 NAB 自己。",
       "sources": [
-        {"name": "AFR", "url": "https://www.afr.com/companies/financial-services/nab-to-cut-2500-jobs-in-massive-restructure-most-to-go-within-months-20261020-p616yh"},
-        {"name": "Market Index", "url": "https://www.marketindex.com.au/news/asx-200-live-today-tuesday-20th-october"},
-        {"name": "ABC", "url": "https://www.abc.net.au/news/2026-10-20/nab-slashes-jobs-in-massive-restructure/107286316"}
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/financial-services/nab-to-cut-2500-jobs-in-massive-restructure-most-to-go-within-months-20261020-p616yh"
+        },
+        {
+          "name": "Market Index",
+          "url": "https://www.marketindex.com.au/news/asx-200-live-today-tuesday-20th-october"
+        },
+        {
+          "name": "ABC",
+          "url": "https://www.abc.net.au/news/2026-10-20/nab-slashes-jobs-in-massive-restructure/107286316"
+        }
       ]
     },
     {
@@ -33,13 +53,28 @@
       "afr_section": "Markets / Equity markets",
       "what_zh": "BHP 公布 9 月季度产量：铜 400.7 千吨，同比少 19%，原因是矿石品位下降、检修、智利恶劣天气，以及南澳 Carrapateena 矿传送带故障；全年铜产量指引 1650–1800 千吨没改。按指引中值算，后三个季度平均每季要做到约 441 千吨，比这个季度多约 10%。铁矿石产量同比增 4%，创纪录。矿业板块盘中一度跌 2.1%，是当天大盘下跌的主因。",
       "impact": [
-        {"name": "必和必拓", "code": "BHP", "direction": "偏空", "move_pct": -1.59},
-        {"name": "矿业板块", "code": null, "direction": "偏空"}
+        {
+          "name": "必和必拓",
+          "code": "BHP",
+          "direction": "偏空",
+          "move_pct": -1.59
+        },
+        {
+          "name": "矿业板块",
+          "code": null,
+          "direction": "偏空"
+        }
       ],
       "why_zh": "指引没改，说明公司认为是一次性问题；但后面三个季度必须明显提速才能达标，市场会先打折扣。当晚大宗商品也偏弱，矿业股被一起拖下来。",
       "sources": [
-        {"name": "AFR", "url": "https://www.afr.com/markets/equity-markets/asx-to-fall-wall-street-lifts-on-tech-rebound-20261020-p616wl"},
-        {"name": "Market Index", "url": "https://www.marketindex.com.au/news/asx-200-live-today-tuesday-20th-october"}
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/markets/equity-markets/asx-to-fall-wall-street-lifts-on-tech-rebound-20261020-p616wl"
+        },
+        {
+          "name": "Market Index",
+          "url": "https://www.marketindex.com.au/news/asx-200-live-today-tuesday-20th-october"
+        }
       ]
     },
     {
@@ -49,12 +84,23 @@
       "afr_section": "Companies / Financial services",
       "what_zh": "日本第一生命（Daiichi Life）周一提出以每股 11.80 澳元、总价约 78 亿澳元全面收购年金公司 Challenger 并让它退市，比报价公开前的收盘价高 20.1%。外国投资审查委员会（FIRB）主席 Bruce Miller 同时是第一生命的董事，因此宣布回避这宗审批。Challenger 周一大涨约 19%，周二回落 1.3%，收 11.60 澳元；UBS 把它的评级降到「中性」。",
       "impact": [
-        {"name": "Challenger", "code": "CGF", "direction": "中性", "move_pct": -1.28}
+        {
+          "name": "Challenger",
+          "code": "CGF",
+          "direction": "中性",
+          "move_pct": -1.28
+        }
       ],
       "why_zh": "股价已经贴着收购价，离 11.80 只剩约 1.7% 的空间，上涨基本被锁死；风险在下面——审批不过或交易谈崩，股价可能退回报价前的 9.85 附近（约跌 15%）。主席回避是正常程序，不改变判断。",
       "sources": [
-        {"name": "AFR", "url": "https://www.afr.com/companies/financial-services/firb-boss-sits-out-daiichi-life-s-7-8b-bid-for-challenger-20261020-p6170o"},
-        {"name": "AFR 收盘播报（周一）", "url": "https://www.afr.com/markets/equity-markets/asx-to-fall-as-ai-trade-faces-earnings-test-20261019-p616gw"}
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/financial-services/firb-boss-sits-out-daiichi-life-s-7-8b-bid-for-challenger-20261020-p6170o"
+        },
+        {
+          "name": "AFR 收盘播报（周一）",
+          "url": "https://www.afr.com/markets/equity-markets/asx-to-fall-as-ai-trade-faces-earnings-test-20261019-p616gw"
+        }
       ]
     },
     {
@@ -64,14 +110,33 @@
       "afr_section": "Street Talk",
       "what_zh": "养老社区运营商 Ingenia 表示，和私募巨头华平（Warburg Pincus）的收购谈判「进展可观」，把谈判期延到 10 月 23 日（本周五），争取在那之前谈成。Ingenia 之前一再拒绝华平，理由之一就是它正在收购另一家住宅开发商 Peet；如果放弃 Peet 交易，要付 1000 万澳元分手费。Ingenia 收涨 9.7%，Peet 收跌 7.1%。",
       "impact": [
-        {"name": "Ingenia", "code": "INA", "direction": "偏多", "move_pct": 9.67},
-        {"name": "Peet", "code": "PPC", "direction": "偏空", "move_pct": -7.1}
+        {
+          "name": "Ingenia",
+          "code": "INA",
+          "direction": "偏多",
+          "move_pct": 9.67
+        },
+        {
+          "name": "Peet",
+          "code": "PPC",
+          "direction": "偏空",
+          "move_pct": -7.1
+        }
       ],
       "why_zh": "Ingenia 的股价在押注华平收购成功，周五前谈成的可能性上升；没谈成会回吐一部分。Peet 的风险是 Ingenia 一旦被华平买下，原来对 Peet 的收购可能不再推进，股价失去收购价的支撑。",
       "sources": [
-        {"name": "AFR", "url": "https://www.afr.com/street-talk/ingenia-opens-the-door-to-warburg-pincus-raising-questions-about-peet-20261020-p6173t"},
-        {"name": "Capital Brief", "url": "https://www.capitalbrief.com/briefing/australian-shares-set-to-miss-out-on-nasdaqs-chip-led-bounce-c2e79205-66ff-49bc-a4b5-85a7b3e137ce/"},
-        {"name": "Market Index", "url": "https://www.marketindex.com.au/news/asx-200-live-today-tuesday-20th-october"}
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/street-talk/ingenia-opens-the-door-to-warburg-pincus-raising-questions-about-peet-20261020-p6173t"
+        },
+        {
+          "name": "Capital Brief",
+          "url": "https://www.capitalbrief.com/briefing/australian-shares-set-to-miss-out-on-nasdaqs-chip-led-bounce-c2e79205-66ff-49bc-a4b5-85a7b3e137ce/"
+        },
+        {
+          "name": "Market Index",
+          "url": "https://www.marketindex.com.au/news/asx-200-live-today-tuesday-20th-october"
+        }
       ]
     },
     {
@@ -81,14 +146,31 @@
       "afr_section": "Companies / Infrastructure",
       "what_zh": "NextDC 周一起停牌，原因是墨尔本 West Footscray 的 M3 数据中心供电延迟，公司要先评估对业务的影响再公告。另据 AFR 拿到的政府简报文件，微软和 NextDC 曾在闭门会议上警告新州政府：供电和建设速度跟不上，就转去维州或东南亚建。Firmus 本月取消上市以来，市场对数据中心股越来越挑剔，做数据中心建设的 Maas Group 两周跌了近 46%。",
       "impact": [
-        {"name": "NextDC", "code": "NXT", "direction": "偏空"},
-        {"name": "数据中心板块", "code": null, "direction": "偏空"}
+        {
+          "name": "NextDC",
+          "code": "NXT",
+          "direction": "偏空"
+        },
+        {
+          "name": "数据中心板块",
+          "code": null,
+          "direction": "偏空"
+        }
       ],
       "why_zh": "电是数据中心最大的瓶颈：电接不进来，机房建好也收不到租金，收入只能往后推。停牌期间没有价格，复牌时容易一次性反映利空；整个板块正处在「先证明能赚钱」的阶段，坏消息会被放大。",
       "sources": [
-        {"name": "AFR", "url": "https://www.afr.com/companies/infrastructure/data-centre-giants-sound-alarm-as-building-backlash-headwinds-grow-20261020-p616od"},
-        {"name": "AFR Rear Window", "url": "https://www.afr.com/rear-window/nextdc-s-electrician-family-dumped-100m-in-shares-ahead-of-crash-20261020-p6170s"},
-        {"name": "ABC", "url": "https://www.abc.net.au/news/2026-10-20/asx-markets-business-live-news-october-20-2026/107283924"}
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/infrastructure/data-centre-giants-sound-alarm-as-building-backlash-headwinds-grow-20261020-p616od"
+        },
+        {
+          "name": "AFR Rear Window",
+          "url": "https://www.afr.com/rear-window/nextdc-s-electrician-family-dumped-100m-in-shares-ahead-of-crash-20261020-p6170s"
+        },
+        {
+          "name": "ABC",
+          "url": "https://www.abc.net.au/news/2026-10-20/asx-markets-business-live-news-october-20-2026/107283924"
+        }
       ]
     },
     {
@@ -98,14 +180,34 @@
       "afr_section": "Companies / Mining",
       "what_zh": "西澳金矿的成本在快速上升。Regis Resources 挖一盎司金的全部成本（AISC）从 3 月季度到 9 月季度涨了近 30%，达到 3617 澳元，原因是柴油变贵、大雨耽误开采高品位矿，全年产量指引不变。Bellevue Gold 季度产量少 15%，成本升 19% 到 3096 澳元/盎司。当晚金价跌约 0.7%，金矿股普遍下跌。",
       "impact": [
-        {"name": "Regis Resources", "code": "RRL", "direction": "偏空", "move_pct": -1.86},
-        {"name": "Bellevue Gold", "code": "BGL", "direction": "偏空", "move_pct": -1.05},
-        {"name": "金矿板块", "code": null, "direction": "偏空"}
+        {
+          "name": "Regis Resources",
+          "code": "RRL",
+          "direction": "偏空",
+          "move_pct": -1.86
+        },
+        {
+          "name": "Bellevue Gold",
+          "code": "BGL",
+          "direction": "偏空",
+          "move_pct": -1.05
+        },
+        {
+          "name": "金矿板块",
+          "code": null,
+          "direction": "偏空"
+        }
       ],
       "why_zh": "金价还很高（Regis 卖出均价约 6088 澳元/盎司，成本约占六成），利润依然厚；但成本涨得比金价快，利润率在被挤压。油价还在每桶 100 美元以上，下个季度的柴油成本很难降下来。",
       "sources": [
-        {"name": "AFR", "url": "https://www.afr.com/companies/mining/gold-miners-warn-of-higher-costs-as-diesel-prices-bite-20261020-p6171d"},
-        {"name": "Market Index", "url": "https://www.marketindex.com.au/news/asx-200-live-today-tuesday-20th-october"}
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/mining/gold-miners-warn-of-higher-costs-as-diesel-prices-bite-20261020-p6171d"
+        },
+        {
+          "name": "Market Index",
+          "url": "https://www.marketindex.com.au/news/asx-200-live-today-tuesday-20th-october"
+        }
       ]
     },
     {
@@ -115,12 +217,25 @@
       "afr_section": "Companies / Energy",
       "what_zh": "Origin Energy 首席执行官 Frank Calabria 说，今年夏天澳洲出现超强厄尔尼诺（更热更干）的风险上升，是最近批发电价明显上涨的主要原因；这也暴露出在燃煤电厂陆续关闭之前，电力市场的供需余量其实很薄。Origin 当天收 12.05 澳元，基本持平。",
       "impact": [
-        {"name": "Origin Energy", "code": "ORG", "direction": "中性", "move_pct": -0.08},
-        {"name": "AGL", "code": "AGL", "direction": "中性", "move_pct": 0.34}
+        {
+          "name": "Origin Energy",
+          "code": "ORG",
+          "direction": "中性",
+          "move_pct": -0.08
+        },
+        {
+          "name": "AGL",
+          "code": "AGL",
+          "direction": "中性",
+          "move_pct": 0.34
+        }
       ],
       "why_zh": "批发电价上涨对 Origin、AGL 这种「自己发电又卖电」的公司是两面的：发电赚得多，零售端买电的成本也升。真正吃亏的是用电多、没锁定电价的企业。现在只是风险上升，还没成为事实。",
       "sources": [
-        {"name": "AFR", "url": "https://www.afr.com/companies/energy/super-el-nino-threat-rattling-power-markets-origin-ceo-20261020-p616qr"}
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/energy/super-el-nino-threat-rattling-power-markets-origin-ceo-20261020-p616qr"
+        }
       ]
     },
     {
@@ -130,11 +245,19 @@
       "afr_section": "Street Talk",
       "what_zh": "私募巨头黑石（Blackstone）和行业养老金背景的 IFM Investors 都已向力拓提交初步报价，竞购它在西澳和加拿大、价值约 70 亿澳元的能源基础设施，竞争者众多。IFM 的报价集中在力拓 Pilbara 铁矿配套的约 500 兆瓦电厂和输配电资产。力拓当天收跌 0.4%。",
       "impact": [
-        {"name": "力拓", "code": "RIO", "direction": "中性", "move_pct": -0.43}
+        {
+          "name": "力拓",
+          "code": "RIO",
+          "direction": "中性",
+          "move_pct": -0.43
+        }
       ],
       "why_zh": "卖资产能回笼现金，但 70 亿澳元相对力拓的体量不大，而且现在只是不具约束力的初步报价，离成交还远，对股价影响有限。",
       "sources": [
-        {"name": "AFR", "url": "https://www.afr.com/street-talk/blackstone-ifm-investors-lob-bids-for-rio-tinto-s-7b-power-assets-20261020-p61734"}
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/street-talk/blackstone-ifm-investors-lob-bids-for-rio-tinto-s-7b-power-assets-20261020-p61734"
+        }
       ]
     }
   ]

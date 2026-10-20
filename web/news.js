@@ -2,11 +2,16 @@
    原来的整套分析一行没删，收在「多角度分析」按钮后面（#app，照常由 app.js 渲染）。
    数据：news/brief.json（最新一期）、news/briefs/<日期>.json（往期）、news/index.json、
    news/headlines.json（发布时抓的 AFR 标题，解读还没生成时兜底）。格式见 asxquant/news.py。
+   两个阶段：每天收盘后 Opus 5.5（中）自动抓标题、写「发生了什么」（stage=headlines）；
+   用户点「深度分析」按钮 → 打开 Claude 云端任务页按「Run now」→ Opus 5.5（高）补上影响和分析（stage=analysis）。
    整个文件包在一个函数里，不和 app.js 的全局变量（el、esc 等）互相干扰。 */
 (function () {
   "use strict";
   var DIR_CLASS = { "空": "d-s2", "偏空": "d-s1", "中性": "d-0", "偏多": "d-l1", "多": "d-l2" };
   var WEEK = "日一二三四五六";
+  // 「深度分析」云端任务（claude.ai 上的例行任务页，只有用户本人登录后能打开和运行）
+  var DEEP_URL = "https://claude.ai/code/routines/trig_014Jvo6KKqqQjPvygXNFEUL7";
+  var EFFORT = { low: "低", medium: "中", high: "高" };
   var latest = null, heads = [], index = [];
 
   function $(id) { return document.getElementById(id); }
@@ -25,6 +30,22 @@
   function cnDate(d) {
     var x = new Date(d + "T00:00:00");
     return (x.getMonth() + 1) + " 月 " + x.getDate() + " 日 周" + WEEK[x.getDay()];
+  }
+  function modelLabel(b) {
+    var m = /claude-([a-z]+)-(\d+)-(\d+)/.exec(b.model || b.generated_by || "");
+    var name = m ? " " + m[1].charAt(0).toUpperCase() + m[1].slice(1) + " " + m[2] + "." + m[3] : "";
+    return "Claude" + name + (EFFORT[b.effort] ? "（" + EFFORT[b.effort] + "）" : "");
+  }
+  function deepButton() {
+    if (DEEP_URL.indexOf("__") >= 0) return "";            // 还没配置云端任务
+    return '<div class="ndeep"><a class="nbtn" id="nDeep" href="' + esc(DEEP_URL) +
+      '" target="_blank" rel="noopener">Claude 深度分析 · Opus 5.5（高）</a>' +
+      '<div class="nhint" id="nHint" hidden>已打开 Claude 的任务页：点 <b>Run now</b>（立即运行）。' +
+      "大约 15–30 分钟后回到这里刷新，就能看到分析。</div></div>";
+  }
+  function wireDeep() {
+    var a = $("nDeep");
+    if (a) a.addEventListener("click", function () { $("nHint").hidden = false; });
   }
   function link(url, text, cls) {
     return '<a' + (cls ? ' class="' + cls + '"' : "") + ' href="' + safeUrl(url) +
@@ -55,7 +76,7 @@
   }
 
   function card(it) {
-    var imp = it.impact.map(function (t) {
+    var imp = (it.impact || []).map(function (t) {
       return '<div class="nimp"><span class="dir ' + (DIR_CLASS[t.direction] || "d-0") + '">' +
         esc(t.direction) + '</span><span class="nt">' + esc(t.name) +
         (t.code ? " <b>" + esc(t.code) + "</b>" : "") + "</span>" + move(t) + "</div>";
@@ -65,8 +86,9 @@
       "<h3>" + esc(it.title_zh) + "</h3>" +
       link(it.afr_url, "AFR：" + esc(it.afr_headline) + " ↗", "norig") +
       '<p class="nwhat">' + esc(it.what_zh) + "</p>" +
-      '<div class="nbox"><div class="nlbl">影响</div>' + imp +
-      '<p class="nwhy">' + esc(it.why_zh) + "</p></div>" +
+      (it.impact && it.impact.length
+        ? '<div class="nbox"><div class="nlbl">影响</div>' + imp + '<p class="nwhy">' + esc(it.why_zh) + "</p></div>"
+        : "") +
       '<div class="nsrc">来源：' + src + "</div></article>";
   }
 
@@ -78,10 +100,16 @@
     b.items.forEach(function (it) { shown[it.afr_url] = 1; });
     var others = heads.filter(function (h) { return !shown[h.url]; });
 
+    var analysed = (b.stage || "analysis") === "analysis";
     var html = '<div class="nhead"><h2 class="ntitle">AFR 要闻 · Claude 解读</h2>' +
-      '<div class="nmeta">' + cnDate(b.date) + " · " + b.items.length + " 条" +
+      '<div class="nmeta">' + cnDate(b.date) + " · " + b.items.length + " 条 · " +
+      (analysed ? "分析：" + esc(modelLabel(b)) : "标题和内容：" + esc(modelLabel(b)) + "，还没有分析") +
       (isLatest ? "" : ' · <a href="#" id="nBack">回到最新一期</a>') + "</div>" +
+      (isLatest ? deepButton() : "") +
       (b.market ? '<div class="nmkt">' + esc(b.market.text_zh) + "</div>" : "") + "</div>";
+    if (!analysed && isLatest && DEEP_URL.indexOf("__") < 0) {
+      html += '<div class="nstale">今天还没有 Claude 的影响分析。想看的话点上面的「深度分析」，让 Opus 5.5（高）来写。</div>';
+    }
     if (isLatest && newer) {
       html += '<div class="nstale">这是 ' + cnDate(b.date) + ' 的解读。AFR 之后又有 ' + newer +
         ' 条新闻，Claude 还没解读——标题先列在最下面。</div>';
@@ -93,6 +121,7 @@
     var back = $("nBack");
     if (back) back.onclick = function (e) { e.preventDefault(); render(latest); window.scrollTo(0, 0); };
     wireHistory();
+    wireDeep();
   }
 
   function headList(list, title, open) {
@@ -107,7 +136,7 @@
       return '<button class="npast" data-d="' + esc(x.date) + '">' + esc(x.date.slice(5)) + "</button>";
     }).join("");
     return '<div class="nfoot">「影响」是 Claude 根据新闻做的判断，没有经过回测验证，可能出错；' +
-      "涨跌幅是发布时按收盘价重算的。以上是分析，不是投资建议。" +
+      "涨跌幅是发布时用行情重算的（盘中发布就是当时的价格）。以上是分析，不是投资建议。" +
       (index.length > 1 ? '<div class="npasts">往期：' + past + "</div>" : "") + "</div>";
   }
 
@@ -135,8 +164,9 @@
     if (latest && latest.items && latest.items.length) return render(latest);
     if (heads.length) {
       $("brief").innerHTML = '<div class="nhead"><h2 class="ntitle">AFR 要闻</h2>' +
-        '<div class="nmeta">Claude 的解读还没生成，先看 AFR 最新标题</div></div>' +
+        '<div class="nmeta">Claude 的解读还没生成，先看 AFR 最新标题</div>' + deepButton() + "</div>" +
         headList(heads, "AFR 最新标题（" + heads.length + " 条）", true) + foot();
+      wireDeep();
       return;
     }
     // 本地服务器或还没发布过新闻：没东西可看，直接打开原来的分析页

@@ -51,6 +51,11 @@ Windows：所有文本读写写明 `encoding="utf-8"`；改 JS 文件不要用�
 - 简报写法和步骤全在 `news/README.md`；格式和校验在 `asxquant/news.py`（`validate()`）。
 - 新闻只从 AFR 选；AFR 正文被订阅墙挡住时去其他权威来源补全，每条列来源。影响方向只有
   空 / 偏空 / 中性 / 偏多 / 多 五档。涨跌幅发布时按收盘价重算（`fill_moves`），不信手写数字。
+- 两个阶段（用户 2026-10-20 指定模型和强度）：每个交易日悉尼 18:00 云端任务「AFR 每日抓标题」调用子代理
+  `.claude/agents/afr-headlines.md`（Opus 5.5，effort medium）只写标题和内容（`stage: headlines`）；用户点页面上的
+  「深度分析」按钮 → 云端任务「AFR 深度分析」调用 `.claude/agents/afr-analysis.md`（Opus 5.5，effort high）补上
+  影响和分析（`stage: analysis`）。云端任务本身设不了思考强度，所以强度写在子代理定义里——**不要改这两个文件的
+  `model` / `effort`**，除非用户要求。同一天已有分析版时，标题版不会覆盖它（`news.accept_brief`）。
 - **唯一允许不走 Pull Request 进 main 的改动**：推到 `claude/` 开头分支、且只新增或修改
   `news/briefs/YYYY-MM-DD.json` 的提交，由 `.github/workflows/news-intake.yml` 用 main 上的校验程序检查后自动并入。
   别的改动混在同一分支里，它就不合并。改 `news-intake.yml` 或 `validate()` 规则要先问用户。

@@ -49,11 +49,20 @@ jobs:
             echo "这个分支改了简报以外的文件，不自动合并（请开 Pull Request）"
             exit 0
           fi
-          git checkout FETCH_HEAD -- $FILES
-          python -m asxquant.news check $FILES
+          # 逐个校验；同一天 main 上已经是「分析版」时不收「标题版」（每日自动抓标题不能盖掉点按钮换来的分析）。
+          # 校验不过会让这一步失败（Actions 里标红，方便发现）；被「不覆盖」挡下的不算失败。
+          ACCEPTED=$(python -m asxquant.news accept FETCH_HEAD $FILES)
+          if [ -z "$ACCEPTED" ]; then
+            echo "没有需要并入的简报"
+            case "$BRANCH" in
+              claude/afr-brief-*) git push origin --delete "$BRANCH" || true ;;
+            esac
+            exit 0
+          fi
 
           git config user.name  "asx-radar-bot"
           git config user.email "actions@github.com"
+          FILES="$ACCEPTED"
           git add $FILES
           if git diff --staged --quiet; then
             echo "和 main 上的完全一样，不用提交"

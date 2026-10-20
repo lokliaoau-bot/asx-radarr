@@ -149,6 +149,43 @@ def test_build_site():
         shutil.rmtree(tmp, ignore_errors=True)
 
 
+def headlines_only(date="2026-10-20"):
+    b = sample(date)
+    b.update(stage="headlines", model="claude-opus-5-5", effort="medium")
+    for it in b["items"]:
+        it.pop("impact")
+        it.pop("why_zh")
+    return b
+
+
+def test_stages():
+    print("\n[N6] 两个阶段：每日自动抓标题（不写分析）→ 点按钮补上分析；标题版不能盖掉分析版")
+    check("标题版不写影响和分析也能通过", NW.validate(headlines_only()) == [], str(NW.validate(headlines_only())))
+    half = headlines_only()
+    half["items"][0]["why_zh"] = "只写了一半的分析"
+    check("标题版里分析只写一半 → 挡下（要么不写，要么写全）", NW.validate(half))
+    a = sample()
+    a["stage"] = "analysis"
+    del a["items"][0]["impact"]
+    check("分析版缺影响 → 挡下", NW.validate(a))
+    check("没写 stage 的老简报当作分析版（今天这期照常显示）", NW.stage_of(sample()) == "analysis")
+    check("stage 写错 → 挡下", NW.validate(dict(sample(), stage="draft")))
+    check("effort 写错 → 挡下", NW.validate(dict(sample(), effort="max")))
+
+    H = json.dumps(headlines_only(), ensure_ascii=False)
+    A = json.dumps(dict(sample(), stage="analysis", effort="high"), ensure_ascii=False)
+    name = "news/briefs/2026-10-20.json"
+    check("新的一天，标题版直接收", NW.accept_brief(name, H, None)[0])
+    check("标题版 → 分析版：收（点了深度分析）", NW.accept_brief(name, A, H)[0])
+    check("分析版 → 再一次分析版：收（又点了一次）", NW.accept_brief(name, A, A)[0])
+    ok, why = NW.accept_brief(name, H, A)
+    check("分析版 → 标题版：不收，而且不算错误", not ok and why.startswith("main 上这一天已经有分析版"), why)
+    check("文件名和日期对不上：不收", not NW.accept_brief("news/briefs/2026-10-21.json", H, None)[0])
+    check("没过校验：不收", not NW.accept_brief(name, H.replace("afr.com", "example.com"), None)[0])
+    hb = headlines_only()
+    check("标题版没有影响对象，重算涨跌不出错", NW.fill_moves([hb], prices={}, log=lambda m: None) == 0)
+
+
 def test_page_wiring():
     print("\n[N5] 页面：默认 AFR 要闻，原来的分析一行没删、收在「多角度分析」里")
     html = io.open("web/index.html", encoding="utf-8").read()
@@ -166,13 +203,16 @@ def test_page_wiring():
     check("news.js 会发布、也进离线缓存", "news.js" in PB.ASSETS and "./news.js" in sw)
     check("页面上所有新闻文字都经过转义", js.count("esc(it.") >= 4 and "safeUrl(" in js)
     check("五档方向都有颜色", all(d in js for d in NW.DIRECTIONS))
+    check("有「深度分析」按钮，指向 claude.ai 上的云端任务页",
+          "Claude 深度分析 · Opus 5.5（高）" in js and 'DEEP_URL = "https://claude.ai/code/routines/' in js)
+    check("标题版（还没分析）的卡片不画影响框", "it.impact && it.impact.length" in js)
 
 
 def main():
     print("=" * 68)
     print("AFR 要闻回归测试")
     print("=" * 68)
-    for fn in (test_validate, test_headlines, test_moves, test_build_site, test_page_wiring):
+    for fn in (test_validate, test_headlines, test_moves, test_build_site, test_stages, test_page_wiring):
         try:
             fn()
         except Exception as e:
