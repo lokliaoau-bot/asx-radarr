@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>澳股市场雷达 · ASX Market Radar</title>
+<title>澳股雷达 · AFR 要闻</title>
 <link rel="stylesheet" href="style.css">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#0a0d14">
@@ -13,14 +13,17 @@
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" href="icon-192.png">
 </head>
-<body>
+<body class="mode-brief">
 <div class="wrap">
   <header>
     <div class="hrow">
       <div class="brand">
         <h1>澳股市场雷达</h1>
+        <div class="sub" id="briefSub">AFR 每日要闻 · Claude 解读</div>
         <div class="sub" id="asof">载入中 ...</div>
       </div>
+      <!-- 默认只显示 AFR 要闻；原来的整套分析（下面这些按钮和 #app）收在「多角度分析」里，见 news.js -->
+      <button class="ghost" id="btnMulti">多角度分析</button>
       <div class="quote" id="quote"></div>
       <a class="ghost" id="lnkShort" href="short/" title="ChatGPT 版看空雷达：真实行情 + 严格数据检查（分数实测无预测力，页面有说明）">看空雷达 ↗</a>
       <span id="live">
@@ -34,8 +37,10 @@
       <div class="msg" id="progMsg"></div>
     </div>
   </header>
+  <main id="brief"><div class="empty">正在载入 AFR 要闻 ...</div></main>
   <div id="app"><div class="empty">正在载入 ...</div></div>
 </div>
+<script src="news.js"></script>
 <script src="app.js"></script>
 <script>
 /* 看门狗：app.js 若有语法错误，整个脚本一行都不会执行——app.js 内部的 try/catch

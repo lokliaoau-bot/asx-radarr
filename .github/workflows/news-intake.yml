@@ -1,0 +1,76 @@
+name: 收 AFR 简报
+
+# Claude 云端例行任务每个交易日收盘后写一份 news/briefs/YYYY-MM-DD.json，推到 claude/ 开头的分支。
+# 这里只做一件事：分支上【只改了简报文件】、而且用 main 上的校验程序检查通过 → 把它并进 main，
+# 再触发「每日更新」重新部署。改了任何别的文件的分支一律不碰（那种改动走 Pull Request + 测试，见 AGENTS.md）。
+# 校验程序来自 main，不来自分支，所以分支里的内容没法改掉检查规则。
+on:
+  push:
+    branches: ['claude/**']
+
+permissions:
+  contents: write     # 把简报提交进 main、删掉用完的简报分支
+  actions: write      # 触发「每日更新」：用 GITHUB_TOKEN 推送不会自动触发别的 workflow，只能手动调一次
+
+concurrency:
+  group: news-intake
+  cancel-in-progress: false
+
+jobs:
+  intake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 只收简报文件，校验通过才并进 main
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          set -e
+          git fetch origin "$BRANCH"
+          ALL=$(git diff --name-only origin/main...FETCH_HEAD)
+          FILES=$(git diff --name-only --diff-filter=AM origin/main...FETCH_HEAD)
+          echo "分支 $BRANCH 改动的文件："
+          echo "$ALL"
+          if [ -z "$FILES" ]; then
+            echo "没有新增或修改的简报，什么都不做"
+            exit 0
+          fi
+          if echo "$ALL" | grep -vqE '^news/briefs/[0-9]{4}-[0-9]{2}-[0-9]{2}\.json$'; then
+            echo "这个分支改了简报以外的文件，不自动合并（请开 Pull Request）"
+            exit 0
+          fi
+          git checkout FETCH_HEAD -- $FILES
+          python -m asxquant.news check $FILES
+
+          git config user.name  "asx-radar-bot"
+          git config user.email "actions@github.com"
+          git add $FILES
+          if git diff --staged --quiet; then
+            echo "和 main 上的完全一样，不用提交"
+          else
+            git commit -m "AFR 简报 $(echo "$FILES" | sed 's#.*/##; s#\.json$##' | tr '\n' ' ')"
+            # 每日更新也会往 main 推存档，撞上了就变基重推
+            for i in 1 2 3; do
+              if git push origin HEAD:main; then break; fi
+              echo "推送被拒，变基后重试 $i/3"
+              git pull --rebase origin main
+            done
+            git fetch origin main
+            git merge-base --is-ancestor HEAD origin/main || { echo "三次都没推上去"; exit 1; }
+          fi
+
+          gh workflow run daily.yml --ref main
+          echo "已触发重新部署，约 10 分钟后手机上可见"
+          case "$BRANCH" in
+            claude/afr-brief-*) git push origin --delete "$BRANCH" || true ;;
+          esac

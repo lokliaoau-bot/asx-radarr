@@ -17,11 +17,13 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WEB = os.path.join(ROOT, "web")
 SITE = os.path.join(ROOT, "site")
 
-ASSETS = ["index.html", "app.js", "style.css", "sw.js",
+ASSETS = ["index.html", "app.js", "news.js", "style.css", "sw.js",
           "manifest.webmanifest", "icon-192.png", "icon-512.png"]
 
 
-def build(report, out_dir=None, log=print):
+def build(report, out_dir=None, log=print, fetch_news=None):
+    # 只有正式发布（写到 site/）才联网：重算新闻里的涨跌、抓 AFR 标题。测试和预览不联网。
+    fetch_news = (out_dir is None) if fetch_news is None else fetch_news
     out_dir = out_dir or SITE
     os.makedirs(out_dir, exist_ok=True)
 
@@ -57,6 +59,13 @@ def build(report, out_dir=None, log=print):
 
     # Pages would otherwise run the output through Jekyll and drop files it dislikes
     open(os.path.join(out_dir, ".nojekyll"), "w").close()
+
+    # AFR 要闻（默认首页）：简报来自 news/briefs/，由 Claude 云端任务每天写入；失败不影响主站
+    try:
+        from . import news as NW
+        NW.build_site(out_dir, log=log, fetch=fetch_news)
+    except Exception as e:
+        log("AFR 要闻生成失败(不影响主站): %s" % e)
 
     # 看空雷达（ChatGPT 版并入）是附加页：它失败不能拖垮主站，页面自己会显示「今天的结果还没生成」。
     try:

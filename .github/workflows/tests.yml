@@ -25,7 +25,7 @@ jobs:
       - name: 全部离线测试（合成数据，不联网）
         run: |
           set -e
-          for t in test_step1 test_shortradar test_review test_round3 test_selfreview test_calibrate test_journal test_shortradar_review; do
+          for t in test_step1 test_shortradar test_review test_round3 test_selfreview test_calibrate test_journal test_shortradar_review test_news; do
             echo "::group::$t"
             python -m tests.$t
             echo "::endgroup::"

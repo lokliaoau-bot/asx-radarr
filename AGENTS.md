@@ -3,6 +3,10 @@
 这是用户「澳股雷达」的代码，每天自动更新并部署到用户的手机：
 https://lokliaoau-bot.github.io/asx-radarr/ （主页） · /short/ （看空雷达，ChatGPT 最初写的那个 App）
 
+**主页默认显示「AFR 要闻 · Claude 解读」**（2026-10-20 用户要求：原来的界面太复杂）。原来的整套分析
+一行没删，收在右上角「多角度分析」按钮里（`web/news.js` 切换，`#app` 照常由 `web/app.js` 渲染）。
+不要把复杂内容加回默认页面；要加就加在「多角度分析」里。
+
 ## 开工前必读（按顺序）
 1. https://lokliaoau-bot.github.io/asx-radarr/self-review.md —— 系统每天自动写的自我复盘和**未处理的改进提案**
 2. `交接文档.md` 的五点五～五点十节（最新进展、所有冻结规则的来历）
@@ -18,7 +22,7 @@ https://lokliaoau-bot.github.io/asx-radarr/ （主页） · /short/ （看空雷
 ## 本地验证（全部离线、合成数据，约 3–5 分钟）
 ```bash
 pip install -r requirements.txt
-for t in test_step1 test_shortradar test_review test_round3 test_selfreview test_calibrate test_journal test_shortradar_review; do python -m tests.$t || exit 1; done
+for t in test_step1 test_shortradar test_review test_round3 test_selfreview test_calibrate test_journal test_shortradar_review test_news; do python -m tests.$t || exit 1; done
 ```
 Windows：所有文本读写写明 `encoding="utf-8"`；改 JS 文件不要用「heredoc 套 Python 字符串」，转义会写坏。
 
@@ -42,3 +46,11 @@ Windows：所有文本读写写明 `encoding="utf-8"`；改 JS 文件不要用�
   （来源：ASX 官网交易日历页）。**2027 年底前**要按官网补 2028 年（`short_radar/asx_calendar.py` 的 HOLIDAYS
   + 当年提前收市日的补充说明）。系统会提前 120 天在 self-review.md 里报警。
 - 不登录券商、不下单、不付费、不新建网站。
+
+## AFR 要闻（`news/`）
+- 简报写法和步骤全在 `news/README.md`；格式和校验在 `asxquant/news.py`（`validate()`）。
+- 新闻只从 AFR 选；AFR 正文被订阅墙挡住时去其他权威来源补全，每条列来源。影响方向只有
+  空 / 偏空 / 中性 / 偏多 / 多 五档。涨跌幅发布时按收盘价重算（`fill_moves`），不信手写数字。
+- **唯一允许不走 Pull Request 进 main 的改动**：推到 `claude/` 开头分支、且只新增或修改
+  `news/briefs/YYYY-MM-DD.json` 的提交，由 `.github/workflows/news-intake.yml` 用 main 上的校验程序检查后自动并入。
+  别的改动混在同一分支里，它就不合并。改 `news-intake.yml` 或 `validate()` 规则要先问用户。
