@@ -368,3 +368,13 @@ details.sec > summary:hover{background:rgba(255,255,255,.026)}
 .nbtn:active{transform:translateY(1px)}
 .nhint{font-size:13px;color:var(--mut);line-height:1.6;margin-top:8px;padding:0 2px}
 .nhint b{color:var(--tx)}
+/* 数字核对、判断成绩单（2026-10-21） */
+.nver{font-size:11.5px;color:var(--dim);margin-top:4px;line-height:1.6}
+.nver .nmiss{color:#fbbf24}
+.nscore{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 15px;margin:0 0 12px}
+.nscore summary{cursor:pointer;font-size:14px;color:var(--tx)}
+.nsnote{font-size:12.5px;color:var(--mut);line-height:1.7;margin:10px 0}
+.nstab{width:100%;border-collapse:collapse;font-size:12.5px;margin:6px 0 10px}
+.nstab th,.nstab td{text-align:left;padding:5px 6px;border-bottom:1px solid var(--line)}
+.nstab th{color:var(--mut);font-weight:600}
+.nstab td b{font-family:var(--mono);font-size:11.5px;color:var(--mut)}

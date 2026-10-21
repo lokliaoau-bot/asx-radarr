@@ -434,6 +434,136 @@ def test_round2():
     check("抓取失败时请求分支也会被删掉（单独一步，always）", "if: always()" in col and "--delete" in col)
 
 
+def test_number_check():
+    print("\n[N11] 数字核对：中英文数字对得上；自己算的写算式；算错和大盘不对直接退回")
+    from asxquant import newscheck as K
+    t = ("NextDC 收 5.35 澳元，跌 41.7%，约是 2018 年初以来最低，市值蒸发约 30 亿澳元。明年 2 月前不会复工，"
+         "推迟到 FY28（2027/28 财年）。指引从 3.85–4.10 亿砍到 2.45–2.65 亿，按中值少约 36%。裁掉约 2500 个岗位，"
+         "卖出约 36.4 万盎司黄金，400.7 千吨，3 个原因。")
+    raws = [n["raw"] for n in K.zh_numbers(t)]
+    check("年份、月份、财年、2027/28、小整数都不当成要核对的数字",
+          not any(r in ("2018", "2", "28", "27", "2027", "3") for r in raws), str(raws))
+    check("区间和单位：3.85–4.10 亿 = 3.85 亿和 4.10 亿；36.4 万；400.7 千",
+          [n["value"] for n in K.zh_numbers("3.85–4.10 亿")] == [3.85e8, 4.10e8]
+          and K.zh_numbers("36.4 万")[0]["value"] == 364000 and K.zh_numbers("400.7 千吨")[0]["value"] == 400700)
+    en = K.en_numbers("EBITDA $245–265 million; shares fell 41.7 per cent to $5.35; 400.7kt; 2,500 jobs; A$3 billion")
+    check("英文：区间单位对两头都算、per cent、kt、逗号、billion",
+          all(x in en for x in [("num", 245e6), ("num", 265e6), ("pct", 41.7), ("num", 5.35), ("num", 400700.0),
+                                ("num", 2500.0), ("num", 3e9)]), str(en))
+    zh = {n["raw"]: n for n in K.zh_numbers(t)}
+    check("中文 2.45 亿 ↔ 英文 $245 million；约 30 亿 ↔ A$3 billion；41.7% ↔ 41.7 per cent",
+          K._match(K.zh_numbers("2.45 亿")[0], en) and K._match(zh["约 30 亿"], en) and K._match(zh["41.7%"], en))
+    check("四舍五入算对得上（42% ≈ 41.7 per cent），差得远的不算（45%）",
+          K._match(K.zh_numbers("42%")[0], en) and not K._match(K.zh_numbers("45%")[0], en))
+
+    ok = {"calcs": [{"value": "约 36%", "expr": "(1-255/397.5)*100"}, {"value": "2.55 亿", "expr": "(2.45+2.65)/2"}]}
+    check("算式算得对 → 通过", K.check_calcs(ok) == [], str(K.check_calcs(ok)))
+    check("算式算错 → 退回", K.check_calcs({"calcs": [{"value": "40%", "expr": "(1-255/397.5)*100"}]}))
+    check("算式里只许数字和加减乘除（不执行任何代码）",
+          K.check_calcs({"calcs": [{"value": "36%", "expr": "__import__('os').system('x')"}]}))
+    b = sample()
+    b["items"][0]["calcs"] = [{"value": "40%", "expr": "1+1"}]
+    check("校验（news check）就会挡下算错的简报", any("算式" in p for p in NW.validate(b)))
+
+    inbox = {"date": "2026-10-20", "index": {"code": "XJO", "pct": -0.33, "close": 8816.9}, "moves": {}, "headlines": []}
+    check("大盘收盘和涨跌对得上 → 通过", K.check_market(sample(), inbox) == [])
+    bad = sample()
+    bad["market"].update(index_close=8900.0, index_pct=0.5)
+    check("大盘收盘或涨跌和行情对不上 → 退回", len(K.check_market(bad, inbox)) == 2)
+    check("收件箱不是同一天的不比", K.check_market(bad, dict(inbox, date="2026-10-19")) == [])
+
+    item = {"title_zh": "NAB 裁员", "afr_headline": "NAB to cut 2500 jobs",
+            "afr_url": "https://www.afr.com/companies/x-20261020-p616yh",
+            "what_zh": "国民银行裁掉约 2500 个岗位，约占员工 6%，重组费约 3 亿澳元，股价收跌 1.75%，按中值少约 36%，还有 999 个谜。",
+            "calcs": [{"value": "约 36%", "expr": "(1-255/397.5)*100"}],
+            "impact": [{"name": "国民银行", "code": "NAB", "direction": "偏空"}],
+            "sources": [{"name": "AFR", "url": "https://www.afr.com/companies/x-20261020-p616yh"},
+                        {"name": "ABC", "url": "https://abc.example/nab"},
+                        {"name": "Reuters", "url": "https://reuters.example/nab"}]}
+    br = {"date": "2026-10-20", "items": [item], "market": {"text_zh": "x", "index_close": 8816.9, "index_pct": -0.33}}
+    pages = {"https://abc.example/nab": "<article><p>NAB will take a $300 million charge, about 6 per cent of staff.</p></article>"}
+
+    def get(u):
+        if u in pages:
+            return pages[u]
+        raise OSError("403")
+    lead = lambda u: {"paragraphs": ["National Australia Bank will slash 2500 jobs."]}
+    box = dict(inbox, moves={"NAB": {"pct": -1.75, "close": 39.2, "halted": False}})
+    out, hard = K.verify_brief(br, get, box, lead=lead)
+    v = out["items"][0]["verify"]
+    check("来源网页里找到（2500 来自 AFR 公开开头，6% 和 3 亿来自 ABC）",
+          set(v["found"]) == {"约 2500", "6%", "约 3 亿"}, str(v))
+    check("股价涨跌对上行情", v["market"] == ["1.75%"], str(v["market"]))
+    check("自己算的数字按算式核对", v["derived"] == ["约 36%"])
+    check("哪都找不到的标成未核实", v["missing"] == ["999"], str(v["missing"]))
+    check("打不开的来源单独记下（不算错）", v["sources_failed"] == ["Reuters"] and hard == [])
+    check("整份简报记下核对时间和总数", out["verify"]["checked"] == 6 and out["verify"]["missing"] == 1)
+    js = io.open("web/news.js", encoding="utf-8").read()
+    check("页面卡片显示数字核对结果", "verifyLine(it.verify)" in js and "未核实" in js)
+    intake = io.open(".github/workflows/news-intake.yml", encoding="utf-8").read()
+    check("收简报时先核对数字再并入 main", intake.index("news verify") < intake.index("git add $FILES"))
+
+
+def test_scorecard():
+    print("\n[N12] 判断成绩单：按之后的实际涨跌（扣大盘）对账，样本少就说看不出")
+    from asxquant import newscheck as K
+    days = ["2026-10-19", "2026-10-20", "2026-10-21", "2026-10-22", "2026-10-23", "2026-10-26", "2026-10-27",
+            "2026-10-28"]
+    check("收盘后写的：从当天收盘算起", K.base_day("2026-10-20T20:52:00+11:00", "2026-10-20", days) == "2026-10-20")
+    check("盘中写的：从当天收盘算起（不占早盘已知涨跌的便宜）",
+          K.base_day("2026-10-21T11:30:00+11:00", "2026-10-21", days) == "2026-10-21")
+    check("开盘前写的：从前一天收盘算起", K.base_day("2026-10-21T08:00:00+11:00", "2026-10-21", days) == "2026-10-20")
+    check("周末写的：从周五收盘算起", K.base_day("2026-10-24T15:00:00+11:00", "2026-10-24", days) == "2026-10-23")
+
+    flat = [(d, 100.0, 1.0) for d in days]
+    down = [(d, 10.0 - i * 0.5, 1e5) for i, d in enumerate(days)]
+    up = [(d, 10.0 + i * 0.5, 1e5) for i, d in enumerate(days)]
+    prices = {"XJO": flat, "AAA": down, "BBB": up, "CCC": down}
+
+    def brief(date, gen, stage, impacts):
+        return {"date": date, "generated_at": gen, "stage": stage,
+                "items": [{"title_zh": "t", "impact": impacts}]}
+    briefs = [
+        brief("2026-10-20", "2026-10-20T20:00:00+11:00", "analysis",
+              [{"name": "A", "code": "AAA", "direction": "偏空"}, {"name": "B", "code": "BBB", "direction": "偏空"},
+               {"name": "C", "code": "CCC", "direction": "中性"}, {"name": "板块", "code": None, "direction": "偏空"}]),
+        brief("2026-10-27", "2026-10-27T20:00:00+11:00", "analysis", [{"name": "A", "code": "AAA", "direction": "空"}]),
+        brief("2026-10-28", "2026-10-28T20:00:00+11:00", "analysis", [{"name": "B", "code": "BBB", "direction": "多"}]),
+        brief("2026-10-21", "2026-10-21T20:00:00+11:00", "headlines", [{"name": "A", "code": "AAA", "direction": "多"}]),
+    ]
+    card = K.scorecard(briefs, prices)
+    h1, h5 = card["horizons"]["1"], card["horizons"]["5"]
+    check("判空之后跑输大盘算对，判空之后跑赢算错", h1["n"] == 3 and h1["hits"] == 2, str(h1))
+    check("5 天后对账：只有到期的才算", h5["n"] == 2 and h5["hits"] == 1, str(h5))
+    check("「中性」单独计数、板块（没代码）和标题版不算", card["neutral"] == 1 and len(card["recent"]) == 3)
+    check("还没到期的记为待到期", card["pending"] == 1, str(card["pending"]))
+    check("样本少于 20 次：明说看不出准不准", "看不出" in card["verdict_zh"])
+    check("最近判错的例子列出来（给 Claude 下次参考）", any(r["code"] == "BBB" for r in card["misses"]))
+    check("瞎猜的概率：20 次对 14 次约 0.058，20 次对 10 次约 0.59",
+          abs(K.binom_p(14, 20) - 0.0577) < 0.001 and abs(K.binom_p(10, 20) - 0.588) < 0.001)
+    many = [brief(d, d + "T20:00:00+11:00", "analysis", [{"name": "A", "code": "AAA", "direction": "偏空"}])
+            for d in days[:-1] for _ in range(4)]
+    check("样本够多而且明显比瞎猜准时这么说", "明显比瞎猜准" in K.scorecard(many, prices)["verdict_zh"])
+
+    tmp = tempfile.mkdtemp()
+    try:
+        src = os.path.join(tmp, "news", "briefs")
+        os.makedirs(src)
+        with io.open(os.path.join(src, "2026-10-20.json"), "w", encoding="utf-8") as f:
+            json.dump(sample(), f, ensure_ascii=False)
+        with io.open(os.path.join(tmp, "news", "scorecard.json"), "w", encoding="utf-8") as f:
+            json.dump(card, f, ensure_ascii=False)
+        NW.build_site(os.path.join(tmp, "site"), briefs_dir=src, log=lambda m: None, fetch=False,
+                      inbox_dir=os.path.join(tmp, "none"))
+        check("发布时把成绩单放进站点", os.path.exists(os.path.join(tmp, "site", "news", "scorecard.json")))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+    js = io.open("web/news.js", encoding="utf-8").read()
+    col = io.open(".github/workflows/news-collect.yml", encoding="utf-8").read()
+    check("页面底部有成绩单，每次抓收件箱时更新", "scoreBlock()" in js and "news/scorecard.json" in js
+          and "news score" in col and "news/scorecard.json" in col)
+
+
 def test_workflows():
     print("\n[N8] GitHub 上的三道保险：抓标题、收简报、看门狗")
     col = io.open(".github/workflows/news-collect.yml", encoding="utf-8").read()
@@ -477,7 +607,7 @@ def main():
     print("AFR 要闻回归测试")
     print("=" * 68)
     for fn in (test_validate, test_headlines, test_moves, test_build_site, test_stages, test_inbox,
-               test_more_news, test_round2, test_workflows, test_page_wiring):
+               test_more_news, test_round2, test_number_check, test_scorecard, test_workflows, test_page_wiring):
         try:
             fn()
         except Exception as e:

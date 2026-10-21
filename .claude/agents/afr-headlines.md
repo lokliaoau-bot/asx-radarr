@@ -19,6 +19,7 @@ tools: Bash, Read, Write, Edit, Glob, Grep, WebSearch, WebFetch
 4. `python -m asxquant.news inbox` 看收件箱。**新闻只能从收件箱的 AFR 标题里选 5–8 条，`afr_url` 原样照抄**；
    事实用 WebSearch（不要限定 afr.com）核实补全，每个数字都要能在列出的来源里找到，找不到就不写，不编。
    涨跌和指数用收件箱的数字。
+   自己算出来的数字要在 `calcs` 里写算式（见 README「数字核对」）；数字尽量来自能公开打开的来源网页。
    **Street Talk 组至少看一遍**，涉及 ASX 上市公司的交易挑最重要的 1–2 条，按 README 的办法拼出内容。
 5. 只写标题、发生了什么和来源，**不要写 `impact` 和 `why_zh`**。`stage` 写 `headlines`，
    `model` 写 `claude-opus-5-5`，`effort` 写 `medium`。

@@ -18,7 +18,7 @@
     var m = /afr\.com\/([a-z-]+)\//.exec(u || "");
     return m && COLUMNS[m[1]] ? "AFR · " + COLUMNS[m[1]] : "AFR";
   }
-  var latest = null, heads = [], index = [];
+  var latest = null, heads = [], index = [], score = null;
 
   function $(id) { return document.getElementById(id); }
   function esc(s) {
@@ -95,7 +95,7 @@
       (it.impact && it.impact.length
         ? '<div class="nbox"><div class="nlbl">影响</div>' + imp + '<p class="nwhy">' + esc(it.why_zh) + "</p></div>"
         : "") +
-      '<div class="nsrc">来源：' + src + "</div></article>";
+      '<div class="nsrc">来源：' + src + "</div>" + verifyLine(it.verify) + "</article>";
   }
 
   /* ---------- 一期简报 ---------- */
@@ -137,11 +137,50 @@
       }).join("") + "</ul></details>";
   }
 
+  /* 数字核对（发布前 GitHub 打开来源网页逐个找出处，见 asxquant/newscheck.py） */
+  function verifyLine(v) {
+    if (!v || !v.checked) return "";
+    var ok = (v.found || []).length + (v.market || []).length + (v.derived || []).length;
+    var miss = v.missing || [];
+    var failed = (v.sources_failed || []).length;
+    return '<div class="nver">数字核对：' + (miss.length
+      ? ok + "/" + v.checked + " 个找到出处；<span class=\"nmiss\">未核实：" + esc(miss.join("、")) + "</span>"
+      : "全部 " + v.checked + " 个都找到出处") +
+      (failed && miss.length ? "（" + failed + " 个来源网站不让程序打开，没法核对）" : "") + "</div>";
+  }
+
+  /* Claude 判断成绩单（news/scorecard.json，每天抓收件箱时更新） */
+  function scoreBlock() {
+    if (!score || !score.horizons) return "";
+    var rows = ["1", "5"].map(function (h) {
+      var x = score.horizons[h];
+      return "<tr><td>" + h + " 天后</td><td>" + x.n + "</td><td>" +
+        (x.n ? Math.round(x.rate * 100) + "%" : "—") + "</td><td>" +
+        (x.median_signed_excess == null ? "—" : (x.median_signed_excess > 0 ? "+" : "") + x.median_signed_excess + "%") +
+        "</td></tr>";
+    }).join("");
+    var recent = (score.recent || []).map(function (r) {
+      function cell(k) {
+        return r["ex" + k] == null ? "待到期" :
+          (r["hit" + k] ? "✓ " : "✗ ") + (r["ex" + k] > 0 ? "+" : "") + r["ex" + k].toFixed(1) + "%";
+      }
+      return "<tr><td>" + esc(r.date.slice(5)) + "</td><td>" + esc(r.name || r.code) + " <b>" + esc(r.code) +
+        "</b></td><td>" + esc(r.direction) + "</td><td>" + cell(1) + "</td><td>" + cell(5) + "</td></tr>";
+    }).join("");
+    return '<details class="nscore"><summary>Claude 判断成绩：' + esc(score.verdict_zh) + "</summary>" +
+      '<p class="nsnote">每个带股票代码、方向不是「中性」的判断，按之后的实际涨跌对账，扣掉大盘（ASX 200）的涨跌，' +
+      "只看个股本身：判「空/偏空」后跑输大盘、判「多/偏多」后跑赢大盘算对。瞎猜大约对一半。" +
+      "还有 " + score.pending + " 个判断没到期，" + score.neutral + " 个「中性」不计。</p>" +
+      '<table class="nstab"><tr><th></th><th>次数</th><th>对了</th><th>中位超额</th></tr>' + rows + "</table>" +
+      (recent ? '<table class="nstab"><tr><th>日期</th><th>股票</th><th>判断</th><th>1 天</th><th>5 天</th></tr>' +
+        recent + "</table>" : "") + "</details>";
+  }
+
   function foot() {
     var past = index.slice(0, 14).map(function (x) {
       return '<button class="npast" data-d="' + esc(x.date) + '">' + esc(x.date.slice(5)) + "</button>";
     }).join("");
-    return '<div class="nfoot">「影响」是 Claude 根据新闻做的判断，没有经过回测验证，可能出错；' +
+    return scoreBlock() + '<div class="nfoot">「影响」是 Claude 根据新闻做的判断，可能出错（准不准见上面的成绩单）；' +
       "涨跌幅是发布时用行情重算的（盘中发布就是当时的价格）。以上是分析，不是投资建议。" +
       (index.length > 1 ? '<div class="npasts">往期：' + past + "</div>" : "") + "</div>";
   }
@@ -164,9 +203,10 @@
   Promise.all([
     getJSON("news/brief.json").catch(function () { return null; }),
     getJSON("news/headlines.json").then(function (h) { return h.items || []; }).catch(function () { return []; }),
-    getJSON("news/index.json").then(function (x) { return x.briefs || []; }).catch(function () { return []; })
+    getJSON("news/index.json").then(function (x) { return x.briefs || []; }).catch(function () { return []; }),
+    getJSON("news/scorecard.json").catch(function () { return null; })
   ]).then(function (r) {
-    latest = r[0]; heads = r[1]; index = r[2];
+    latest = r[0]; heads = r[1]; index = r[2]; score = r[3];
     if (latest && latest.items && latest.items.length) return render(latest);
     if (heads.length) {
       $("brief").innerHTML = '<div class="nhead"><h2 class="ntitle">AFR 要闻</h2>' +

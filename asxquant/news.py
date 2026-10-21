@@ -21,6 +21,8 @@
   python -m asxquant.news collect [日期]                  # GitHub Actions 用：抓 AFR 标题和收盘行情 → news/inbox/
   python -m asxquant.news request                         # 云端 Claude 用：请 GitHub 现抓一份，等它提交后拉下来
   python -m asxquant.news inbox [日期]                    # 云端 Claude 用：看收件箱里的 AFR 标题和涨跌
+  python -m asxquant.news verify <文件…>                  # news-intake.yml 用：打开来源网页逐个核对数字
+  python -m asxquant.news score                           # news-collect.yml 用：判断成绩单 → news/scorecard.json
 """
 from __future__ import annotations
 
@@ -430,6 +432,11 @@ def validate(b):
             if not (isinstance(s, dict) and _str(s.get("name"), 1, 40)
                     and isinstance(s.get("url"), str) and s["url"].startswith("https://")):
                 P.append(w + "每个来源要有 name 和 https 链接")
+    # Claude 自己算的数字要写算式（calcs），算出来对不上就退回
+    from .newscheck import check_calcs
+    for i, it in enumerate(items, 1):
+        if isinstance(it, dict):
+            P += ["第 %d 条：%s" % (i, x) for x in check_calcs(it)]
     # 页面会转义，这里再挡一道：任何文字里都不许出现尖括号
     for s in _strings(b):
         if "<" in s or ">" in s:
@@ -465,6 +472,18 @@ def inbox_urls(day, inbox_dir=INBOX):
     return urls
 
 
+def check_inbox(b, inbox_dir=INBOX):
+    """有收件箱时的两项核对：AFR 链接是真实抓到的；大盘收盘和涨跌和行情一致。"""
+    from .newscheck import check_market
+    P = check_urls(b, inbox_dir)
+    if isinstance(b, dict):
+        try:
+            P += check_market(b, load_inbox(b.get("date"), inbox_dir))
+        except Exception:
+            pass
+    return P
+
+
 def check_urls(b, inbox_dir=INBOX):
     """有收件箱时，每条的 AFR 链接都必须是 GitHub 真实抓到的——挡住编出来的链接。"""
     urls = inbox_urls(b.get("date"), inbox_dir) if isinstance(b, dict) else None
@@ -487,7 +506,7 @@ def accept_brief(name, new_text, old_text=None, inbox_dir=INBOX):
     if isinstance(b, dict) and b.get("date") != os.path.basename(name)[:10]:
         P.append("文件名和 date 对不上")
     if not P:
-        P = check_urls(b, inbox_dir)
+        P = check_inbox(b, inbox_dir)
     if P:
         return False, "没过校验: " + "；".join(P[:5])
     if old_text:
@@ -809,6 +828,13 @@ def build_site(out_dir, briefs_dir=BRIEFS, log=print, fetch=True, prices=None, i
            {"briefs": [{"date": b["date"], "n": len(b["items"]), "stage": stage_of(b)} for b in reversed(briefs)]})
     if briefs:
         _write(os.path.join(nd, "brief.json"), briefs[-1])
+    score = os.path.join(os.path.dirname(briefs_dir), "scorecard.json")
+    if os.path.exists(score):                   # 判断成绩单（news-collect.yml 每次抓取时更新）
+        try:
+            with io.open(score, encoding="utf-8") as f:
+                _write(os.path.join(nd, "scorecard.json"), json.load(f))
+        except Exception as e:
+            log("成绩单读不了（页面不显示）: %s" % e)
     heads = []
     if fetch:
         try:
@@ -866,7 +892,7 @@ def main(argv=None):
                 if isinstance(b, dict) and b.get("date") != os.path.basename(path)[:10]:
                     P.append("文件名和 date 对不上")
                 if not P:
-                    P = check_urls(b)
+                    P = check_inbox(b)
             except Exception as e:
                 P = ["读不了: %s" % e]
             print("%s: %s" % (path, "通过" if not P else "不通过"))
@@ -910,6 +936,44 @@ def main(argv=None):
             print("没有 news/inbox/%s.json，先运行 python -m asxquant.news request" % day, file=sys.stderr)
             return 1
         print_inbox(inbox)
+        return 0
+    if cmd == "verify" and a:
+        # news-intake.yml 用：打开来源网页逐个核对数字，结果写回简报（verify 字段）。网页打不开不算错。
+        from .newscheck import verify_brief
+        bad = 0
+        for path in a:
+            with io.open(path, encoding="utf-8") as f:
+                b = json.load(f)
+            b, hard = verify_brief(b, lambda u: _get(u, timeout=10), load_inbox(b.get("date")),
+                                   lead=lambda u: article_lead(u, get=lambda x: _get(x, timeout=10)),
+                                   log=lambda m: print("!", m, file=sys.stderr))
+            with io.open(path, "w", encoding="utf-8", newline="\n") as f:
+                json.dump(b, f, ensure_ascii=False, indent=2)
+                f.write("\n")
+            for it in b["items"]:
+                v = it["verify"]
+                print("%s：%d 个数字，来源找到 %d，行情对上 %d，自己算的 %d，没找到 %s（打不开的来源：%s）"
+                      % (it["title_zh"], v["checked"], len(v["found"]), len(v["market"]), len(v["derived"]),
+                         "、".join(v["missing"]) or "无", "、".join(v["sources_failed"]) or "无"))
+            for h in hard:
+                print("退回：" + h)
+            bad += bool(hard)
+        return 1 if bad else 0
+    if cmd == "score":
+        # news-collect.yml 用：给所有分析版的方向判断对账，写 news/scorecard.json
+        from .newscheck import scorecard
+        briefs = load_briefs(log=lambda m: print("!", m, file=sys.stderr))
+        codes = sorted({t["code"] for b in briefs if stage_of(b) == "analysis" for it in b["items"]
+                        for t in it.get("impact") or [] if t.get("code")})
+        prices = {}
+        if codes:
+            start = min(dt.date.fromisoformat(b["date"]) for b in briefs) - dt.timedelta(days=10)
+            prices = _yahoo(codes + ["XJO"], start, lambda m: print("!", m, file=sys.stderr))
+        card = scorecard(briefs, prices)
+        _write(os.path.join(os.path.dirname(BRIEFS), "scorecard.json"), card)
+        h1, h5 = card["horizons"]["1"], card["horizons"]["5"]
+        print("判断成绩：1 天后 %d 次对 %d；5 天后 %d 次对 %d；待到期 %d；%s"
+              % (h1["n"], h1["hits"], h5["n"], h5["hits"], card["pending"], card["verdict_zh"]))
         return 0
     if cmd == "accept" and len(a) >= 2:
         # 标准输出只打印收下的文件路径（给 shell 用），说明都写到标准错误

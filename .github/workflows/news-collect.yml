@@ -48,9 +48,12 @@ jobs:
         run: |
           set -e
           python -m asxquant.news collect
+          # 判断成绩单：给以前的分析版对账（失败不影响收件）
+          python -m asxquant.news score || echo "成绩单没算成，下次再算"
           git config user.name  "asx-radar-bot"
           git config user.email "actions@github.com"
           git add news/inbox
+          [ -f news/scorecard.json ] && git add news/scorecard.json
           if git diff --staged --quiet; then
             echo "收件箱没有变化"
           else

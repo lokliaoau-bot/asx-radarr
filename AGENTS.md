@@ -61,7 +61,9 @@ Windows：所有文本读写写明 `encoding="utf-8"`；改 JS 文件不要用�
   （只有标题、链接和行情数字，不存 AFR 正文——仓库是公开的）。云端 Claude 用 `python -m asxquant.news request`
   请它现抓，再只从收件箱选新闻；有收件箱时，简报里的 AFR 链接必须在收件箱里（`news.check_urls`）。
   云端推送需要 Claude GitHub App 装在本仓库。`news-watchdog.yml` 每个交易日晚上检查，没有简报就开 issue。
+- 判断成绩单（`news/scorecard.json`）和数字核对（简报的 `verify` 字段）都在 `asxquant/newscheck.py`。
+  自己算出来的数字必须写 `calcs` 算式；改对账口径（起点、1/5 天、扣大盘、20 次门槛）要先问用户。
 - **唯一允许不走 Pull Request 进 main 的改动**：推到 `claude/` 开头分支、且只新增或修改
   `news/briefs/YYYY-MM-DD.json` 的提交，由 `.github/workflows/news-intake.yml` 用 main 上的校验程序检查后自动并入；
-  以及 `news-collect.yml` 自己提交的 `news/inbox/` 收件箱。
+  以及 `news-collect.yml` 自己提交的 `news/inbox/` 收件箱和 `news/scorecard.json`。
   别的改动混在同一分支里，它就不合并。改 `news-intake.yml` 或 `validate()` 规则要先问用户。

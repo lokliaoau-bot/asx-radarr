@@ -58,7 +58,38 @@
           "name": "Kalkine（公司公告摘要）",
           "url": "https://kalkinemedia.com/au/news/announcements/nextdc-lowers-fy27-financial-forecast-due-to-jemena-power-network-delays-impacting-m3-melbourne-capacity-to-fy28"
         }
-      ]
+      ],
+      "verify": {
+        "checked": 12,
+        "found": [
+          "5.35",
+          "41.7%",
+          "约 30 亿",
+          "3.85–4.10 亿",
+          "3.85–4.10 亿",
+          "2.45–2.65 亿",
+          "2.45–2.65 亿",
+          "6.15–6.40 亿",
+          "6.15–6.40 亿",
+          "4.75–5.00 亿",
+          "4.75–5.00 亿"
+        ],
+        "derived": [],
+        "market": [],
+        "missing": [
+          "约 36%"
+        ],
+        "sources_ok": [
+          "AFR",
+          "AFR（业绩指引）",
+          "AFR（对冲基金与券商评级）",
+          "The Motley Fool",
+          "Kalkine（公司公告摘要）"
+        ],
+        "sources_failed": [
+          "Investing.com"
+        ]
+      }
     },
     {
       "title_zh": "RBA 副行长：通胀前景明显更糟，加息押注升温",
@@ -98,7 +129,29 @@
           "name": "Investing.com",
           "url": "https://uk.investing.com/news/economy-news/rba-nov-rate-hike-bets-surge-to-over-50-after-hauser-warning-on-inflation-4921315"
         }
-      ]
+      ],
+      "verify": {
+        "checked": 5,
+        "found": [
+          "4.7%"
+        ],
+        "derived": [],
+        "market": [],
+        "missing": [
+          "4.60%",
+          "4.85%",
+          "40%",
+          "56%"
+        ],
+        "sources_ok": [
+          "AFR",
+          "ABC News"
+        ],
+        "sources_failed": [
+          "Reuters（Investing.com 转载）",
+          "Investing.com"
+        ]
+      }
     },
     {
       "title_zh": "CSL 选定新 CEO：ViiV 掌门 Deborah Waterhouse",
@@ -136,7 +189,28 @@
           "name": "The Motley Fool",
           "url": "https://fool.com.au/2026/10/21/csl-names-deborah-waterhouse-as-next-ceo-in-global-search"
         }
-      ]
+      ],
+      "verify": {
+        "checked": 3,
+        "found": [
+          "150 万"
+        ],
+        "derived": [],
+        "market": [
+          "196.08",
+          "0.1%"
+        ],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "CSL 公告（PR Newswire）",
+          "Capital Brief",
+          "The Motley Fool"
+        ],
+        "sources_failed": [
+          "Investing.com"
+        ]
+      }
     },
     {
       "title_zh": "Woodside 下调产量指引上限，准备减持美国氨厂",
@@ -174,7 +248,38 @@
           "name": "Rigzone（油价）",
           "url": "https://www.rigzone.com/news/oil_slips_as_iran_talks_fuel_volatility-20-oct-2026-184889-article"
         }
-      ]
+      ],
+      "verify": {
+        "checked": 12,
+        "found": [
+          "4620 万",
+          "9%",
+          "12%",
+          "1.74–1.85 亿",
+          "1.74–1.85 亿",
+          "1.74–1.81 亿",
+          "1.74–1.81 亿",
+          "23.5 亿",
+          "69%"
+        ],
+        "derived": [],
+        "market": [
+          "33.96",
+          "0.4%"
+        ],
+        "missing": [
+          "1%"
+        ],
+        "sources_ok": [
+          "AFR",
+          "Offshore Engineer",
+          "Proactive Investors",
+          "Rigzone（油价）"
+        ],
+        "sources_failed": [
+          "Investing.com"
+        ]
+      }
     },
     {
       "title_zh": "Northern Star 季度销量下滑，等 Gold Fields 加价",
@@ -216,7 +321,39 @@
           "name": "The Northern Miner",
           "url": "https://www.northernminer.com/news/northern-star-rejects-uninvited-a38-7b-gold-fields-bid/1003895187/"
         }
-      ]
+      ],
+      "verify": {
+        "checked": 12,
+        "found": [
+          "约 36.4 万",
+          "3217",
+          "150–165 万",
+          "3050–3450",
+          "3050–3450",
+          "约 387 亿",
+          "25.06"
+        ],
+        "derived": [],
+        "market": [
+          "1.8%"
+        ],
+        "missing": [
+          "38.1 万",
+          "18.2 亿",
+          "19.3 亿",
+          "150–165 万"
+        ],
+        "sources_ok": [
+          "AFR",
+          "The Motley Fool",
+          "Mining Weekly",
+          "The Northern Miner"
+        ],
+        "sources_failed": [
+          "Kalkine",
+          "Mining.com.au"
+        ]
+      }
     },
     {
       "title_zh": "大摩：澳洲房价从高点可能跌 10–15%",
@@ -252,7 +389,27 @@
           "name": "AFR（Stockland）",
           "url": "https://www.afr.com/property/commercial/stockland-buyer-inquiries-sink-to-seven-year-low-in-property-downturn-20261019-p616b4"
         }
-      ]
+      ],
+      "verify": {
+        "checked": 6,
+        "found": [
+          "10–15%",
+          "10–15%",
+          "10%",
+          "5.2%",
+          "5 个百分点",
+          "40"
+        ],
+        "derived": [],
+        "market": [],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "AAP（Oberon Review 转载）",
+          "AFR（Stockland）"
+        ],
+        "sources_failed": []
+      }
     },
     {
       "title_zh": "MA Financial 冻结 23 亿房贷基金赎回",
@@ -286,7 +443,25 @@
           "name": "Capital Brief",
           "url": "https://www.capitalbrief.com/briefing/ma-financial-limits-withdrawals-from-property-loan-fund-7c65b11d-6b95-4f82-bde0-84c5419b677d/"
         }
-      ]
+      ],
+      "verify": {
+        "checked": 3,
+        "found": [
+          "约 23 亿",
+          "1%",
+          "约 1 亿"
+        ],
+        "derived": [],
+        "market": [],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "Money Management",
+          "MA Financial 基金页面",
+          "Capital Brief"
+        ],
+        "sources_failed": []
+      }
     },
     {
       "title_zh": "NAB 裁员最多 2500 人，重组费用约 3 亿澳元",
@@ -320,7 +495,36 @@
           "name": "Information Age（ACS）",
           "url": "https://ia.acs.org.au/article/2026/nab-cutting-2-500-staff-amid--rapid-technological-change-.html"
         }
-      ]
+      ],
+      "verify": {
+        "checked": 8,
+        "found": [
+          "2500",
+          "6%",
+          "1500",
+          "约 3 亿",
+          "约 8000 万",
+          "约 180",
+          "39.93"
+        ],
+        "derived": [],
+        "market": [
+          "1.9%"
+        ],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "The New Daily",
+          "InDaily",
+          "Information Age（ACS）"
+        ],
+        "sources_failed": []
+      }
     }
-  ]
+  ],
+  "verify": {
+    "at": "2026-10-21T10:13:44+00:00",
+    "checked": 61,
+    "missing": 10
+  }
 }

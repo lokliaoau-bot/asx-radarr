@@ -22,6 +22,8 @@ tools: Bash, Read, Write, Edit, Glob, Grep, WebSearch, WebFetch
    每个数字都要能在列出的来源里找到，找不到就不写，不编。涨跌、收盘价、指数用收件箱的数字；
    **Street Talk 组至少看一遍**，涉及 ASX 上市公司的交易挑最重要的 1–2 条，按 README 的办法拼出内容；
    能算的用代码算，不要心算。
+   自己算出来的数字要在 `calcs` 里写算式（见 README「数字核对」），算错 `check` 不收；数字尽量来自能公开打开的来源网页。
+   开工前先看 `news/scorecard.json` 里自己以前判断的对错（样本少时只当参考）。
 4. 每条写上 `impact`（股票填 3 位 ASX 代码和当天涨跌 `move_pct`，板块 `code` 填 null；方向只能是
    空 / 偏空 / 中性 / 偏多 / 多）和 `why_zh`（这件事怎么一步步影响到股价、主要风险、是不是已经反映在股价里）。
    `stage` 写 `analysis`，`model` 写 `claude-opus-5-5`，`effort` 写 `high`。

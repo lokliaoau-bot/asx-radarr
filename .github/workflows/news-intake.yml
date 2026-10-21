@@ -20,7 +20,7 @@ concurrency:
 jobs:
   intake:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
@@ -68,6 +68,9 @@ jobs:
           git config user.name  "asx-radar-bot"
           git config user.email "actions@github.com"
           FILES="$ACCEPTED"
+          # 数字核对：打开每条的来源网页逐个找出处，结果写进简报（页面上标出没找到的）。
+          # 算错、大盘数字不对这种硬错误上面 accept 已经挡掉了；这里网页打不开之类的问题不挡发布。
+          python -m asxquant.news verify $FILES || echo "数字核对没跑完，照常发布（页面不显示核对结果）"
           git add $FILES
           if git diff --staged --quiet; then
             echo "和 main 上的完全一样，不用提交"
