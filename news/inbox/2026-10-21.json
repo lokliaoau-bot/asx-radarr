@@ -1,7 +1,7 @@
 {
  "schema": "afr-inbox-v1",
  "date": "2026-10-21",
- "collected_at": "2026-10-21T09:58:19+00:00",
+ "collected_at": "2026-10-21T10:02:49+00:00",
  "headlines": [
   {
    "title": "Unis reject AI detection tools amid ‘futile’ fight against cheating",
@@ -3004,12 +3004,12 @@
   "EBO",
   "XRO",
   "MP1",
-  "GDG",
   "SEK",
-  "GLC",
   "CAR",
-  "ABB",
   "BOE",
-  "TCL"
+  "TCL",
+  "APX",
+  "HMC",
+  "WTC"
  ]
 }
