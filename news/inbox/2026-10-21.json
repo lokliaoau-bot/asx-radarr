@@ -1,7 +1,7 @@
 {
  "schema": "afr-inbox-v1",
  "date": "2026-10-21",
- "collected_at": "2026-10-21T09:06:41+00:00",
+ "collected_at": "2026-10-21T09:43:50+00:00",
  "headlines": [
   {
    "title": "Unis reject AI detection tools amid ‘futile’ fight against cheating",
@@ -102,13 +102,6 @@
    "published": "2026-10-21T06:19:43+00:00"
   },
   {
-   "title": "ASX rallies into the close as CSL names new CEO",
-   "url": "https://www.afr.com/markets/equity-markets/asx-to-rise-spacex-to-report-oil-retreats-20261021-p6179b",
-   "section": "markets",
-   "date": "2026-10-21",
-   "published": "2026-10-21T05:48:53+00:00"
-  },
-  {
    "title": "Hedge funds feast on NextDC, but brokers say it’s still a ‘buy’",
    "url": "https://www.afr.com/markets/equity-markets/hedge-funds-feast-on-nextdc-but-brokers-say-it-s-still-a-buy-20261021-p617d2",
    "section": "markets",
@@ -116,37 +109,9 @@
    "published": null
   },
   {
-   "title": "$3b gone in 40 minutes: Inside the NextDC bloodbath",
-   "url": "https://www.afr.com/chanticleer/australia-s-data-centre-dream-just-crashed-into-a-22-metre-power-pole-20261021-p617fd",
-   "section": "chanticleer",
-   "date": "2026-10-21",
-   "published": null
-  },
-  {
-   "title": "NextDC slashes earnings forecast, triggering 42pc share plunge",
-   "url": "https://www.afr.com/companies/infrastructure/nextdc-slashes-earnings-forecast-triggering-42pc-share-plunge-20261021-p616u7",
-   "section": "companies",
-   "date": "2026-10-21",
-   "published": null
-  },
-  {
-   "title": "NextDC’s electrician family dumped $100m in shares ahead of crash",
-   "url": "https://www.afr.com/rear-window/nextdc-s-electrician-family-dumped-100m-in-shares-ahead-of-crash-20261020-p6170s",
-   "section": "rear-window",
-   "date": "2026-10-20",
-   "published": null
-  },
-  {
-   "title": "Nassif family list Sydney’s biggest mansion with $45m price tag",
-   "url": "https://www.afr.com/property/residential/nassif-family-list-sydney-s-biggest-mansion-with-45m-price-tag-20261021-p6178n",
-   "section": "property",
-   "date": "2026-10-21",
-   "published": null
-  },
-  {
-   "title": "Cannon-Brookes’ private jet does a 32-minute flight",
-   "url": "https://www.afr.com/rear-window/cannon-brookes-private-jet-does-a-32-minute-flight-20261021-p617js",
-   "section": "rear-window",
+   "title": "Axing private equity tax break is okay, but not retrospectively",
+   "url": "https://www.afr.com/policy/tax-and-super/axing-private-equity-tax-break-is-okay-but-not-retrospectively-20261021-p616zp",
+   "section": "policy",
    "date": "2026-10-21",
    "published": null
   },
@@ -158,16 +123,9 @@
    "published": null
   },
   {
-   "title": "Beyond the AI hype: The sectors winning over top fund managers",
-   "url": "https://www.afr.com/markets/equity-markets/beyond-the-ai-hype-the-sectors-winning-over-top-fund-managers-20261021-p6177k",
-   "section": "markets",
-   "date": "2026-10-21",
-   "published": null
-  },
-  {
-   "title": "MA Financial halts property credit redemptions, winds up retail fund",
-   "url": "https://www.afr.com/companies/financial-services/ma-financial-halts-redemptions-in-property-funds-winds-up-retail-fund-20261021-p617ez",
-   "section": "companies",
+   "title": "$3b gone in 40 minutes: Inside the NextDC bloodbath",
+   "url": "https://www.afr.com/chanticleer/australia-s-data-centre-dream-just-crashed-into-a-22-metre-power-pole-20261021-p617fd",
+   "section": "chanticleer",
    "date": "2026-10-21",
    "published": null
   },
@@ -186,6 +144,20 @@
    "published": null
   },
   {
+   "title": "Cannon-Brookes’ private jet does a 32-minute flight",
+   "url": "https://www.afr.com/rear-window/cannon-brookes-private-jet-does-a-32-minute-flight-20261021-p617js",
+   "section": "rear-window",
+   "date": "2026-10-21",
+   "published": null
+  },
+  {
+   "title": "NextDC’s electrician family dumped $100m in shares ahead of crash",
+   "url": "https://www.afr.com/rear-window/nextdc-s-electrician-family-dumped-100m-in-shares-ahead-of-crash-20261020-p6170s",
+   "section": "rear-window",
+   "date": "2026-10-20",
+   "published": null
+  },
+  {
    "title": "Fortescue fires top exec after harassment, bullying investigation",
    "url": "https://www.afr.com/companies/mining/fortescue-sacks-top-executive-after-harassment-bullying-investigation-20261021-p617gf",
    "section": "companies",
@@ -195,6 +167,13 @@
   {
    "title": "Chemist Warehouse founder vows to stay on to drive global expansion",
    "url": "https://www.afr.com/companies/healthcare-and-fitness/chemist-warehouse-founder-to-stay-put-create-global-powerhouse-20261021-p616pd",
+   "section": "companies",
+   "date": "2026-10-21",
+   "published": null
+  },
+  {
+   "title": "MA Financial halts property credit redemptions, winds up retail fund",
+   "url": "https://www.afr.com/companies/financial-services/ma-financial-halts-redemptions-in-property-funds-winds-up-retail-fund-20261021-p617ez",
    "section": "companies",
    "date": "2026-10-21",
    "published": null
@@ -221,16 +200,9 @@
    "published": null
   },
   {
-   "title": "Qatar Airways to start Western Sydney flights, pushes for new rights",
-   "url": "https://www.afr.com/companies/transport/qatar-airways-to-start-western-sydney-flights-pushes-for-new-rights-20261021-p6176e",
-   "section": "companies",
-   "date": "2026-10-21",
-   "published": null
-  },
-  {
-   "title": "AirTrunk, Iren warn data centre investors now ‘a lot more selective’",
-   "url": "https://www.afr.com/companies/infrastructure/airtrunk-iren-warn-data-centre-investors-now-a-lot-more-selective-20261021-p6174y",
-   "section": "companies",
+   "title": "Beyond the AI hype: The sectors winning over top fund managers",
+   "url": "https://www.afr.com/markets/equity-markets/beyond-the-ai-hype-the-sectors-winning-over-top-fund-managers-20261021-p6177k",
+   "section": "markets",
    "date": "2026-10-21",
    "published": null
   },
@@ -256,13 +228,6 @@
    "published": null
   },
   {
-   "title": "Retail investors dive into Maas betting the sell-off has gone too far",
-   "url": "https://www.afr.com/markets/equity-markets/retail-investors-dive-into-maas-betting-the-sell-off-has-gone-too-far-20261020-p61710",
-   "section": "markets",
-   "date": "2026-10-20",
-   "published": null
-  },
-  {
    "title": "There’s always been cheating at uni, give students a pass for using AI",
    "url": "https://www.afr.com/policy/health-and-education/there-s-always-been-cheating-at-uni-give-students-a-pass-for-using-ai-20261021-p6179o",
    "section": "policy",
@@ -274,13 +239,6 @@
    "url": "https://www.afr.com/markets/debt-markets/australian-private-credit-is-adjusting-to-a-new-reality-20261020-p61732",
    "section": "markets",
    "date": "2026-10-20",
-   "published": null
-  },
-  {
-   "title": "Axing private equity tax break is okay, but not retrospectively",
-   "url": "https://www.afr.com/policy/tax-and-super/axing-private-equity-tax-break-is-okay-but-not-retrospectively-20261021-p616zp",
-   "section": "policy",
-   "date": "2026-10-21",
    "published": null
   },
   {
@@ -948,11 +906,6 @@
   "REH": {
    "pct": -1.96,
    "close": 17.05,
-   "halted": false
-  },
-  "RHC": {
-   "pct": 0.28,
-   "close": 54.25,
    "halted": false
   },
   "RIO": {
