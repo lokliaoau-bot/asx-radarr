@@ -223,11 +223,12 @@ def test_inbox():
               "BHP": [("2026-10-19", 60.46, 1e6), ("2026-10-20", 59.50, 1e6)],
               "XJO": [("2026-10-19", 8845.7, 0.0), ("2026-10-20", 8816.9, 0.0)]}
     box = NW.collect(dt.date(2026, 10, 20), get=lambda u: pages[u], prices=prices,
-                     codes=["NAB", "NXT", "BHP"], log=lambda m: None)
+                     codes=["NAB", "NXT", "BHP"], log=lambda m: None, sections=(), sleep=lambda s: None)
     urls = [h["url"] for h in box["headlines"]]
     check("抓到当天的 AFR 标题", any("nab-to-cut" in u for u in urls) and any("gold-miners" in u for u in urls), str(urls))
     check("太旧的文章（三天以前）不进收件箱", not any("old-story" in u for u in urls))
-    check("收件箱不存 AFR 摘要正文", all(set(h) == {"title", "url", "section", "date", "published"} for h in box["headlines"]))
+    check("收件箱不存 AFR 摘要正文", all(set(h) <= {"title", "url", "section", "date", "published", "codes", "hints"}
+                                    for h in box["headlines"]))
     check("指数收盘和涨跌（指数没有成交量，不算停牌）",
           box["index"] == {"code": "XJO", "pct": -0.33, "close": 8816.9}, str(box["index"]))
     check("个股涨跌按收盘价算", box["moves"]["NAB"]["pct"] == -1.75 and box["moves"]["NAB"]["close"] == 39.2)
@@ -290,6 +291,108 @@ def test_inbox():
           == "news/inbox/2026-10-20.json")
 
 
+ASX_CSV = '''ASX listed companies as at Wed Oct 21 20:03:20 AEDT 2026
+
+Company name,ASX code,GICS industry group
+"NEXTDC LIMITED","NXT","Software & Services"
+"NORTHERN STAR RESOURCES LIMITED","NST","Materials"
+"STAR ENTERTAINMENT GROUP LIMITED (THE)","SGR","Consumer Services"
+"NEW ZEALAND KING SALMON INVESTMENTS LIMITED","NZK","Food, Beverage & Tobacco"
+"COOPER METALS LIMITED","CPM","Materials"
+"EQT HOLDINGS LIMITED","EQT","Financial Services"
+"ASX LIMITED","ASX","Financial Services"
+"BLACKSTONE MINERALS LIMITED","BSX","Materials"
+"PEET LIMITED","PPC","Real Estate Management & Development"
+"INGENIA COMMUNITIES GROUP","INA","Equity Real Estate Investment Trusts (REITs)"
+"NATIONAL AUSTRALIA BANK LIMITED","NAB","Banks"
+"VANGUARD AUSTRALIAN SHARES INDEX ETF","VAS","Not Applic"
+'''
+
+ST_PAGE = '''<a href="/street-talk/eqt-set-to-sweep-cleanaway-off-the-asx-20261021-p617aa">EQT set to sweep Cleanaway off the ASX with $9.4b bid</a>
+<a href="/street-talk/old-deal-from-last-week-20261012-p615aa">An old Street Talk deal from last week here</a>'''
+
+ARTICLE = '''<html><article><p>Sarah ThompsonSenior reporterOct 21, 2026 – 10.37am, first published at 9.02amIngenia Communities
+has agreed a $1.2 billion deal with Warburg Pincus, advised by Macquarie Capital, while Peet shareholders wait.</p>
+<p>The Sydney-based group said the 49.9 per cent stake would be sold on Wednesday, according to Milan Cooper.</p>
+<p>Ingenia CommunitiesPeet LimitedMore from Latest In Financial services Fetching latest articles</p></article></html>'''
+
+
+def test_more_news():
+    print("\n[N9] 抓更多新闻：栏目页（含 Street Talk）、公司代码、文章线索、同日合并")
+    import datetime as dt
+    idx = NW.parse_asx_list(ASX_CSV)
+    bare = {"NAB", "EQT"}
+    d = lambda t, **k: NW.detect_codes(t, idx, bare=bare, **k)
+    check("NextDC → NXT", d("NextDC slashes earnings forecast") == ["NXT"])
+    check("「Northern Star’s」认成 NST，不会拆出 Star（SGR）", d("Northern Star’s costs jump") == ["NST"])
+    check("「New Zealand」是地名，不当成 New Zealand King Salmon", d("Genesis snaps up New Zealand’s Harbour") == [])
+    check("「EQT」「ASX」「Blackstone」在新闻里多半指海外机构/大盘，不认",
+          d("EQT set to sweep Cleanaway off the ASX") == [] and d("Blackstone lobs bid") == [])
+    check("「NAB」这种大写代码只认股票池里的", d("NAB’s job cuts") == ["NAB"]
+          and NW.detect_codes("NAB’s job cuts", idx, bare=set()) == [])
+    check("正文里的人名不撞公司首词（Milan Cooper ≠ Cooper Metals），单词全名照认（Peet）",
+          d("founded by Milan Cooper, while Peet waits", first_word=False) == ["PPC"])
+    check("ETF 等「Not Applic」不进清单", ("vanguard",) not in idx)
+
+    lead = NW.article_lead("x", get=lambda u: ARTICLE)["paragraphs"]
+    check("文章开头去掉标签云和「最新文章」栏", len(lead) == 2 and not any("Fetching" in p for p in lead), str(lead))
+    h = NW.lead_hints(lead, idx, bare)
+    check("线索：数字", h["amounts"][:2] == ["$1.2 billion", "49.9 per cent"], str(h["amounts"]))
+    check("线索：名字（去掉署名、星期、Sydney-based 这类修饰）",
+          "Warburg Pincus" in h["names"] and "Macquarie Capital" in h["names"]
+          and not any(("Thompson" in n or n == "Wednesday" or "based" in n) for n in h["names"]), str(h["names"]))
+    check("线索：正文里认出的公司", h["codes"] == ["INA", "PPC"], str(h["codes"]))
+    check("线索里没有整句（不转载原文）", all(len(n) <= 60 for n in h["names"]))
+
+    pages = {NW.AFR_RSS: RSS, NW.AFR + "/": HOME, NW.AFR + "/street-talk": ST_PAGE, NW.ASX_LIST: ASX_CSV}
+    slept = []
+
+    def get(u):
+        if u in pages:
+            return pages[u]
+        if "eqt-set-to-sweep" in u or "nab-to-cut" in u:
+            return ARTICLE
+        raise OSError("404")
+    prices = {"PPC": [("2026-10-20", 1.55, 1e5), ("2026-10-21", 1.44, 1e5)],
+              "INA": [("2026-10-20", 4.24, 1e5), ("2026-10-21", 4.65, 1e5)]}
+    box = NW.collect(dt.date(2026, 10, 21), get=get, prices=prices, codes=["NAB"], log=lambda m: None,
+                     sections=("/street-talk",), sleep=slept.append)
+    st = [x for x in box["headlines"] if x["section"] == "street-talk"]
+    check("Street Talk 栏目页的标题抓到了，上周的旧闻不要", len(st) == 1 and "eqt-set-to-sweep" in st[0]["url"], str(st))
+    check("近两天的文章带线索；不存任何正文段落",
+          "hints" in st[0] and all("paragraphs" not in x and "lead" not in x for x in box["headlines"]))
+    check("正文里提到的股票池外公司（PPC、INA）也取了涨跌",
+          box["moves"].get("PPC", {}).get("pct") == -7.1 and "INA" in box["moves"], str(box["moves"]))
+    check("读文章之间有停顿（别把 AFR 刷太快）", slept and all(s == 0.3 for s in slept))
+
+    old = {"date": "2026-10-21", "headlines": [{"url": "u1", "title": "早上的", "hints": {"amounts": ["$1"]},
+                                               "codes": ["NXT"]}, {"url": "u2", "title": "只在早上出现"}]}
+    new = {"date": "2026-10-21", "headlines": [{"url": "u1", "title": "晚上的", "codes": []},
+                                               {"url": "u3", "title": "晚上新出现"}], "moves": {"X": 1}}
+    m = NW.merge_inbox(old, new)
+    urls = [x["url"] for x in m["headlines"]]
+    check("同一天抓两次：标题取并集（首页轮换掉的早上链接还在）", urls == ["u1", "u3", "u2"], str(urls))
+    check("同一篇新的没读到线索就沿用旧的；行情用新的",
+          m["headlines"][0]["hints"] == {"amounts": ["$1"]} and m["headlines"][0]["codes"] == ["NXT"] and m["moves"] == {"X": 1})
+    check("换了一天就不合并", NW.merge_inbox(old, dict(new, date="2026-10-22")) == dict(new, date="2026-10-22"))
+
+    tmp = tempfile.mkdtemp()
+    try:
+        for n in ("2026-09-01.json", "2026-10-20.json", "notes.txt"):
+            io.open(os.path.join(tmp, n), "w").close()
+        gone = NW.prune_inbox(dt.date(2026, 10, 21), tmp)
+        check("收件箱只留 30 天", gone == ["2026-09-01.json"] and sorted(os.listdir(tmp)) == ["2026-10-20.json", "notes.txt"])
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+    buf = io.StringIO()
+    NW.print_inbox(box, out=buf)
+    txt = buf.getvalue()
+    check("看收件箱时 Street Talk 单独一组排在前面", txt.index("## Street Talk") < txt.index("## 其他 AFR 标题"))
+    js = io.open("web/news.js", encoding="utf-8").read()
+    check("页面卡片标出 Street Talk 等专栏", '"street-talk": "Street Talk"' in js and "afrLabel(it.afr_url)" in js)
+
+
 def test_workflows():
     print("\n[N8] GitHub 上的三道保险：抓标题、收简报、看门狗")
     col = io.open(".github/workflows/news-collect.yml", encoding="utf-8").read()
@@ -333,7 +436,7 @@ def main():
     print("AFR 要闻回归测试")
     print("=" * 68)
     for fn in (test_validate, test_headlines, test_moves, test_build_site, test_stages, test_inbox,
-               test_workflows, test_page_wiring):
+               test_more_news, test_workflows, test_page_wiring):
         try:
             fn()
         except Exception as e:

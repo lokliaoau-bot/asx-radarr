@@ -37,7 +37,11 @@ jobs:
           BRANCH: ${{ github.ref_name }}
         run: |
           set -e
-          git fetch origin "$BRANCH"
+          # 同一分支连推两次（比如变基后强推）时，前一次运行可能已经收下并删掉了分支——这不是错误
+          if ! git fetch origin "$BRANCH"; then
+            echo "分支 $BRANCH 已经不在了（多半已被前一次运行收下并删除），什么都不做"
+            exit 0
+          fi
           ALL=$(git diff --name-only origin/main...FETCH_HEAD)
           FILES=$(git diff --name-only --diff-filter=AM origin/main...FETCH_HEAD)
           echo "分支 $BRANCH 改动的文件："

@@ -12,6 +12,12 @@
   // 「深度分析」云端任务（claude.ai 上的例行任务页，只有用户本人登录后能打开和运行）
   var DEEP_URL = "https://claude.ai/code/routines/trig_014Jvo6KKqqQjPvygXNFEUL7";
   var EFFORT = { low: "低", medium: "中", high: "高" };
+  // AFR 的专栏：卡片上标出来（Street Talk 是交易内幕，多为独家）
+  var COLUMNS = { "street-talk": "Street Talk", "chanticleer": "Chanticleer", "rear-window": "Rear Window" };
+  function afrLabel(u) {
+    var m = /afr\.com\/([a-z-]+)\//.exec(u || "");
+    return m && COLUMNS[m[1]] ? "AFR · " + COLUMNS[m[1]] : "AFR";
+  }
   var latest = null, heads = [], index = [];
 
   function $(id) { return document.getElementById(id); }
@@ -84,7 +90,7 @@
     var src = it.sources.map(function (s) { return link(s.url, esc(s.name)); }).join(" · ");
     return '<article class="ncard">' +
       "<h3>" + esc(it.title_zh) + "</h3>" +
-      link(it.afr_url, "AFR：" + esc(it.afr_headline) + " ↗", "norig") +
+      link(it.afr_url, afrLabel(it.afr_url) + "：" + esc(it.afr_headline) + " ↗", "norig") +
       '<p class="nwhat">' + esc(it.what_zh) + "</p>" +
       (it.impact && it.impact.length
         ? '<div class="nbox"><div class="nlbl">影响</div>' + imp + '<p class="nwhy">' + esc(it.why_zh) + "</p></div>"

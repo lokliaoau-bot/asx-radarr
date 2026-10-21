@@ -24,6 +24,7 @@
 """
 from __future__ import annotations
 
+import csv
 import datetime as dt
 import email.utils
 import html
@@ -55,6 +56,22 @@ UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
 # 和股市有关的栏目（链接路径第一段）。政治、国际、生活、文化不选。
 MARKET_SECTIONS = {"companies", "markets", "street-talk", "chanticleer", "rear-window",
                    "policy", "technology", "property", "wealth"}
+# 栏目页（2026-10-21 加，用户要「抓更多新闻、把 Street Talk 也抓到」）：RSS 只有最新 20 条、首页约 50 条，
+# 每个栏目页还能各补约 20 条，Street Talk 页能拿到它当天和前两天的全部标题。
+SECTION_PAGES = (
+    "/street-talk", "/chanticleer", "/rear-window",
+    "/companies", "/companies/financial-services", "/companies/mining", "/companies/energy",
+    "/companies/infrastructure", "/companies/healthcare-and-fitness", "/companies/retail",
+    "/companies/telecommunications", "/companies/transport", "/companies/professional-services",
+    "/markets", "/markets/equity-markets", "/markets/commodities", "/markets/debt-markets",
+    "/markets/currencies", "/policy/economy", "/policy/tax-and-super", "/technology", "/property/commercial",
+)
+SECTION_LABELS = {"street-talk": "Street Talk", "chanticleer": "Chanticleer", "rear-window": "Rear Window",
+                  "companies": "公司", "markets": "市场", "policy": "政策", "technology": "科技",
+                  "property": "地产", "wealth": "理财"}
+ASX_LIST = "https://www.asx.com.au/asx/research/ASXListedCompanies.csv"
+LEAD_LIMIT = 100    # 收件时最多读多少篇文章的公开开头（只提取线索，不存原文）
+INBOX_KEEP_DAYS = 30
 KEEP_SITE = 30      # 站点里保留最近多少期
 CHECK_MOVES = 10    # 发布时重算最近多少期的涨跌
 MAX_HEADLINES = 40
@@ -121,10 +138,12 @@ def parse_home(text):
     return out
 
 
-def headlines(market_only=True, get=_get, log=lambda m: None):
-    """RSS 在前（有时间和栏目），首页补齐（RSS 只有最新 20 条，早上的大新闻常常已经掉出去）。"""
+def headlines(market_only=True, get=_get, log=lambda m: None, sections=()):
+    """RSS 在前（有时间和栏目），首页补齐（RSS 只有最新 20 条，早上的大新闻常常已经掉出去），
+    再按 sections 逐个读栏目页（收件时用 SECTION_PAGES；发布时为了快，只读 RSS 和首页）。"""
     items, seen = [], set()
-    for url, parse in ((AFR_RSS, parse_rss), (AFR + "/", parse_home)):
+    pages = [(AFR_RSS, parse_rss), (AFR + "/", parse_home)] + [(AFR + p, parse_home) for p in sections]
+    for url, parse in pages:
         try:
             got = parse(get(url))
         except Exception as e:
@@ -150,12 +169,151 @@ def article_lead(url, n=4, get=_get):
     body = text[a:b] if 0 <= a < b else text
     paras = []
     for p in re.findall(r"<p[^>]*>(.*?)</p>", body, flags=re.S):
-        p = _clean(p)
+        # 第一段前面粘着署名和时间（「…SmithSenior reporterOct 21, 2026 – 10.37amWoodside…」），先去掉，
+        # 否则会被下面的「标签云」规则误删——而第一段恰恰是最重要的
+        p = _BYLINE.sub("", _clean(p), count=1).strip()
         # 导航栏会被拼成一长串没有空格的词，按空格密度筛掉；订阅推广语也去掉
-        if len(p) > 60 and p.count(" ") / len(p) > 0.08 and "Gift articles" not in p:
+        if (len(p) > 60 and p.count(" ") / len(p) > 0.08 and "Gift articles" not in p
+                and "Latest In" not in p and "Fetching latest" not in p
+                and len(re.findall(r"[a-z][A-Z][a-z]", p)) < 3):      # 标签云会拼成「CommunitiesPeet」
             paras.append(p)
     m = re.search(r'"datePublished":"([^"]+)"', text)
     return {"url": url, "published": m.group(1) if m else None, "paragraphs": paras[:n]}
+
+
+# ---------------------------------------------------------------- 公司名 → ASX 代码、文章线索
+
+# 公司名里常见、单独出现时多半不是指这家公司的词：只有它们打头的公司，不用第一个词单独匹配
+_GENERIC = set("""
+bank gold energy capital global national first western northern southern eastern central metals mining minerals
+health healthcare property properties investment investments australian australia international pacific asia
+china india japan american america sydney melbourne brisbane perth adelaide queensland victoria tasmania star
+commonwealth treasury nine seven super fund funds market markets real future digital data media network networks
+services solutions systems infrastructure airport airports life insurance credit finance financial money equity
+battery uranium copper iron silver rare earth earths clean green blue black white golden royal united general
+premier prime advance smart open next alpha peak summit vision pure true bright liberty unity fortune atlas titan
+phoenix orion nova pilbara hunter wealth trade retail home house housing bond bonds dollar rate rates price
+labor liberal federal reserve street talk chief lithium power water coal resources holdings partners ventures
+technologies technology industries trust income growth value select crown platinum horizon frontier pioneer
+legacy heritage diamond regional city state public private island coast north south east west great new
+blackstone apollo carlyle bain goldman morgan citi jpmorgan microsoft google amazon apple nvidia tesla spacex
+openai intel oracle samsung toyota boeing shell walmart costco
+""".split())
+# 大写三字母但不是在说那家公司的缩写（「ASX rallies」说的是大盘，不是 ASX 这家公司）
+_ACRONYMS = {"ASX", "CEO", "CFO", "IPO", "AFR", "ESG", "GDP", "CPI", "USD", "AUD", "RBA", "ATO", "NSW", "GST",
+             "AGM", "EPS", "NPV", "LNG", "API", "FY2", "FY1", "THE", "AND", "ACT", "ACC", "ACL", "IMF", "OPEC"}
+# 和海外同名机构撞名、新闻里几乎总是指海外那家的代码（瑞典私募 EQT 收购 Cleanaway、TAL 第一生命、ADNOC 的 XRG）
+_COLLIDE = {"EQT", "TAL", "XRG"}
+# 两个词的地名/常用词组：不能当公司名前缀（「New Zealand」不是 New Zealand King Salmon）
+_PHRASES = {("new", "zealand"), ("western", "australia"), ("south", "australia"), ("new", "south"),
+            ("new", "york"), ("hong", "kong"), ("united", "states"), ("gold", "coast"), ("sunshine", "coast"),
+            ("north", "america"), ("south", "africa"), ("middle", "east"), ("northern", "territory"),
+            ("south", "east"), ("great", "southern"), ("new", "zealand's"), ("west", "australia")}
+_SUFFIX = re.compile(r"\b(LIMITED|LTD|HOLDINGS?|GROUP|CORPORATION|CORP|INCORPORATED|INC|PLC|N\.?V\.?|AG|SE|NL|"
+                     r"TRUST|FUND|REIT|STAPLED|SECURITIES|THE|CO)\b\.?|\(THE\)", re.I)
+
+
+def parse_asx_list(text):
+    """ASX 官网的上市公司清单（CSV）→ {别名词组（小写元组）: 代码}。一个别名对应多家公司的直接丢掉。
+    别名三种：全名（去掉 Limited/Group 等）、前两个词、第一个词；只靠第一个词认的记在 __first__ 里——
+    正文里人名常撞上这类别名（「Milan Cooper」≠ Cooper Metals），所以正文只用全名和多词别名。"""
+    seen, index, first = {}, {}, set()
+    for row in csv.reader(io.StringIO(text)):
+        if len(row) < 3 or not _CODE.match(row[1].strip()) or row[2].strip() == "Not Applic":
+            continue
+        code = row[1].strip()
+        name = re.sub(r"\s+", " ", _SUFFIX.sub(" ", row[0])).strip(" .,&-")
+        words = [w.lower() for w in name.split()]
+        if not words:
+            continue
+        aliases = {tuple(words)}
+        if len(words) >= 2 and tuple(words[:2]) not in _PHRASES:
+            aliases.add(tuple(words[:2]))
+        if len(words) > 1 and len(words[0]) >= 4 and words[0] not in _GENERIC:
+            aliases.add((words[0],))
+            first.add((words[0],))
+        for a in aliases:
+            if len(a) == 1 and (a[0].upper() in _ACRONYMS or a[0].upper() in _COLLIDE or a[0] in _GENERIC):
+                continue                # 「ASX」「Blackstone」这类单词单独出现多半不是在说这家公司
+            if a in _PHRASES:
+                continue
+            seen.setdefault(a, set()).add(code)
+    for a, codes in seen.items():
+        if len(codes) == 1:
+            index[a] = next(iter(codes))
+    index["__codes__"] = {c for codes in seen.values() for c in codes}
+    index["__first__"] = {a for a in first if a in index}
+    return index
+
+
+def detect_codes(text, index, first_word=True, bare=None):
+    """在标题或正文里找 ASX 公司（专有名词要大写开头；长名字优先，「Northern Star」不会被拆成「Star」）。
+    first_word=False：不用「只靠第一个词」的别名（正文里人名太多）。
+    bare：大写三字母直接当代码认时，只认这个集合里的（股票池里的大公司）——「EQT」「TAL」「XRG」在新闻里
+    常常是海外同名机构（瑞典私募 EQT、TAL 第一生命、阿布扎比的 XRG），不是同代码的 ASX 小公司。"""
+    if not index:
+        return []
+    skip = set() if first_word else index.get("__first__", set())
+    toks = re.findall(r"[A-Za-z0-9][A-Za-z0-9&.\-]*", re.sub(r"[’']s\b", "", text or ""))
+    low = [t.lower().strip(".") for t in toks]
+    codes, all_codes, i = [], index.get("__codes__", set()), 0
+    while i < len(toks):
+        hit = None
+        for n in (6, 5, 4, 3, 2, 1):
+            key = tuple(low[i:i + n])
+            if len(key) == n and key in index and key not in skip and toks[i][0].isupper():
+                hit = (index[key], n)
+                break
+        if hit:
+            codes.append(hit[0])
+            i += hit[1]
+            continue
+        t = toks[i]
+        if (len(t) == 3 and t.isupper() and t in all_codes and t not in _ACRONYMS and t not in _COLLIDE
+                and (bare is None or t in bare)):
+            codes.append(t)
+        i += 1
+    return list(dict.fromkeys(codes))
+
+
+_BYLINE = re.compile(r"^.{0,160}?\b20\d\d\s*[–-]\s*\d{1,2}\.\d{2}\s*[ap]m(?:,\s*first published at\s*\d{1,2}\.\d{2}\s*[ap]m)?")
+_AMOUNT = re.compile(r"(?:A|US|NZ|HK)?\$\s?\d[\d,]*(?:\.\d+)?(?:\s?(?:billion|million|trillion|bn|m)\b)?"
+                     r"|\b\d[\d,]*(?:\.\d+)?\s?(?:per cent|pc)\b"
+                     r"|\b\d[\d,]*(?:\.\d+)?\s?(?:megawatts|gigawatts|MW|GW|ounces|tonnes|barrels|jobs)\b", re.I)
+_NAME_RUN = re.compile(r"(?:[A-Z][A-Za-z&\-]+(?:\s+(?:of|and|&)\s+|\s+)?){1,5}")    # 不含句点，不会跨句
+_NAME_STOP = {"The", "A", "An", "In", "On", "At", "But", "And", "It", "Its", "This", "That", "These", "Those", "He",
+              "She", "They", "We", "I", "After", "Before", "As", "While", "When", "With", "From", "For", "Of", "To",
+              "By", "Shares", "Mr", "Ms", "Dr", "Chief", "Executive", "If", "Updated", "Key", "Posts", "Share",
+              "Now", "Just", "Big", "Private", "Mergers", "Five", "Four", "Three", "Two", "One", "Six", "Ten",
+              "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "January", "February",
+              "March", "April", "May", "June", "July", "August", "September", "October", "November", "December",
+              "CEO", "CFO", "ASX", "Capital", "Partners", "Group", "Limited", "More", "Latest", "So", "Yet", "Also",
+              "Investing", "Shares", "Fixed", "Income", "Courts", "Industrial", "Relations", "Financial", "Services",
+              "There", "Here", "Some", "Many", "Most", "Other", "Others", "Such"}
+_NAME_PREFIX = re.compile(r"^(?:ASX-listed|[A-Z][a-z]+-(?:headquartered|based|listed|backed|owned|themed))\s*")
+
+
+def lead_hints(paragraphs, index=None, bare=None):
+    """从文章公开的开头里只取「线索」：金额百分比、出现的公司和人名、对应的 ASX 代码。
+    不存句子（仓库是公开的，不转载 AFR 原文）。线索只用来搜别的来源核实，不能直接当事实写。"""
+    text = " ".join(paragraphs or [])
+    text = _BYLINE.sub("", text, count=1)
+    amounts = list(dict.fromkeys(m.group(0).strip() for m in _AMOUNT.finditer(text)))[:6]
+    names = []
+    for m in _NAME_RUN.finditer(text):
+        run = _NAME_PREFIX.sub("", m.group(0).strip().rstrip("."))
+        words = run.split()
+        while words and words[0] in _NAME_STOP:
+            words = words[1:]
+        while words and words[-1].lower() in ("and", "of", "&"):
+            words = words[:-1]
+        if len(words) == 1 and (words[0] in _NAME_STOP or "-" in words[0]):
+            continue
+        run = " ".join(words)
+        if len(run) >= 3 and run not in names and not run.isdigit():
+            names.append(run)
+    return {"amounts": amounts, "names": names[:8],
+            "codes": detect_codes(text, index, first_word=False, bare=bare)[:5]}
 
 
 # ---------------------------------------------------------------- 校验
@@ -408,16 +566,45 @@ def _now_iso():
     return dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
 
 
-def collect(day=None, get=_get, prices=None, codes=None, log=print):
-    """GitHub Actions 里跑：今天的 AFR 标题 + 股票池和 ASX 200 的收盘涨跌。
-    只存标题、链接、栏目、时间和行情数字，不存 AFR 的摘要或正文（仓库是公开的）。"""
+def collect(day=None, get=_get, prices=None, codes=None, log=print, sections=SECTION_PAGES, sleep=None):
+    """GitHub Actions 里跑：AFR 标题（RSS + 首页 + 各栏目页，含 Street Talk）、每篇提到的 ASX 公司、
+    近两天文章的线索，以及股票池、被提到的公司和 ASX 200 的收盘涨跌。
+    只存标题、链接、栏目、时间、线索和行情数字，不存 AFR 的摘要或正文（仓库是公开的）。"""
+    import time
+    sleep = sleep or time.sleep
     day = day or sydney_today()
     lo = day - dt.timedelta(days=3)
-    heads = [h for h in headlines(get=get, log=log)
+    heads = [h for h in headlines(get=get, log=log, sections=sections)
              if not h.get("date") or lo <= dt.date.fromisoformat(h["date"]) <= day]
+    try:
+        index = parse_asx_list(get(ASX_LIST))
+    except Exception as e:
+        log("ASX 公司清单取不到（不标公司代码）: %s" % e)
+        index = {}
     if codes is None:
         from . import config as C
         codes = sorted({C.asx_code(t) for t in C.all_stock_tickers()})
+    bare = set(codes)
+    recent = (day - dt.timedelta(days=1)).isoformat()
+    read = fails = 0
+    for h in heads:
+        h["codes"] = detect_codes(h["title"], index, bare=bare)
+        if read >= LEAD_LIMIT or fails >= 5 or (h.get("date") or "") < recent:
+            continue
+        try:
+            hints = lead_hints(article_lead(h["url"], get=get)["paragraphs"], index, bare)
+            fails = 0
+        except Exception as e:                      # 还没上线的文章是 404，正常
+            fails += 1
+            log("读不到 %s: %s" % (h["url"], e))
+            continue
+        finally:
+            read += 1
+            sleep(0.3)                              # 别把 AFR 刷太快
+        h["hints"] = {"amounts": hints["amounts"], "names": hints["names"]}
+        h["codes"] = list(dict.fromkeys(h["codes"] + hints["codes"]))[:6]
+    mentioned = {c for h in heads for c in h.get("codes", [])}
+    codes = sorted(set(codes) | mentioned)
     probe = {"date": day.isoformat(), "items": [{"impact": [{"code": c} for c in list(codes) + ["XJO"]]}]}
     try:
         fill_moves([probe], prices=prices, log=log)
@@ -429,7 +616,8 @@ def collect(day=None, get=_get, prices=None, codes=None, log=print):
     movers = sorted((c for c in moves if not moves[c]["halted"]), key=lambda c: -abs(moves[c]["pct"]))[:15]
     return {
         "schema": INBOX_SCHEMA, "date": day.isoformat(), "collected_at": _now_iso(),
-        "headlines": [{k: h.get(k) for k in ("title", "url", "section", "date", "published")} for h in heads],
+        "headlines": [{k: h[k] for k in ("title", "url", "section", "date", "published", "codes", "hints")
+                       if h.get(k) is not None} for h in heads],
         "index": {"code": "XJO", "pct": idx["move_pct"], "close": idx["close"]} if idx else None,
         "moves": moves, "top_movers": movers,
     }
@@ -501,6 +689,33 @@ def request_inbox(day=None, wait=900, poll=20, git=_git, sleep=None, clock=None,
     return path
 
 
+def merge_inbox(old, new):
+    """同一天抓多次时合并：标题取并集（AFR 首页会轮换，早上抓到的链接晚上可能就不在了——10-21 的简报
+    因此有一条链接被校验挡下）；同一篇两次都有就用新的，新的没读到线索就沿用旧的；行情用新的。"""
+    if not old or old.get("date") != new.get("date"):
+        return new
+    prev = {h["url"]: h for h in old.get("headlines") or []}
+    heads = []
+    for h in new.get("headlines") or []:
+        o = prev.pop(h["url"], None)
+        if o and "hints" in o and "hints" not in h:
+            h = dict(h, hints=o["hints"], codes=list(dict.fromkeys((h.get("codes") or []) + (o.get("codes") or []))))
+        heads.append(h)
+    heads += list(prev.values())
+    return dict(new, headlines=heads)
+
+
+def prune_inbox(today, inbox_dir=INBOX, keep_days=INBOX_KEEP_DAYS):
+    """收件箱只留最近 keep_days 天，仓库不会越长越大。"""
+    if not os.path.isdir(inbox_dir):
+        return []
+    cut = (today - dt.timedelta(days=keep_days)).isoformat()
+    gone = [n for n in os.listdir(inbox_dir) if _FILE.match(n) and n[:10] < cut]
+    for n in gone:
+        os.remove(os.path.join(inbox_dir, n))
+    return gone
+
+
 def print_inbox(inbox, out=None):
     out = out or sys.stdout
     ix = inbox.get("index") or {}
@@ -512,9 +727,28 @@ def print_inbox(inbox, out=None):
     halted = [c for c, v in (inbox.get("moves") or {}).items() if v.get("halted")]
     if halted:
         print("停牌：" + "，".join(halted), file=out)
-    print("\nAFR 标题（只能从这里选，链接原样照抄）：", file=out)
-    for h in inbox.get("headlines") or []:
-        print("- [%s] %s | %s | %s" % (h.get("date"), h.get("section"), h.get("title"), h.get("url")), file=out)
+    moves = inbox.get("moves") or {}
+
+    def code_txt(h):
+        out_ = []
+        for c in h.get("codes") or []:
+            m = moves.get(c)
+            out_.append(c + ("（停牌）" if m and m.get("halted") else (" %+.2f%%" % m["pct"]) if m else ""))
+        return ("  [可能涉及 " + "，".join(out_) + "]") if out_ else ""
+
+    heads = inbox.get("headlines") or []
+    groups = [("Street Talk（交易内幕：收购、出售、融资、IPO）", [h for h in heads if h.get("section") == "street-talk"]),
+              ("其他 AFR 标题", [h for h in heads if h.get("section") != "street-talk"])]
+    print("\nAFR 标题（只能从这里选，链接原样照抄；「线索」只是搜别的来源用的关键词，不能直接当事实写）：", file=out)
+    for title, group in groups:
+        print("\n## %s：%d 条" % (title, len(group)), file=out)
+        for h in group:
+            print("- [%s] %s | %s%s | %s" % (h.get("date"), h.get("section"), h.get("title"), code_txt(h), h.get("url")),
+                  file=out)
+            hints = h.get("hints") or {}
+            if hints.get("amounts") or hints.get("names"):
+                print("    线索：%s%s" % ("数字 " + "、".join(hints["amounts"]) + "；" if hints.get("amounts") else "",
+                                       "名字 " + "、".join(hints.get("names") or [])), file=out)
     print("\n其余股票的涨跌在 JSON 的 moves 里（股票池外的，发布时会自动补）。", file=out)
 
 
@@ -637,12 +871,20 @@ def main(argv=None):
             print("一条 AFR 标题都没抓到，不写收件箱", file=sys.stderr)
             return 1
         os.makedirs(INBOX, exist_ok=True)
+        for n in prune_inbox(day):
+            print("删掉过期收件箱 %s" % n, file=sys.stderr)
         path = os.path.join(INBOX, day.isoformat() + ".json")
+        try:
+            inbox = merge_inbox(load_inbox(day), inbox)
+        except Exception as e:
+            print("! 旧收件箱读不了，直接覆盖: %s" % e, file=sys.stderr)
         with io.open(path, "w", encoding="utf-8", newline="\n") as f:
             json.dump(inbox, f, ensure_ascii=False, indent=1)
             f.write("\n")
-        print("%s：AFR 标题 %d 条，行情 %d 只，ASX 200 %s"
-              % (path, len(inbox["headlines"]), len(inbox["moves"]), inbox["index"]))
+        st = sum(h.get("section") == "street-talk" for h in inbox["headlines"])
+        print("%s：AFR 标题 %d 条（Street Talk %d 条，带线索 %d 条），行情 %d 只，ASX 200 %s"
+              % (path, len(inbox["headlines"]), st, sum("hints" in h for h in inbox["headlines"]),
+                 len(inbox["moves"]), inbox["index"]))
         return 0
     if cmd == "request":
         try:

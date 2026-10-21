@@ -31,17 +31,28 @@ Market Index、ABC、Capital Brief、Yahoo 行情也都打不开。能用的只�
    成功会打印收件箱路径。失败时**不要硬写**，按退出码报告后结束：
    - 退出码 3：推不上 GitHub——Claude GitHub App 没装到 `lokliaoau-bot/asx-radarr`，原话报告给用户；
    - 退出码 4：GitHub 没在时间内抓回来——报告，并提醒去 Actions 看「抓 AFR 标题和收盘行情」。
-3. **看收件箱**：`python -m asxquant.news inbox`。列出 AFR 标题（带链接和发稿日期）、ASX 200 收盘、
-   涨跌最大的股票、停牌的股票；全部个股涨跌在 `news/inbox/<日期>.json` 的 `moves` 里。
+3. **看收件箱**：`python -m asxquant.news inbox`。内容：
+   - ASX 200 收盘、涨跌最大的股票、停牌的股票；
+   - AFR 标题分两组：**Street Talk**（交易内幕：收购、出售资产、融资、IPO、大宗交易）和其他栏目，
+     来自 RSS、首页和二十多个栏目页，一天一般一百多条；
+   - 每条标题后面的「可能涉及 XXX ±x%」是按 ASX 公司清单自动认出来的公司和当天涨跌（可能认错，自己判断）；
+   - 近两天的文章还有「线索」：AFR 公开开头里出现的数字和名字。**线索只是搜索关键词，不是事实**——
+     数字属于哪件事、名字是什么角色，必须在别的来源里看到才能写。
+   全部个股涨跌在 `news/inbox/<日期>.json` 的 `moves` 里。
 4. **挑 5–8 条真正会动股价的**——**只能从收件箱的 AFR 标题里选，`afr_url` 原样照抄**（校验会核对，
    编出来的链接一律不收）。只选最近两三天的：
    - 公司：收购报价、业绩和指引、停牌复牌、裁员重组、监管处罚、券商大幅调整评级
    - 宏观：RBA 和利率、债券收益率、油价金价铁矿石、中国数据、美股和 AI 情绪
    - 不选：政治社会新闻、生活文化、没有新事实的纯评论
    - 涨跌最大的股票如果有对应的 AFR 标题，优先选（它们是当天真正动了股价的事）。
+   - **Street Talk 至少看一遍**：涉及 ASX 上市公司（标了代码的）的收购、出售、融资、IPO，挑最重要的 1–2 条。
 5. **弄清楚发生了什么**：用 WebSearch 找同一件事的报道（ASX 公告、Reuters、ABC、Capital Brief、
    Market Index、The Motley Fool、Stockhead 等），读搜索结果里的摘要。每个写进去的数字都要能在列出的
    来源里找到；找不到就不写，**不编**。当天涨跌、收盘价、指数一律用收件箱的数字（发布时还会再核一次）。
+   - **Street Talk 怎么拼出内容**：它多是独家，别家常常还没报。用标题里的公司名 + 线索里的名字和数字去搜
+     （例如「Blackstone IFM Rio Tinto power assets bid」），找公司公告、Reuters、Bloomberg、The Australian
+     DataRoom、Mingtiandi、行业媒体的跟进报道。找到就按来源写；**找不到就只写标题本身能确定的事**，
+     并在 `what_zh` 里写明「据 AFR Street Talk 报道，其他媒体暂未证实」，不要用线索里的数字自己拼故事。
 
 ## A. 抓标题（`stage: "headlines"`）
 
@@ -99,6 +110,8 @@ Market Index、ABC、Capital Brief、Yahoo 行情也都打不开。能用的只�
    git commit -m "AFR 简报 <日期>"
    git push -u origin <分支名>
    ```
+   **只推一次**：推完不要再变基、强推或补推。main 上后来多出的存档提交不影响——收件流程只看你这个分支
+   自己改了哪些文件。
    不用开 Pull Request：`.github/workflows/news-intake.yml` 会再校验一遍、并进 main、触发部署，
    约 10 分钟后手机上可见。分支里多改了任何别的文件，它就不会合并。
 3. 最后用中文列出每条的标题（B 阶段再加上方向）。
