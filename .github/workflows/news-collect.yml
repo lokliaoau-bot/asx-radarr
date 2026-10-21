@@ -63,9 +63,13 @@ jobs:
             git fetch origin main
             git merge-base --is-ancestor HEAD origin/main || { echo "三次都没推上去"; exit 1; }
           fi
-          if [ "$EVENT" = "push" ]; then
-            git push origin --delete "$BRANCH" || true
-          fi
           if [ "$EVENT" = "schedule" ]; then
             gh workflow run daily.yml --ref main
           fi
+
+      # 抓取失败也要删掉请求分支，不然会越积越多（单独一步，前面失败了也照样跑）
+      - name: 删掉用完的请求分支
+        if: always() && github.event_name == 'push'
+        env:
+          BRANCH: ${{ github.ref_name }}
+        run: git push origin --delete "$BRANCH" || true

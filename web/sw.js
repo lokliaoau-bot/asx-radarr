@@ -9,7 +9,7 @@
    · 只清理自己名下（asx-radar-*）的旧缓存，不碰同源上别的缓存；
    · 离线时打开看空雷达页，回落到看空雷达页本身，而不是错跳到主页；
    · 缺的数据文件离线时明确返回 503，而不是把主页 HTML 当 JSON 塞给页面。 */
-var CACHE = "asx-radar-v13";    // 改 app.js / news.js / 增删 report.json 字段时必须 bump（v13：卡片标出 AFR 专栏）
+var CACHE = "asx-radar-v14";    // 改 app.js / news.js / 增删 report.json 字段时必须 bump（v14：深度分析等待时间）
 var SHELL = ["./", "./index.html", "./news.js", "./app.js", "./style.css", "./manifest.webmanifest"];
 
 self.addEventListener("install", function (e) {

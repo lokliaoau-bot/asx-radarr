@@ -393,6 +393,47 @@ def test_more_news():
     check("页面卡片标出 Street Talk 等专栏", '"street-talk": "Street Talk"' in js and "afrLabel(it.afr_url)" in js)
 
 
+def test_round2():
+    print("\n[N10] 第二轮：Street Talk 优先读、周一补周末、涨跌榜不被小公司挤占")
+    import datetime as dt
+    rss = RSS.replace("nab-to-cut-2500-jobs-20261020-p616yh", "nab-to-cut-2500-jobs-20261026-p616yh")
+    st = ('<a href="/street-talk/weekend-deal-for-ingenia-20261024-p618aa">Weekend Street Talk deal for Ingenia here</a>'
+          '<a href="/street-talk/older-deal-20261021-p618bb">Older Street Talk deal from Wednesday here</a>')
+    pages = {NW.AFR_RSS: rss, NW.AFR + "/": "", NW.AFR + "/street-talk": st, NW.ASX_LIST: ASX_CSV}
+    read = []
+
+    def get(u):
+        if u in pages:
+            return pages[u]
+        read.append(u)
+        return ARTICLE
+    old_limit = NW.LEAD_LIMIT
+    try:
+        NW.LEAD_LIMIT = 1
+        box = NW.collect(dt.date(2026, 10, 26), get=get, prices={}, codes=["NAB"], log=lambda m: None,
+                         sections=("/street-talk",), sleep=lambda s: None)
+    finally:
+        NW.LEAD_LIMIT = old_limit
+    check("篇数有限时先读 Street Talk（RSS 里的公司新闻排在后面）",
+          len(read) == 1 and "/street-talk/" in read[0], str(read))
+    check("周一：周六的 Street Talk 也算「近两天」，会读线索",
+          any("weekend-deal" in h["url"] and "hints" in h for h in box["headlines"]))
+    read.clear()
+    NW.collect(dt.date(2026, 10, 28), get=get, prices={}, codes=["NAB"], log=lambda m: None,
+               sections=("/street-talk",), sleep=lambda s: None)
+    check("平日：三天前的文章不读（只读今天和昨天）", not any("weekend-deal" in u or "older-deal" in u for u in read), str(read))
+
+    prices = {"NAB": [("2026-10-20", 39.9, 1e6), ("2026-10-21", 39.2, 1e6)],
+              "PPC": [("2026-10-20", 1.55, 1e5), ("2026-10-21", 1.10, 1e5)]}
+    pages2 = {NW.AFR_RSS: RSS, NW.AFR + "/": "", NW.ASX_LIST: ASX_CSV}
+    box = NW.collect(dt.date(2026, 10, 21), get=lambda u: pages2.get(u, ARTICLE), prices=prices, codes=["NAB"],
+                     log=lambda m: None, sections=(), sleep=lambda s: None)
+    check("正文提到的小公司照样有涨跌，但不进涨跌榜",
+          "PPC" in box["moves"] and box["top_movers"] == ["NAB"], str(box["top_movers"]))
+    col = io.open(".github/workflows/news-collect.yml", encoding="utf-8").read()
+    check("抓取失败时请求分支也会被删掉（单独一步，always）", "if: always()" in col and "--delete" in col)
+
+
 def test_workflows():
     print("\n[N8] GitHub 上的三道保险：抓标题、收简报、看门狗")
     col = io.open(".github/workflows/news-collect.yml", encoding="utf-8").read()
@@ -436,7 +477,7 @@ def main():
     print("AFR 要闻回归测试")
     print("=" * 68)
     for fn in (test_validate, test_headlines, test_moves, test_build_site, test_stages, test_inbox,
-               test_more_news, test_workflows, test_page_wiring):
+               test_more_news, test_round2, test_workflows, test_page_wiring):
         try:
             fn()
         except Exception as e:

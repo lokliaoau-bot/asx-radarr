@@ -71,6 +71,8 @@ SECTION_LABELS = {"street-talk": "Street Talk", "chanticleer": "Chanticleer", "r
                   "property": "地产", "wealth": "理财"}
 ASX_LIST = "https://www.asx.com.au/asx/research/ASXListedCompanies.csv"
 LEAD_LIMIT = 100    # 收件时最多读多少篇文章的公开开头（只提取线索，不存原文）
+LEAD_PRIORITY = {s: i for i, s in enumerate(("street-talk", "companies", "markets", "chanticleer", "rear-window",
+                                              "policy", "technology", "property", "wealth"))}
 INBOX_KEEP_DAYS = 30
 KEEP_SITE = 30      # 站点里保留最近多少期
 CHECK_MOVES = 10    # 发布时重算最近多少期的涨跌
@@ -585,12 +587,18 @@ def collect(day=None, get=_get, prices=None, codes=None, log=print, sections=SEC
         from . import config as C
         codes = sorted({C.asx_code(t) for t in C.all_stock_tickers()})
     bare = set(codes)
-    recent = (day - dt.timedelta(days=1)).isoformat()
-    read = fails = 0
+    # 「近两天」：周一要把周末算进去（周五晚上、周六的 Street Talk 常常是周一开盘前最要紧的）
+    recent = (day - dt.timedelta(days=3 if day.weekday() == 0 else 1)).isoformat()
     for h in heads:
         h["codes"] = detect_codes(h["title"], index, bare=bare)
-        if read >= LEAD_LIMIT or fails >= 5 or (h.get("date") or "") < recent:
-            continue
+    # 文章按栏目优先级读：Street Talk 排第一。原来按 RSS→首页→栏目页的顺序，忙的日子里 Street Talk 会被
+    # 读的篇数上限挤掉。
+    todo = sorted((h for h in heads if (h.get("date") or "") >= recent),
+                  key=lambda h: LEAD_PRIORITY.get(h.get("section"), len(LEAD_PRIORITY)))
+    read = fails = 0
+    for h in todo:
+        if read >= LEAD_LIMIT or fails >= 8:
+            break
         try:
             hints = lead_hints(article_lead(h["url"], get=get)["paragraphs"], index, bare)
             fails = 0
@@ -613,7 +621,9 @@ def collect(day=None, get=_get, prices=None, codes=None, log=print, sections=SEC
     got = {t["code"]: t for t in probe["items"][0]["impact"] if t.get("move_checked")}
     idx = got.pop("XJO", None)
     moves = {c: {"pct": t["move_pct"], "close": t["close"], "halted": t["halted"]} for c, t in sorted(got.items())}
-    movers = sorted((c for c in moves if not moves[c]["halted"]), key=lambda c: -abs(moves[c]["pct"]))[:15]
+    # 涨跌榜只看股票池（大中盘）：正文里提到的小公司一天涨跌三成很常见，放进来会把真正的大事挤出去
+    movers = sorted((c for c in moves if c in bare and not moves[c]["halted"]),
+                    key=lambda c: -abs(moves[c]["pct"]))[:15]
     return {
         "schema": INBOX_SCHEMA, "date": day.isoformat(), "collected_at": _now_iso(),
         "headlines": [{k: h[k] for k in ("title", "url", "section", "date", "published", "codes", "hints")

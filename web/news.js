@@ -47,7 +47,7 @@
     return '<div class="ndeep"><a class="nbtn" id="nDeep" href="' + esc(DEEP_URL) +
       '" target="_blank" rel="noopener">Claude 深度分析 · Opus 5.5（高）</a>' +
       '<div class="nhint" id="nHint" hidden>已打开 Claude 的任务页：点 <b>Run now</b>（立即运行）。' +
-      "大约 15–30 分钟后回到这里刷新，就能看到分析。</div></div>";
+      "大约 10–20 分钟后回到这里刷新，就能看到分析。</div></div>";
   }
   function wireDeep() {
     var a = $("nDeep");
