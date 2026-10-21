@@ -1,0 +1,1176 @@
+{
+ "schema": "afr-inbox-v1",
+ "date": "2026-10-21",
+ "collected_at": "2026-10-21T09:06:41+00:00",
+ "headlines": [
+  {
+   "title": "Unis reject AI detection tools amid ‘futile’ fight against cheating",
+   "url": "https://www.afr.com/policy/health-and-education/unis-reject-ai-detection-tools-amid-futile-fight-against-cheating-20261021-p616tg",
+   "section": "policy",
+   "date": "2026-10-21",
+   "published": "2026-10-21T09:00:00+00:00"
+  },
+  {
+   "title": "If you build it, will they come? Western Sydney Airport’s big test",
+   "url": "https://www.afr.com/companies/infrastructure/if-you-build-it-will-they-come-western-sydney-airport-s-big-test-20261021-p617b4",
+   "section": "companies",
+   "date": "2026-10-21",
+   "published": "2026-10-21T09:00:00+00:00"
+  },
+  {
+   "title": "NDIS blowouts lead $145b surge in unexpected spending",
+   "url": "https://www.afr.com/policy/economy/ndis-blowouts-lead-145b-surge-in-unexpected-spending-20261021-p617e2",
+   "section": "policy",
+   "date": "2026-10-21",
+   "published": "2026-10-21T09:00:00+00:00"
+  },
+  {
+   "title": "Last days of Rome around Ben Carroll",
+   "url": "https://www.afr.com/rear-window/last-days-of-rome-around-ben-carroll-20261021-p617eo",
+   "section": "rear-window",
+   "date": "2026-10-21",
+   "published": "2026-10-21T09:00:00+00:00"
+  },
+  {
+   "title": "Investor anxiety turns data centre gold rush into fire sale",
+   "url": "https://www.afr.com/technology/investor-anxiety-turns-data-centre-gold-rush-into-fire-sale-20261021-p616yc",
+   "section": "technology",
+   "date": "2026-10-21",
+   "published": "2026-10-21T08:20:43+00:00"
+  },
+  {
+   "title": "NAB’s swingeing local job cuts come after years of offshoring",
+   "url": "https://www.afr.com/companies/financial-services/nab-s-swingeing-local-job-cuts-come-after-years-of-offshoring-20261021-p617fs",
+   "section": "companies",
+   "date": "2026-10-21",
+   "published": "2026-10-21T08:07:14+00:00"
+  },
+  {
+   "title": "Luminis’ youngest partner jumps ship to Azure Capital",
+   "url": "https://www.afr.com/street-talk/luminis-youngest-ever-partner-jumps-ship-to-azure-capital-20261021-p617j6",
+   "section": "street-talk",
+   "date": "2026-10-21",
+   "published": "2026-10-21T07:34:27+00:00"
+  },
+  {
+   "title": "These are the people and power poles that wiped $3b off NextDC",
+   "url": "https://www.afr.com/technology/meet-the-people-and-power-poles-that-wiped-3b-off-nextdc-20261021-p617de",
+   "section": "technology",
+   "date": "2026-10-21",
+   "published": "2026-10-21T07:19:39+00:00"
+  },
+  {
+   "title": "AFR Magazine’s inaugural Power dinner",
+   "url": "https://www.afr.com/companies/media-and-marketing/afr-magazine-s-inaugural-power-dinner-20261021-p617la",
+   "section": "companies",
+   "date": "2026-10-21",
+   "published": "2026-10-21T07:19:00+00:00"
+  },
+  {
+   "title": "Thinking the Maldives? Try Brisbane instead, Games boss Liveris says",
+   "url": "https://www.afr.com/companies/tourism/thinking-the-maldives-try-brisbane-instead-games-boss-liveris-says-20261021-p617jz",
+   "section": "companies",
+   "date": "2026-10-21",
+   "published": "2026-10-21T06:56:03+00:00"
+  },
+  {
+   "title": "Senior staff exit after new Evidentia Group chief pulls out the broom",
+   "url": "https://www.afr.com/street-talk/senior-staff-exit-after-new-evidentia-group-chief-pulls-out-the-broom-20261021-p617k8",
+   "section": "street-talk",
+   "date": "2026-10-21",
+   "published": "2026-10-21T06:55:40+00:00"
+  },
+  {
+   "title": "CSL names British pharma executive as new CEO",
+   "url": "https://www.afr.com/companies/healthcare-and-fitness/csl-names-british-pharma-executive-as-new-ceo-20261021-p617km",
+   "section": "companies",
+   "date": "2026-10-21",
+   "published": "2026-10-21T06:47:18+00:00"
+  },
+  {
+   "title": "Koda Capital founders hunt for a new backer amid staff unrest",
+   "url": "https://www.afr.com/street-talk/koda-capital-founders-hunt-for-a-new-backer-amid-staff-unrest-20261021-p617gt",
+   "section": "street-talk",
+   "date": "2026-10-21",
+   "published": "2026-10-21T06:35:49+00:00"
+  },
+  {
+   "title": "ASIC investigating Adgemis backers’ freeze on $150m investor capital",
+   "url": "https://www.afr.com/companies/financial-services/asic-investigating-gemi-freeze-on-150m-in-investor-capital-20261021-p616me",
+   "section": "companies",
+   "date": "2026-10-21",
+   "published": "2026-10-21T06:19:43+00:00"
+  },
+  {
+   "title": "ASX rallies into the close as CSL names new CEO",
+   "url": "https://www.afr.com/markets/equity-markets/asx-to-rise-spacex-to-report-oil-retreats-20261021-p6179b",
+   "section": "markets",
+   "date": "2026-10-21",
+   "published": "2026-10-21T05:48:53+00:00"
+  },
+  {
+   "title": "Hedge funds feast on NextDC, but brokers say it’s still a ‘buy’",
+   "url": "https://www.afr.com/markets/equity-markets/hedge-funds-feast-on-nextdc-but-brokers-say-it-s-still-a-buy-20261021-p617d2",
+   "section": "markets",
+   "date": "2026-10-21",
+   "published": null
+  },
+  {
+   "title": "$3b gone in 40 minutes: Inside the NextDC bloodbath",
+   "url": "https://www.afr.com/chanticleer/australia-s-data-centre-dream-just-crashed-into-a-22-metre-power-pole-20261021-p617fd",
+   "section": "chanticleer",
+   "date": "2026-10-21",
+   "published": null
+  },
+  {
+   "title": "NextDC slashes earnings forecast, triggering 42pc share plunge",
+   "url": "https://www.afr.com/companies/infrastructure/nextdc-slashes-earnings-forecast-triggering-42pc-share-plunge-20261021-p616u7",
+   "section": "companies",
+   "date": "2026-10-21",
+   "published": null
+  },
+  {
+   "title": "NextDC’s electrician family dumped $100m in shares ahead of crash",
+   "url": "https://www.afr.com/rear-window/nextdc-s-electrician-family-dumped-100m-in-shares-ahead-of-crash-20261020-p6170s",
+   "section": "rear-window",
+   "date": "2026-10-20",
+   "published": null
+  },
+  {
+   "title": "Nassif family list Sydney’s biggest mansion with $45m price tag",
+   "url": "https://www.afr.com/property/residential/nassif-family-list-sydney-s-biggest-mansion-with-45m-price-tag-20261021-p6178n",
+   "section": "property",
+   "date": "2026-10-21",
+   "published": null
+  },
+  {
+   "title": "Cannon-Brookes’ private jet does a 32-minute flight",
+   "url": "https://www.afr.com/rear-window/cannon-brookes-private-jet-does-a-32-minute-flight-20261021-p617js",
+   "section": "rear-window",
+   "date": "2026-10-21",
+   "published": null
+  },
+  {
+   "title": "‘The backdrop has worsened’: Morgan Stanley flags 15pc house price hit",
+   "url": "https://www.afr.com/property/residential/the-backdrop-has-worsened-morgan-stanley-flags-15pc-house-price-hit-20261021-p617e3",
+   "section": "property",
+   "date": "2026-10-21",
+   "published": null
+  },
+  {
+   "title": "Beyond the AI hype: The sectors winning over top fund managers",
+   "url": "https://www.afr.com/markets/equity-markets/beyond-the-ai-hype-the-sectors-winning-over-top-fund-managers-20261021-p6177k",
+   "section": "markets",
+   "date": "2026-10-21",
+   "published": null
+  },
+  {
+   "title": "MA Financial halts property credit redemptions, winds up retail fund",
+   "url": "https://www.afr.com/companies/financial-services/ma-financial-halts-redemptions-in-property-funds-winds-up-retail-fund-20261021-p617ez",
+   "section": "companies",
+   "date": "2026-10-21",
+   "published": null
+  },
+  {
+   "title": "What Musk’s mega Tesla-SpaceX merger is really about",
+   "url": "https://www.afr.com/chanticleer/spacex-tesla-5-trn-merger-could-make-power-mad-musk-a-bigger-risk-20261021-p617cw",
+   "section": "chanticleer",
+   "date": "2026-10-21",
+   "published": null
+  },
+  {
+   "title": "Fresh AI sell-off is ‘indiscriminate’. But beware another AI story",
+   "url": "https://www.afr.com/chanticleer/fresh-ai-sell-off-is-indiscriminate-but-beware-the-other-story-20261020-p61763",
+   "section": "chanticleer",
+   "date": "2026-10-20",
+   "published": null
+  },
+  {
+   "title": "Fortescue fires top exec after harassment, bullying investigation",
+   "url": "https://www.afr.com/companies/mining/fortescue-sacks-top-executive-after-harassment-bullying-investigation-20261021-p617gf",
+   "section": "companies",
+   "date": "2026-10-21",
+   "published": null
+  },
+  {
+   "title": "Chemist Warehouse founder vows to stay on to drive global expansion",
+   "url": "https://www.afr.com/companies/healthcare-and-fitness/chemist-warehouse-founder-to-stay-put-create-global-powerhouse-20261021-p616pd",
+   "section": "companies",
+   "date": "2026-10-21",
+   "published": null
+  },
+  {
+   "title": "Woodside trims output guidance as ammonia heads for chopping block",
+   "url": "https://www.afr.com/companies/energy/woodside-trims-output-guidance-as-ammonia-heads-for-chopping-block-20261021-p61780",
+   "section": "companies",
+   "date": "2026-10-21",
+   "published": null
+  },
+  {
+   "title": "Northern Star’s costs jump as board awaits sweetened Gold Fields bid",
+   "url": "https://www.afr.com/companies/mining/northern-star-s-costs-jump-as-board-awaits-sweetened-gold-fields-bid-20261021-p616z1",
+   "section": "companies",
+   "date": "2026-10-21",
+   "published": null
+  },
+  {
+   "title": "Firmus signs Thinking Machines in first big contract since failed IPO",
+   "url": "https://www.afr.com/companies/infrastructure/firmus-signs-thinking-machines-in-first-big-contract-since-failed-ipo-20261021-p617ap",
+   "section": "companies",
+   "date": "2026-10-21",
+   "published": null
+  },
+  {
+   "title": "Qatar Airways to start Western Sydney flights, pushes for new rights",
+   "url": "https://www.afr.com/companies/transport/qatar-airways-to-start-western-sydney-flights-pushes-for-new-rights-20261021-p6176e",
+   "section": "companies",
+   "date": "2026-10-21",
+   "published": null
+  },
+  {
+   "title": "AirTrunk, Iren warn data centre investors now ‘a lot more selective’",
+   "url": "https://www.afr.com/companies/infrastructure/airtrunk-iren-warn-data-centre-investors-now-a-lot-more-selective-20261021-p6174y",
+   "section": "companies",
+   "date": "2026-10-21",
+   "published": null
+  },
+  {
+   "title": "Tesla-SpaceX merger could unleash $240b in passive flows",
+   "url": "https://www.afr.com/markets/equity-markets/tesla-spacex-merger-could-unleash-240b-in-passive-flows-20261021-p617fc",
+   "section": "markets",
+   "date": "2026-10-21",
+   "published": null
+  },
+  {
+   "title": "Oil price tipped to hit $US150 if Iran war drags on",
+   "url": "https://www.afr.com/markets/commodities/oil-price-tipped-to-hit-us150-if-iran-war-drags-on-20261021-p617du",
+   "section": "markets",
+   "date": "2026-10-21",
+   "published": null
+  },
+  {
+   "title": "PEP says wary public investors stand in the way of more ASX floats",
+   "url": "https://www.afr.com/companies/financial-services/pep-says-wary-public-investors-stand-in-the-way-of-more-asx-floats-20261020-p61770",
+   "section": "companies",
+   "date": "2026-10-20",
+   "published": null
+  },
+  {
+   "title": "Retail investors dive into Maas betting the sell-off has gone too far",
+   "url": "https://www.afr.com/markets/equity-markets/retail-investors-dive-into-maas-betting-the-sell-off-has-gone-too-far-20261020-p61710",
+   "section": "markets",
+   "date": "2026-10-20",
+   "published": null
+  },
+  {
+   "title": "There’s always been cheating at uni, give students a pass for using AI",
+   "url": "https://www.afr.com/policy/health-and-education/there-s-always-been-cheating-at-uni-give-students-a-pass-for-using-ai-20261021-p6179o",
+   "section": "policy",
+   "date": "2026-10-21",
+   "published": null
+  },
+  {
+   "title": "Australian private credit is adjusting to a new reality",
+   "url": "https://www.afr.com/markets/debt-markets/australian-private-credit-is-adjusting-to-a-new-reality-20261020-p61732",
+   "section": "markets",
+   "date": "2026-10-20",
+   "published": null
+  },
+  {
+   "title": "Axing private equity tax break is okay, but not retrospectively",
+   "url": "https://www.afr.com/policy/tax-and-super/axing-private-equity-tax-break-is-okay-but-not-retrospectively-20261021-p616zp",
+   "section": "policy",
+   "date": "2026-10-21",
+   "published": null
+  },
+  {
+   "title": "Grattan’s economists have the wrong answers on GST reform",
+   "url": "https://www.afr.com/policy/economy/grattan-s-economists-have-the-wrong-answers-on-gst-reform-20261020-p616y4",
+   "section": "policy",
+   "date": "2026-10-20",
+   "published": null
+  },
+  {
+   "title": "Rate rise bets jump after RBA warns of ‘materially worse’ inflation",
+   "url": "https://www.afr.com/policy/economy/hard-choices-await-rba-as-inflation-and-employment-worsen-20261021-p617d5",
+   "section": "policy",
+   "date": "2026-10-21",
+   "published": null
+  },
+  {
+   "title": "Backflips, delays and bond yield pain hand Labor $11b budget hole",
+   "url": "https://www.afr.com/policy/economy/backflips-delays-and-bond-yield-pain-hand-labor-11b-budget-hole-20261020-p6178z",
+   "section": "policy",
+   "date": "2026-10-20",
+   "published": null
+  },
+  {
+   "title": "Don’t pity Millennials. It is their economy now",
+   "url": "https://www.afr.com/policy/economy/don-t-pity-millennials-it-is-their-economy-now-20261020-p616sn",
+   "section": "policy",
+   "date": "2026-10-20",
+   "published": null
+  },
+  {
+   "title": "Khuda spends $18m on neighbouring Mosman house for luxury development",
+   "url": "https://www.afr.com/property/commercial/airtrunk-s-khuda-expands-mosman-foothold-for-lux-project-in-18m-deal-20261020-p616q3",
+   "section": "property",
+   "date": "2026-10-20",
+   "published": null
+  },
+  {
+   "title": "Christian Brothers’ $25m headquarters up for sale amid collapse",
+   "url": "https://www.afr.com/property/commercial/christian-brothers-25m-headquarters-up-for-sale-amid-collapse-20261020-p616uo",
+   "section": "property",
+   "date": "2026-10-20",
+   "published": null
+  },
+  {
+   "title": "New reserve price rule takes a toll on Victoria’s auction market",
+   "url": "https://www.afr.com/property/residential/new-reserve-price-rule-takes-a-toll-on-victoria-s-auction-market-20261019-p616ls",
+   "section": "property",
+   "date": "2026-10-19",
+   "published": null
+  },
+  {
+   "title": "Stockland buyer inquiries sink to seven-year low in property downturn",
+   "url": "https://www.afr.com/property/commercial/stockland-buyer-inquiries-sink-to-seven-year-low-in-property-downturn-20261019-p616b4",
+   "section": "property",
+   "date": "2026-10-19",
+   "published": null
+  },
+  {
+   "title": "He left his son 2pc of a $25m estate – a court had other ideas",
+   "url": "https://www.afr.com/wealth/personal-finance/he-left-his-son-2pc-of-a-25-million-estate-a-court-had-other-ideas-20261019-p613su",
+   "section": "wealth",
+   "date": "2026-10-19",
+   "published": null
+  },
+  {
+   "title": "One of the world’s best mathematicians is on a ‘war footing’",
+   "url": "https://www.afr.com/technology/why-one-of-the-world-s-greatest-mathematicians-is-on-a-war-footing-20261021-p617bf",
+   "section": "technology",
+   "date": "2026-10-21",
+   "published": null
+  },
+  {
+   "title": "The $1399 3D printer for creative kids – and nostalgic dads",
+   "url": "https://www.afr.com/technology/the-1399-3d-printer-for-creative-kids-and-nostalgic-dads-20261020-p615t5",
+   "section": "technology",
+   "date": "2026-10-20",
+   "published": null
+  },
+  {
+   "title": "Beyond doom: Why the AI ‘utopia’ presents its own crisis",
+   "url": "https://www.afr.com/technology/beyond-doom-why-the-ai-utopia-presents-its-own-crisis-20261019-p616ln",
+   "section": "technology",
+   "date": "2026-10-19",
+   "published": null
+  },
+  {
+   "title": "Big four’s climate fee bonanza",
+   "url": "https://www.afr.com/companies/professional-services/big-four-s-climate-fee-bonanza-20261021-p617f6",
+   "section": "companies",
+   "date": "2026-10-21",
+   "published": null
+  },
+  {
+   "title": "High Court barrister guilty of contempt after dodging ATO since 2016",
+   "url": "https://www.afr.com/companies/professional-services/high-court-barrister-guilty-of-contempt-after-dodging-ato-since-2016-20261020-p6171v",
+   "section": "companies",
+   "date": "2026-10-20",
+   "published": null
+  },
+  {
+   "title": "From Tamagotchis to skinny jeans, Millennial culture is back",
+   "url": "https://www.afr.com/policy/economy/from-tamagotchis-to-skinny-jeans-millennial-culture-is-back-20261020-p616su",
+   "section": "policy",
+   "date": "2026-10-20",
+   "published": null
+  }
+ ],
+ "index": {
+  "code": "XJO",
+  "pct": 0.16,
+  "close": 8831.2998
+ },
+ "moves": {
+  "A2M": {
+   "pct": -1.16,
+   "close": 6.79,
+   "halted": false
+  },
+  "AGL": {
+   "pct": -1.35,
+   "close": 8.78,
+   "halted": false
+  },
+  "AIA": {
+   "pct": 0.61,
+   "close": 6.64,
+   "halted": false
+  },
+  "ALL": {
+   "pct": 0.55,
+   "close": 63.65,
+   "halted": false
+  },
+  "ALQ": {
+   "pct": 0.4,
+   "close": 20.15,
+   "halted": false
+  },
+  "ALX": {
+   "pct": 0.0,
+   "close": 3.68,
+   "halted": false
+  },
+  "AMC": {
+   "pct": 1.67,
+   "close": 63.97,
+   "halted": false
+  },
+  "AMP": {
+   "pct": -0.41,
+   "close": 2.4,
+   "halted": false
+  },
+  "ANN": {
+   "pct": 0.09,
+   "close": 46.12,
+   "halted": false
+  },
+  "ANZ": {
+   "pct": 0.62,
+   "close": 39.22,
+   "halted": false
+  },
+  "APA": {
+   "pct": 0.96,
+   "close": 11.57,
+   "halted": false
+  },
+  "APX": {
+   "pct": 2.96,
+   "close": 1.045,
+   "halted": false
+  },
+  "ARB": {
+   "pct": 0.76,
+   "close": 17.22,
+   "halted": false
+  },
+  "ARF": {
+   "pct": 0.0,
+   "close": 2.57,
+   "halted": false
+  },
+  "ASX": {
+   "pct": 1.17,
+   "close": 64.25,
+   "halted": false
+  },
+  "AX1": {
+   "pct": 0.76,
+   "close": 0.66,
+   "halted": false
+  },
+  "BEN": {
+   "pct": 1.29,
+   "close": 10.22,
+   "halted": false
+  },
+  "BGA": {
+   "pct": 0.0,
+   "close": 6.36,
+   "halted": false
+  },
+  "BHP": {
+   "pct": -1.61,
+   "close": 58.54,
+   "halted": false
+  },
+  "BOE": {
+   "pct": 3.11,
+   "close": 1.325,
+   "halted": false
+  },
+  "BOQ": {
+   "pct": 1.17,
+   "close": 6.94,
+   "halted": false
+  },
+  "BPT": {
+   "pct": 5.49,
+   "close": 0.96,
+   "halted": false
+  },
+  "BRG": {
+   "pct": 0.74,
+   "close": 31.46,
+   "halted": false
+  },
+  "BSL": {
+   "pct": -0.27,
+   "close": 32.74,
+   "halted": false
+  },
+  "BXB": {
+   "pct": 0.44,
+   "close": 20.58,
+   "halted": false
+  },
+  "CAR": {
+   "pct": 3.45,
+   "close": 24.9,
+   "halted": false
+  },
+  "CBA": {
+   "pct": 0.91,
+   "close": 157.01,
+   "halted": false
+  },
+  "CGF": {
+   "pct": 0.0,
+   "close": 11.6,
+   "halted": false
+  },
+  "CHC": {
+   "pct": 0.98,
+   "close": 19.51,
+   "halted": false
+  },
+  "CHN": {
+   "pct": 0.0,
+   "close": 0.945,
+   "halted": false
+  },
+  "CIP": {
+   "pct": 0.36,
+   "close": 2.76,
+   "halted": false
+  },
+  "CMM": {
+   "pct": -2.32,
+   "close": 13.88,
+   "halted": false
+  },
+  "COH": {
+   "pct": 1.48,
+   "close": 141.47,
+   "halted": false
+  },
+  "COL": {
+   "pct": 0.04,
+   "close": 24.26,
+   "halted": false
+  },
+  "CPU": {
+   "pct": 0.52,
+   "close": 42.39,
+   "halted": false
+  },
+  "CQR": {
+   "pct": 0.86,
+   "close": 3.5,
+   "halted": false
+  },
+  "CSL": {
+   "pct": -0.11,
+   "close": 196.08,
+   "halted": false
+  },
+  "CTD": {
+   "pct": 7.52,
+   "close": 3.29,
+   "halted": false
+  },
+  "CU6": {
+   "pct": 0.56,
+   "close": 1.78,
+   "halted": false
+  },
+  "CWY": {
+   "pct": 0.33,
+   "close": 3.0,
+   "halted": false
+  },
+  "DMP": {
+   "pct": -0.55,
+   "close": 21.89,
+   "halted": false
+  },
+  "DOW": {
+   "pct": 1.03,
+   "close": 6.89,
+   "halted": false
+  },
+  "DTL": {
+   "pct": 0.46,
+   "close": 13.14,
+   "halted": false
+  },
+  "DXS": {
+   "pct": -0.18,
+   "close": 5.61,
+   "halted": false
+  },
+  "DYL": {
+   "pct": 2.72,
+   "close": 0.755,
+   "halted": false
+  },
+  "EBO": {
+   "pct": 5.04,
+   "close": 17.08,
+   "halted": false
+  },
+  "ELD": {
+   "pct": -0.16,
+   "close": 6.29,
+   "halted": false
+  },
+  "EVN": {
+   "pct": -1.62,
+   "close": 12.13,
+   "halted": false
+  },
+  "EVT": {
+   "pct": -0.53,
+   "close": 14.9,
+   "halted": false
+  },
+  "FLT": {
+   "pct": 0.99,
+   "close": 11.18,
+   "halted": false
+  },
+  "FMG": {
+   "pct": 0.0,
+   "close": 15.26,
+   "halted": false
+  },
+  "GMD": {
+   "pct": -2.68,
+   "close": 6.9,
+   "halted": false
+  },
+  "GMG": {
+   "pct": -2.23,
+   "close": 25.92,
+   "halted": false
+  },
+  "GNC": {
+   "pct": 0.47,
+   "close": 6.41,
+   "halted": false
+  },
+  "GPT": {
+   "pct": 1.98,
+   "close": 4.64,
+   "halted": false
+  },
+  "GQG": {
+   "pct": -0.97,
+   "close": 1.025,
+   "halted": false
+  },
+  "HLI": {
+   "pct": 1.73,
+   "close": 5.28,
+   "halted": false
+  },
+  "HMC": {
+   "pct": -2.96,
+   "close": 2.62,
+   "halted": false
+  },
+  "HSN": {
+   "pct": 1.18,
+   "close": 3.43,
+   "halted": false
+  },
+  "HUB": {
+   "pct": -0.43,
+   "close": 66.79,
+   "halted": false
+  },
+  "HVN": {
+   "pct": 1.71,
+   "close": 4.16,
+   "halted": false
+  },
+  "IAG": {
+   "pct": 0.58,
+   "close": 8.72,
+   "halted": false
+  },
+  "IDX": {
+   "pct": 1.44,
+   "close": 2.12,
+   "halted": false
+  },
+  "IFT": {
+   "pct": 1.94,
+   "close": 9.97,
+   "halted": false
+  },
+  "IGO": {
+   "pct": -1.32,
+   "close": 5.25,
+   "halted": false
+  },
+  "ILU": {
+   "pct": -0.39,
+   "close": 5.17,
+   "halted": false
+  },
+  "IMU": {
+   "pct": 2.78,
+   "close": 0.037,
+   "halted": false
+  },
+  "IPH": {
+   "pct": 0.0,
+   "close": 3.5,
+   "halted": false
+  },
+  "IRE": {
+   "pct": 1.26,
+   "close": 5.61,
+   "halted": false
+  },
+  "JBH": {
+   "pct": -0.45,
+   "close": 72.87,
+   "halted": false
+  },
+  "JHX": {
+   "pct": 2.55,
+   "close": 37.4,
+   "halted": false
+  },
+  "KAR": {
+   "pct": 1.15,
+   "close": 1.755,
+   "halted": false
+  },
+  "LLC": {
+   "pct": 0.0,
+   "close": 2.41,
+   "halted": false
+  },
+  "LNW": {
+   "pct": 1.31,
+   "close": 123.18,
+   "halted": false
+  },
+  "LOV": {
+   "pct": 0.47,
+   "close": 25.39,
+   "halted": false
+  },
+  "LTR": {
+   "pct": -1.44,
+   "close": 0.685,
+   "halted": false
+  },
+  "LYC": {
+   "pct": 1.76,
+   "close": 11.55,
+   "halted": false
+  },
+  "MCY": {
+   "pct": 0.19,
+   "close": 5.36,
+   "halted": false
+  },
+  "MFG": {
+   "pct": 1.79,
+   "close": 8.51,
+   "halted": false
+  },
+  "MGR": {
+   "pct": 0.83,
+   "close": 1.82,
+   "halted": false
+  },
+  "MIN": {
+   "pct": -0.26,
+   "close": 45.34,
+   "halted": false
+  },
+  "MND": {
+   "pct": -0.11,
+   "close": 28.19,
+   "halted": false
+  },
+  "MP1": {
+   "pct": 5.0,
+   "close": 16.18,
+   "halted": false
+  },
+  "MPL": {
+   "pct": 1.05,
+   "close": 4.83,
+   "halted": false
+  },
+  "MQG": {
+   "pct": 0.89,
+   "close": 250.37,
+   "halted": false
+  },
+  "MSB": {
+   "pct": 5.68,
+   "close": 1.86,
+   "halted": false
+  },
+  "MTS": {
+   "pct": 0.0,
+   "close": 3.14,
+   "halted": false
+  },
+  "NAB": {
+   "pct": 1.86,
+   "close": 39.93,
+   "halted": false
+  },
+  "NAN": {
+   "pct": 1.0,
+   "close": 3.03,
+   "halted": false
+  },
+  "NCK": {
+   "pct": -1.39,
+   "close": 14.21,
+   "halted": false
+  },
+  "NEC": {
+   "pct": 1.52,
+   "close": 0.67,
+   "halted": false
+  },
+  "NEU": {
+   "pct": 0.41,
+   "close": 19.7,
+   "halted": false
+  },
+  "NHC": {
+   "pct": 1.66,
+   "close": 6.11,
+   "halted": false
+  },
+  "NIC": {
+   "pct": 0.0,
+   "close": 0.675,
+   "halted": false
+  },
+  "NST": {
+   "pct": 1.79,
+   "close": 25.06,
+   "halted": false
+  },
+  "NWH": {
+   "pct": -2.09,
+   "close": 6.56,
+   "halted": false
+  },
+  "NWL": {
+   "pct": 2.3,
+   "close": 16.92,
+   "halted": false
+  },
+  "NWS": {
+   "pct": 1.06,
+   "close": 47.89,
+   "halted": false
+  },
+  "NXT": {
+   "pct": -41.72,
+   "close": 5.35,
+   "halted": false
+  },
+  "ORG": {
+   "pct": 0.0,
+   "close": 12.05,
+   "halted": false
+  },
+  "ORI": {
+   "pct": 0.52,
+   "close": 23.03,
+   "halted": false
+  },
+  "PDN": {
+   "pct": 2.49,
+   "close": 7.4,
+   "halted": false
+  },
+  "PLS": {
+   "pct": -0.68,
+   "close": 2.91,
+   "halted": false
+  },
+  "PME": {
+   "pct": 2.72,
+   "close": 184.83,
+   "halted": false
+  },
+  "PMV": {
+   "pct": 0.23,
+   "close": 13.22,
+   "halted": false
+  },
+  "PNI": {
+   "pct": 1.74,
+   "close": 14.6,
+   "halted": false
+  },
+  "PPT": {
+   "pct": -0.18,
+   "close": 17.03,
+   "halted": false
+  },
+  "QAN": {
+   "pct": 1.46,
+   "close": 8.35,
+   "halted": false
+  },
+  "QBE": {
+   "pct": 0.42,
+   "close": 26.02,
+   "halted": false
+  },
+  "REA": {
+   "pct": 2.73,
+   "close": 162.99,
+   "halted": false
+  },
+  "REH": {
+   "pct": -1.96,
+   "close": 17.05,
+   "halted": false
+  },
+  "RHC": {
+   "pct": 0.28,
+   "close": 54.25,
+   "halted": false
+  },
+  "RIO": {
+   "pct": -1.48,
+   "close": 152.55,
+   "halted": false
+  },
+  "RMD": {
+   "pct": 2.02,
+   "close": 34.89,
+   "halted": false
+  },
+  "RMS": {
+   "pct": 0.56,
+   "close": 3.58,
+   "halted": false
+  },
+  "RRL": {
+   "pct": -2.63,
+   "close": 6.67,
+   "halted": false
+  },
+  "S32": {
+   "pct": -1.82,
+   "close": 4.32,
+   "halted": false
+  },
+  "SCG": {
+   "pct": 0.0,
+   "close": 3.47,
+   "halted": false
+  },
+  "SDR": {
+   "pct": 0.37,
+   "close": 2.69,
+   "halted": false
+  },
+  "SEK": {
+   "pct": 4.37,
+   "close": 13.37,
+   "halted": false
+  },
+  "SFR": {
+   "pct": -1.18,
+   "close": 20.08,
+   "halted": false
+  },
+  "SGH": {
+   "pct": -0.05,
+   "close": 39.29,
+   "halted": false
+  },
+  "SGM": {
+   "pct": -0.68,
+   "close": 20.41,
+   "halted": false
+  },
+  "SGP": {
+   "pct": 1.21,
+   "close": 4.18,
+   "halted": false
+  },
+  "SGR": {
+   "pct": 0.0,
+   "close": 0.12,
+   "halted": false
+  },
+  "SHL": {
+   "pct": 0.43,
+   "close": 18.81,
+   "halted": false
+  },
+  "SIG": {
+   "pct": -2.83,
+   "close": 2.75,
+   "halted": false
+  },
+  "STO": {
+   "pct": 0.54,
+   "close": 9.31,
+   "halted": false
+  },
+  "SUL": {
+   "pct": -1.77,
+   "close": 13.31,
+   "halted": false
+  },
+  "SUN": {
+   "pct": 0.3,
+   "close": 19.93,
+   "halted": false
+  },
+  "SXL": {
+   "pct": -1.94,
+   "close": 0.505,
+   "halted": false
+  },
+  "TAH": {
+   "pct": 1.78,
+   "close": 0.86,
+   "halted": false
+  },
+  "TCL": {
+   "pct": 3.01,
+   "close": 14.05,
+   "halted": false
+  },
+  "TLS": {
+   "pct": 1.89,
+   "close": 4.85,
+   "halted": false
+  },
+  "TLX": {
+   "pct": -7.87,
+   "close": 14.52,
+   "halted": false
+  },
+  "TNE": {
+   "pct": 1.21,
+   "close": 31.86,
+   "halted": false
+  },
+  "TPG": {
+   "pct": 1.31,
+   "close": 3.88,
+   "halted": false
+  },
+  "TPW": {
+   "pct": 0.22,
+   "close": 4.47,
+   "halted": false
+  },
+  "TWE": {
+   "pct": -0.84,
+   "close": 5.88,
+   "halted": false
+  },
+  "VCX": {
+   "pct": 0.0,
+   "close": 2.35,
+   "halted": false
+  },
+  "VEA": {
+   "pct": -0.65,
+   "close": 3.04,
+   "halted": false
+  },
+  "WAF": {
+   "pct": -1.42,
+   "close": 3.46,
+   "halted": false
+  },
+  "WBC": {
+   "pct": 1.14,
+   "close": 35.53,
+   "halted": false
+  },
+  "WDS": {
+   "pct": 0.41,
+   "close": 33.96,
+   "halted": false
+  },
+  "WEB": {
+   "pct": -0.29,
+   "close": 3.48,
+   "halted": false
+  },
+  "WES": {
+   "pct": 0.35,
+   "close": 79.86,
+   "halted": false
+  },
+  "WGX": {
+   "pct": 2.21,
+   "close": 5.08,
+   "halted": false
+  },
+  "WHC": {
+   "pct": -0.77,
+   "close": 7.69,
+   "halted": false
+  },
+  "WOW": {
+   "pct": 0.62,
+   "close": 41.87,
+   "halted": false
+  },
+  "WTC": {
+   "pct": 2.92,
+   "close": 39.77,
+   "halted": false
+  },
+  "XRO": {
+   "pct": 5.02,
+   "close": 64.42,
+   "halted": false
+  },
+  "YAL": {
+   "pct": -2.48,
+   "close": 5.89,
+   "halted": false
+  }
+ },
+ "top_movers": [
+  "NXT",
+  "TLX",
+  "CTD",
+  "MSB",
+  "BPT",
+  "EBO",
+  "XRO",
+  "MP1",
+  "SEK",
+  "CAR",
+  "BOE",
+  "TCL",
+  "APX",
+  "HMC",
+  "WTC"
+ ]
+}
