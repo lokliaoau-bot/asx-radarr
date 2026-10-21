@@ -1,99 +1,325 @@
 {
   "schema": "afr-brief-v1",
   "date": "2026-10-21",
-  "stage": "headlines",
+  "stage": "analysis",
   "model": "claude-opus-5-5",
-  "generated_at": "2026-10-21T20:10:00+11:00",
+  "effort": "high",
+  "generated_at": "2026-10-21T20:44:21+11:00",
   "generated_by": "Claude (claude-opus-5-5)",
   "market": {
-    "text_zh": "ASX 200 收 8831.3 点，涨 0.16%，尾盘拉升，没被加息预期压住。NextDC 暴跌 41.7% 是当天最大的事；Corporate Travel 涨 7.5%、Xero 涨 5%，Telix 跌 7.9%。",
+    "text_zh": "ASX 200 收 8831.3 点，涨 0.16%，尾盘走高。NextDC 暴跌 41.7% 是全场焦点；Corporate Travel 涨 7.5%、Xero 涨 5.0%，Telix 跌 7.9%。",
     "index_close": 8831.3,
     "index_pct": 0.16
   },
   "items": [
     {
-      "title_zh": "NextDC 大砍盈利指引，股价暴跌 42%",
-      "afr_headline": "NextDC slashes earnings forecast, triggering 42pc share plunge",
-      "afr_url": "https://www.afr.com/companies/infrastructure/nextdc-slashes-earnings-forecast-triggering-42pc-share-plunge-20261021-p616u7",
-      "afr_section": "Companies / Infrastructure",
-      "what_zh": "NextDC 复牌当天跌 41.7%，收 5.35 澳元，九年来最低，市值蒸发约 30 亿澳元。原因是墨尔本 M3 数据中心接不上电：电网公司 Jemena 因当地居民反对 22 米高的新电线杆而暂停施工，最早明年 2 月才复工，M3 新增供电推迟到 FY28。公司把 FY27 基础 EBITDA 指引从 3.85–4.10 亿澳元砍到 2.45–2.65 亿（按中值少约 36%），削减资本开支，并考虑出售暂时用不上的开发用地。",
+      "title_zh": "供电受阻，NextDC 大砍盈利指引、股价暴跌 42%",
+      "afr_headline": "These are the people and power poles that wiped $3b off NextDC",
+      "afr_url": "https://www.afr.com/technology/meet-the-people-and-power-poles-that-wiped-3b-off-nextdc-20261021-p617de",
+      "afr_section": "Technology",
+      "what_zh": "数据中心公司 NextDC 停牌两天后复牌，收 5.35 澳元，跌 41.7%，约是 2018 年初以来最低，AFR 估算市值蒸发约 30 亿澳元。原因是墨尔本 M3 数据中心接不上新增电力：电网公司 Jemena 因附近居民反对新建高压电线杆而暂停施工，预计明年 2 月前不会复工，M3 新增供电推迟到 FY28（2027/28 财年）。公司把 FY27 基础 EBITDA（息税折旧摊销前利润）指引从 3.85–4.10 亿澳元砍到 2.45–2.65 亿，按中值少约 36%；收入指引从 6.15–6.40 亿降到 4.75–5.00 亿，资本开支也下调。所有新开发和购地项目暂停，等董事会做资本审查。",
+      "impact": [
+        {
+          "name": "NextDC",
+          "code": "NXT",
+          "direction": "偏空",
+          "move_pct": -41.72
+        },
+        {
+          "name": "Goodman Group",
+          "code": "GMG",
+          "direction": "偏空",
+          "move_pct": -2.23
+        }
+      ],
+      "why_zh": "今年利润预期少了三分之一多，估值跟着下修；一天跌掉四成，已反映了大部分。但复工要看 Jemena 和居民谈得怎样，明年 2 月能否复工没有保证；资本审查可能带来卖资产或融资的变数，对冲基金还在做空。反面是有券商仍给买入评级，超跌后可能反弹。Goodman 也在大举建数据中心，供电难题会被市场一起打折。",
       "sources": [
-        {"name": "AFR", "url": "https://www.afr.com/companies/infrastructure/nextdc-slashes-earnings-forecast-triggering-42pc-share-plunge-20261021-p616u7"},
-        {"name": "The Motley Fool", "url": "https://www.fool.com.au/2026/10/21/nextdc-slashes-fy27-guidance-after-m3-melbourne-power-delay/"},
-        {"name": "公司公告（TradingView 转载）", "url": "https://www.tradingview.com/news/eqs:82f924597094b:0-nextdc-limited-m3-melbourne-power-delay-and-revised-fy27-guidance/"}
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/technology/meet-the-people-and-power-poles-that-wiped-3b-off-nextdc-20261021-p617de"
+        },
+        {
+          "name": "AFR（业绩指引）",
+          "url": "https://www.afr.com/companies/infrastructure/nextdc-slashes-earnings-forecast-triggering-42pc-share-plunge-20261021-p616u7"
+        },
+        {
+          "name": "AFR（对冲基金与券商评级）",
+          "url": "https://www.afr.com/markets/equity-markets/hedge-funds-feast-on-nextdc-but-brokers-say-it-s-still-a-buy-20261021-p617d2"
+        },
+        {
+          "name": "The Motley Fool",
+          "url": "https://www.fool.com.au/2026/10/21/nextdc-slashes-fy27-guidance-after-m3-melbourne-power-delay/"
+        },
+        {
+          "name": "Investing.com",
+          "url": "https://www.investing.com/news/stock-market-news/nextdc-shares-plunge-42-to-a-near-nineyear-low-after-outlook-cut-4961425"
+        },
+        {
+          "name": "Kalkine（公司公告摘要）",
+          "url": "https://kalkinemedia.com/au/news/announcements/nextdc-lowers-fy27-financial-forecast-due-to-jemena-power-network-delays-impacting-m3-melbourne-capacity-to-fy28"
+        }
       ]
     },
     {
-      "title_zh": "RBA 副行长：通胀明显更糟，加息押注升温",
+      "title_zh": "RBA 副行长：通胀前景明显更糟，加息押注升温",
       "afr_headline": "Rate rise bets jump after RBA warns of ‘materially worse’ inflation",
       "afr_url": "https://www.afr.com/policy/economy/hard-choices-await-rba-as-inflation-and-employment-worsen-20261021-p617d5",
       "afr_section": "Policy / Economy",
-      "what_zh": "澳储行副行长 Andrew Hauser 说，通胀比央行预期的明显更糟，虽然就业和消费在走软，央行仍面临要不要今年第五次加息的艰难决定。这是 11 月 2–3 日议息会议前他最后一次单独公开讲话。交易员现在认为第五次加息的可能性大于一半；一旦加息，现金利率将升到 2008 年以来最高。",
+      "what_zh": "澳储行（RBA）副行长 Andrew Hauser 在悉尼一场花旗会议上说，通胀前景比央行 8 月的预测明显更糟，部分原因是油价更高。现金利率现在是 4.60%，11 月 2–3 日议息；若加息，将是今年第五次，升到 4.85%。他讲话后，市场对 11 月加息的押注升到五成上下（各家统计在 40% 到 56% 之间）。反方向的理由是就业走软：9 月失业率 4.7%，五年来最高。10 月 28 日公布的三季度通胀数据是关键。",
+      "impact": [
+        {
+          "name": "房地产信托（REITs）",
+          "code": null,
+          "direction": "偏空",
+          "move_pct": null
+        },
+        {
+          "name": "零售消费板块",
+          "code": null,
+          "direction": "偏空",
+          "move_pct": null
+        }
+      ],
+      "why_zh": "加息会抬高借贷成本和估值用的贴现率：房地产信托融资变贵、资产估值下调；家庭还款压力加大，花钱会更紧，零售商销售受压。但当天大盘仍收涨，说明市场还没把加息当成定局。最大变数是 10 月 28 日的通胀数据：低于预期，加息押注会回落；高于预期，这两个板块还会再受压。",
       "sources": [
-        {"name": "AFR", "url": "https://www.afr.com/policy/economy/hard-choices-await-rba-as-inflation-and-employment-worsen-20261021-p617d5"}
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/policy/economy/hard-choices-await-rba-as-inflation-and-employment-worsen-20261021-p617d5"
+        },
+        {
+          "name": "ABC News",
+          "url": "https://www.abc.net.au/news/2026-10-21/reserve-bank-hauser-warns-inflation-outlook-materially-worse/107288574"
+        },
+        {
+          "name": "Reuters（Investing.com 转载）",
+          "url": "https://au.investing.com/news/economy-news/australian-central-banker-says-inflation-outlook-worse-unsure-about-november-rate-hike-4702859"
+        },
+        {
+          "name": "Investing.com",
+          "url": "https://uk.investing.com/news/economy-news/rba-nov-rate-hike-bets-surge-to-over-50-after-hauser-warning-on-inflation-4921315"
+        }
       ]
     },
     {
-      "title_zh": "CSL 选定新 CEO：GSK 高管 Deborah Waterhouse",
+      "title_zh": "CSL 选定新 CEO：ViiV 掌门 Deborah Waterhouse",
       "afr_headline": "CSL names British pharma executive as new CEO",
       "afr_url": "https://www.afr.com/companies/healthcare-and-fitness/csl-names-british-pharma-executive-as-new-ceo-20261021-p617km",
       "afr_section": "Companies / Healthcare and fitness",
-      "what_zh": "血液制品巨头 CSL 经过半年全球招聘，选定英国药企 GSK 的高管 Deborah Waterhouse 出任首席执行官，明年 2 月接替临时 CEO Gordon Naylor，她会继续常驻英国。消息在收盘后公布，CSL 当天收 196.08 澳元，跌 0.1%。",
+      "what_zh": "血液制品和疫苗巨头 CSL 经全球招聘，选定 GSK 控股的艾滋病药企 ViiV Healthcare 的 CEO Deborah Waterhouse 出任首席执行官兼董事总经理，2027 年 2 月 1 日上任；临时 CEO Gordon Naylor 届时回到董事会当非执行董事。她会继续常驻英国，基本年薪 150 万英镑；因前雇主和 CSL 的流感疫苗业务 Seqirus 有竞争，2027 年 3 月底前不能参与这块业务。CSL 在 2026 财年两次下调指引并计提大额减值。消息在收盘后公布，CSL 当天收 196.08 澳元，跌 0.1%。",
+      "impact": [
+        {
+          "name": "CSL",
+          "code": "CSL",
+          "direction": "中性",
+          "move_pct": -0.11
+        }
+      ],
+      "why_zh": "选定新 CEO 结束了领导层空窗，少了一层不确定性；但她明年 2 月才上任，要扭转增长放缓、减值和研发管线问题，几年后才看得出成效，短期盈利不会因此改变。她常驻英国、Seqirus 有回避期，也可能让部分投资者有疑虑。利好利空都有限，所以中性。",
       "sources": [
-        {"name": "AFR", "url": "https://www.afr.com/companies/healthcare-and-fitness/csl-names-british-pharma-executive-as-new-ceo-20261021-p617km"},
-        {"name": "AFR 收盘播报", "url": "https://www.afr.com/markets/equity-markets/asx-to-rise-spacex-to-report-oil-retreats-20261021-p6179b"}
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/healthcare-and-fitness/csl-names-british-pharma-executive-as-new-ceo-20261021-p617km"
+        },
+        {
+          "name": "CSL 公告（PR Newswire）",
+          "url": "https://www.prnewswire.com/news-releases/csl-appoints-deborah-waterhouse-as-ceo--managing-director-302915172.html"
+        },
+        {
+          "name": "Investing.com",
+          "url": "https://www.investing.com/news/stock-market-news/csl-appoints-viiv-healthcare-chief-deborah-waterhouse-as-ceo-from-february-4961676"
+        },
+        {
+          "name": "Capital Brief",
+          "url": "https://capitalbrief.com/briefing/csl-appoints-deborah-waterhouse-as-ceo-cf80b28b-1a0c-4703-a428-2ae042021c6c"
+        },
+        {
+          "name": "The Motley Fool",
+          "url": "https://fool.com.au/2026/10/21/csl-names-deborah-waterhouse-as-next-ceo-in-global-search"
+        }
       ]
     },
     {
-      "title_zh": "Woodside 卖掉美国氨厂，下调产量指引上限",
+      "title_zh": "Woodside 下调产量指引上限，准备减持美国氨厂",
       "afr_headline": "Woodside trims output guidance as ammonia heads for chopping block",
       "afr_url": "https://www.afr.com/companies/energy/woodside-trims-output-guidance-as-ammonia-heads-for-chopping-block-20261021-p61780",
       "afr_section": "Companies / Energy",
-      "what_zh": "Woodside 把两年多前花 33 亿澳元买下的美国得州 Beaumont 氨厂挂牌出售，这笔收购当初就不被市场看好。氨厂表现不佳——因安全事故停产 30 天、原料供应受限——也让 Woodside 下调了 2026 年产量指引的上限。Woodside 当天收 33.96 澳元，涨 0.4%。",
+      "what_zh": "Woodside 公布 9 月季度：产量 4620 万桶油当量，比一年前少 9%，比上季度多 12%。2026 年产量指引从 1.74–1.85 亿桶油当量改为 1.74–1.81 亿，下限不变、上限下调，按中值约少 1%。拖累来自三处：2024 年花 23.5 亿美元买下的美国得州 Beaumont 氨厂只开到设计产能的 69%（原料供应受限，加上安全事故停产约 30 天）、Okha 浮式生产船减产、Scarborough 液化天然气项目首产时间窗口收窄。公司将启动正式程序，减少在这座氨厂的投资。Woodside 当天收 33.96 澳元，涨 0.4%。",
+      "impact": [
+        {
+          "name": "Woodside",
+          "code": "WDS",
+          "direction": "中性",
+          "move_pct": 0.41
+        }
+      ],
+      "why_zh": "产量指引只少约 1%，对盈利影响小。减持氨厂等于承认这笔收购不成功，可能要计提减值；但也能少烧钱，把资金集中到油气主业。布伦特油价在 110 美元上下，托住了盈利。真正要盯的是 Scarborough 何时首产，若再推迟才会明显伤到估值。",
       "sources": [
-        {"name": "AFR", "url": "https://www.afr.com/companies/energy/woodside-trims-output-guidance-as-ammonia-heads-for-chopping-block-20261021-p61780"}
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/energy/woodside-trims-output-guidance-as-ammonia-heads-for-chopping-block-20261021-p61780"
+        },
+        {
+          "name": "Investing.com",
+          "url": "https://uk.investing.com/news/stock-market-news/woodside-energy-cuts-2026-production-forecast-q3-revenue-rises-93CH-4921299"
+        },
+        {
+          "name": "Offshore Engineer",
+          "url": "https://www.oedigital.com/news/543812-woodside-cuts-production-outlook-scales-back-us-ammonia-investment"
+        },
+        {
+          "name": "Proactive Investors",
+          "url": "https://www.proactiveinvestors.com/companies/news/1100431/woodside-energy-cuts-production-outlook-as-scarborough-lng-start-window-tightens-1100431.html"
+        },
+        {
+          "name": "Rigzone（油价）",
+          "url": "https://www.rigzone.com/news/oil_slips_as_iran_talks_fuel_volatility-20-oct-2026-184889-article"
+        }
       ]
     },
     {
-      "title_zh": "Northern Star 成本上升，等 Gold Fields 加价",
+      "title_zh": "Northern Star 季度销量下滑，等 Gold Fields 加价",
       "afr_headline": "Northern Star’s costs jump as board awaits sweetened Gold Fields bid",
       "afr_url": "https://www.afr.com/companies/mining/northern-star-s-costs-jump-as-board-awaits-sweetened-gold-fields-bid-20261021-p616z1",
       "afr_section": "Companies / Mining",
-      "what_zh": "澳洲最大的本土金矿商 Northern Star 公布 9 月季度：卖出约 36.4 万盎司黄金，比上季度少；全维持成本（AISC，挖一盎司金的总成本）3217 澳元/盎司，据 Grafa 报道比上季度高约两成，主要是 KCGM 新磨矿厂投产调试拖累，但仍在全年 3050–3450 的指引区间内，全年指引不变。上任两周的新 CEO Suresh Vadnagra 对南非 Gold Fields 近 390 亿澳元、上月被拒的收购报价是否会加价不置可否。Northern Star 收涨 1.8%。",
+      "what_zh": "金矿商 Northern Star 公布 9 月季度：卖出约 36.4 万盎司黄金，少于一年前的 38.1 万盎司；全维持成本（AISC，挖一盎司金的总成本）3217 澳元/盎司，主要受 KCGM 新选矿厂接入调试拖累，接入比计划晚约两周。季度黄金收入 18.2 亿澳元，低于市场预期的 19.3 亿；全年产量和成本指引（150–165 万盎司、3050–3450 澳元/盎司）不变。10 月 5 日上任的新 CEO Suresh Vadnagra 提到可能出售资产。南非 Gold Fields 约 387 亿澳元的收购提议上月被拒，据报道它在考虑加价。Northern Star 收 25.06 澳元，涨 1.8%。",
+      "impact": [
+        {
+          "name": "Northern Star",
+          "code": "NST",
+          "direction": "中性",
+          "move_pct": 1.79
+        }
+      ],
+      "why_zh": "季度不及预期，但全年指引不变，说明主要是新厂调试的短期阵痛；季度平均卖价约 5000 澳元/盎司，高金价撑住了现金流。股价还有收购预期托底：Gold Fields 若加价有上行空间，若放弃则可能回落。加价目前没有任何约束力，所以中性。",
       "sources": [
-        {"name": "AFR", "url": "https://www.afr.com/companies/mining/northern-star-s-costs-jump-as-board-awaits-sweetened-gold-fields-bid-20261021-p616z1"},
-        {"name": "The Motley Fool", "url": "https://www.fool.com.au/2026/10/21/northern-star-resources-posts-production-and-commissioning-update/"},
-        {"name": "Grafa", "url": "https://grafa.com/en/news/australia/northern-star-reports-higher-costs-and-lower-output"}
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/mining/northern-star-s-costs-jump-as-board-awaits-sweetened-gold-fields-bid-20261021-p616z1"
+        },
+        {
+          "name": "The Motley Fool",
+          "url": "https://www.fool.com.au/2026/10/21/northern-star-resources-posts-production-and-commissioning-update/"
+        },
+        {
+          "name": "Kalkine",
+          "url": "https://kalkine.com.au/news/mining/northern-star-resources-asxnst-sells-364koz-at-a3217oz-aisc-as-kcgm-mill-tie-in-wraps-up"
+        },
+        {
+          "name": "Mining.com.au",
+          "url": "https://mining.com.au/northern-star-posts-higher-quarterly-gold-sales-revenue-but-misses-estimates/"
+        },
+        {
+          "name": "Mining Weekly",
+          "url": "https://www.miningweekly.com/article/incoming-northern-star-ceo-flags-possibility-of-asset-sales-2026-10-21"
+        },
+        {
+          "name": "The Northern Miner",
+          "url": "https://www.northernminer.com/news/northern-star-rejects-uninvited-a38-7b-gold-fields-bid/1003895187/"
+        }
       ]
     },
     {
-      "title_zh": "大摩：澳洲房价可能再跌最多 15%",
+      "title_zh": "大摩：澳洲房价从高点可能跌 10–15%",
       "afr_headline": "‘The backdrop has worsened’: Morgan Stanley flags 15pc house price hit",
       "afr_url": "https://www.afr.com/property/residential/the-backdrop-has-worsened-morgan-stanley-flags-15pc-house-price-hit-20261021-p617e3",
       "afr_section": "Property / Residential",
-      "what_zh": "摩根士丹利预测，到明年底澳洲房价可能下跌最多 15%，原因是加息的可能性变大。今年 5 月联邦预算改了投资房的税务规定后，大摩曾预测房价跌 5–10%、称之为「40 年来最大调整」，现在全国房价已经跌进这个区间，所以把预测下调。",
+      "what_zh": "摩根士丹利把澳洲房价预测调得更悲观：全国房价从高点下跌 10–15%，谷底在 2027 年下半年，之前预测约跌 10%。据 Cotality 数据，房价已从 3 月高点跌了 5.2%，按大摩的预测只走完约三分之一到一半。大摩估计，5 月联邦预算收紧负扣税（投资房亏损可抵税）和资本利得税折扣，约占整个跌幅里的 5 个百分点；利率是决定跌多深的关键。大摩认为这会是 40 多年来最大的名义房价调整。",
+      "impact": [
+        {
+          "name": "Stockland",
+          "code": "SGP",
+          "direction": "偏空",
+          "move_pct": 1.21
+        },
+        {
+          "name": "银行板块",
+          "code": null,
+          "direction": "中性",
+          "move_pct": null
+        }
+      ],
+      "why_zh": "房价下跌会压住新房销售和开发利润，Stockland 这类住宅开发商受影响最直接（AFR 前两天报道其买家咨询降到七年低点）；若再加息，跌幅可能更大。银行的房贷增长会放慢，坏账可能上升，但只要失业率不大幅上升，坏账压力有限，所以银行先看中性。",
       "sources": [
-        {"name": "AFR", "url": "https://www.afr.com/property/residential/the-backdrop-has-worsened-morgan-stanley-flags-15pc-house-price-hit-20261021-p617e3"}
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/property/residential/the-backdrop-has-worsened-morgan-stanley-flags-15pc-house-price-hit-20261021-p617e3"
+        },
+        {
+          "name": "AAP（Oberon Review 转载）",
+          "url": "https://www.oberonreview.com.au/story/9372281/housing-downturn-forecast-to-run-up-to-15-per-cent/"
+        },
+        {
+          "name": "AFR（Stockland）",
+          "url": "https://www.afr.com/property/commercial/stockland-buyer-inquiries-sink-to-seven-year-low-in-property-downturn-20261019-p616b4"
+        }
       ]
     },
     {
-      "title_zh": "MA Financial 暂停地产信贷基金赎回",
+      "title_zh": "MA Financial 冻结 23 亿房贷基金赎回",
       "afr_headline": "MA Financial halts property credit redemptions, winds up retail fund",
       "afr_url": "https://www.afr.com/companies/financial-services/ma-financial-halts-redemptions-in-property-funds-winds-up-retail-fund-20261021-p617ez",
       "afr_section": "Companies / Financial services",
-      "what_zh": "MA Financial 暂停旗下 23 亿澳元房地产相关贷款基金的全部赎回，并清盘规模 1 亿澳元、面向散户的 MA Secured Real Estate Income Fund，理由是房地产和私募信贷市场都在恶化。MA Financial 管理约 75 亿澳元私募信贷资产。公司股价当天收涨 3%。",
+      "what_zh": "资产管理公司 MA Financial 宣布，旗下约 23 亿澳元的房地产贷款基金 MA Secured Loan Series 暂停申购和赎回，至少到 2027 年 3 月 31 日，每月复核一次；理由是住宅地产市场恶化，卖资产和贷款再融资都要更久。这只基金 8 月起已把赎回限制在每月 1%。另一只约 1 亿澳元、面向散户的 MA Secured Real Estate Income Fund 将清盘。公司称暂停赎回对基金净值没有实质影响，月度分派暂不改变。",
+      "impact": [
+        {
+          "name": "MA Financial",
+          "code": "MAF",
+          "direction": "偏空",
+          "move_pct": null
+        }
+      ],
+      "why_zh": "MA Financial 主要靠管理费赚钱。旗舰信贷基金冻结会伤投资者信心，新资金流入可能放缓，费用收入跟着受压；房价若继续下跌，贷款违约增多，还会影响基金回报和业绩报酬。反面是公司说对净值影响不大，而且 8 月已限赎，部分风险股价早有反映。",
       "sources": [
-        {"name": "AFR", "url": "https://www.afr.com/companies/financial-services/ma-financial-halts-redemptions-in-property-funds-winds-up-retail-fund-20261021-p617ez"}
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/financial-services/ma-financial-halts-redemptions-in-property-funds-winds-up-retail-fund-20261021-p617ez"
+        },
+        {
+          "name": "Money Management",
+          "url": "https://www.moneymanagement.com.au/ma-financial-halts-redemptions-for-five-months-in-unlisted-re-credit-fund"
+        },
+        {
+          "name": "MA Financial 基金页面",
+          "url": "https://mafinancial.com/en/invest/private-credit/ma-secured-real-estate-income-fund"
+        },
+        {
+          "name": "Capital Brief",
+          "url": "https://www.capitalbrief.com/briefing/ma-financial-limits-withdrawals-from-property-loan-fund-7c65b11d-6b95-4f82-bde0-84c5419b677d/"
+        }
       ]
     },
     {
-      "title_zh": "西太：伊朗战事拖下去，油价可能冲到 150 美元",
-      "afr_headline": "Oil price tipped to hit $US150 if Iran war drags on",
-      "afr_url": "https://www.afr.com/markets/commodities/oil-price-tipped-to-hit-us150-if-iran-war-drags-on-20261021-p617du",
-      "afr_section": "Markets / Commodities",
-      "what_zh": "西太银行提醒客户，如果伊朗冲突继续升级，明年上半年油价可能冲向每桶 150 美元，比现在约 110 美元的布伦特油价再高三成多。周二油价一度到 112 美元，是五个月来最高；尽管最近几周出口有所恢复，风险并没有解除。",
+      "title_zh": "NAB 裁员最多 2500 人，重组费用约 3 亿澳元",
+      "afr_headline": "NAB’s swingeing local job cuts come after years of offshoring",
+      "afr_url": "https://www.afr.com/companies/financial-services/nab-s-swingeing-local-job-cuts-come-after-years-of-offshoring-20261021-p617fs",
+      "afr_section": "Companies / Financial services",
+      "what_zh": "澳洲国民银行（NAB）宣布在 2027 财年裁员最多 2500 人，约占员工的 6%，其中最多 1500 个岗位在今年底前裁掉；预计重组费用约 3 亿澳元（税前），远高于前两年每年约 8000 万。CEO Andrew Irvine 说面向客户的岗位不会受到实质影响，管理层裁得更多。金融业工会说约 180 个岗位会转到越南和印度。更多成本细节在 11 月 5 日公布全年业绩时披露。NAB 当天收 39.93 澳元，涨 1.9%。",
+      "impact": [
+        {
+          "name": "NAB",
+          "code": "NAB",
+          "direction": "中性",
+          "move_pct": 1.86
+        }
+      ],
+      "why_zh": "裁员能降低以后的成本、改善成本收入比，但能省多少还没公布，2027 财年还要先付约 3 亿重组费用。当天银行股普遍上涨（CBA 涨 0.9%、西太涨 1.1%），NAB 的涨幅看不出是裁员本身带来的。11 月 5 日公布省钱目标之前先看中性；工会反对和政治压力是风险。",
       "sources": [
-        {"name": "AFR", "url": "https://www.afr.com/markets/commodities/oil-price-tipped-to-hit-us150-if-iran-war-drags-on-20261021-p617du"}
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/financial-services/nab-s-swingeing-local-job-cuts-come-after-years-of-offshoring-20261021-p617fs"
+        },
+        {
+          "name": "The New Daily",
+          "url": "https://www.thenewdaily.com.au/themoneyedition/finance-news/2026/10/20/nab-to-slash-2500-jobs-thousands-of-roles-to-go-by-christmas"
+        },
+        {
+          "name": "InDaily",
+          "url": "https://www.indailysa.com.au/news/just-in/2026/10/20/big-four-bank-to-slash-thousands-of-jobs-by-christmas"
+        },
+        {
+          "name": "Information Age（ACS）",
+          "url": "https://ia.acs.org.au/article/2026/nab-cutting-2-500-staff-amid--rapid-technological-change-.html"
+        }
       ]
     }
   ]
