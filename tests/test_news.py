@@ -201,6 +201,8 @@ class FakeGit:
         if args[0] == "push":
             return ok() if self.push_ok else bad(
                 "remote: Claude doesn't have GitHub access to lokliaoau-bot/asx-radarr\nfatal: 403")
+        if "commit-tree" in args:
+            return ok("deadbeef1234\n")
         if args[0] == "fetch":
             self.fetches += 1
             return ok()
@@ -261,7 +263,11 @@ def test_inbox():
     path = NW.request_inbox(day, git=g, sleep=lambda s: None, log=lambda m: None)
     pushed = [c for c in g.calls if c[0] == "push"]
     check("先推一个 claude/news-request-* 分支请 GitHub 去抓",
-          len(pushed) == 1 and pushed[0][2].startswith("HEAD:refs/heads/claude/news-request-2026-10-20-"), str(pushed))
+          len(pushed) == 1 and pushed[0][2].startswith("deadbeef1234:refs/heads/claude/news-request-2026-10-20-"), str(pushed))
+    made = [c for c in g.calls if "commit-tree" in c]
+    msg = made[0][made[0].index("-m") + 1] if made else ""
+    check("推的是新做的空提交，不是 main 最新那个（存档提交带跳过 CI 标记，GitHub 会不触发）",
+          len(made) == 1 and "skip" not in msg.lower() and "HEAD^{tree}" in made[0], str(made))
     check("等到 GitHub 提交了新的收件箱就拉下来", path == "news/inbox/2026-10-20.json" and g.fetches == 2
           and ("merge", "--ff-only", "origin/main") in g.calls)
     t = [0]

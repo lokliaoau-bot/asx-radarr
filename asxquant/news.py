@@ -465,7 +465,13 @@ def request_inbox(day=None, wait=900, poll=20, git=_git, sleep=None, clock=None,
     path = "news/inbox/%s.json" % day.isoformat()
     asked = _now_iso()
     branch = "claude/news-request-%s-%s" % (day.isoformat(), dt.datetime.now(dt.timezone.utc).strftime("%H%M%S"))
-    r = git("push", "origin", "HEAD:refs/heads/" + branch)
+    # 不能直接推 HEAD：main 最新的提交常常是每日存档，提交信息里带「跳过 CI」标记，GitHub 会因此
+    # 不触发任何 workflow（2026-10-21 实测，请求发出去了却一直没人抓）。所以另做一个空提交再推，
+    # 只改分支、不动工作区和 HEAD。
+    c = git("-c", "user.name=asx-radar-request", "-c", "user.email=actions@github.com", "commit-tree",
+            "HEAD^{tree}", "-p", "HEAD", "-m", "请求抓取 AFR 标题和收盘行情 %s" % day.isoformat())
+    ref = (c.stdout or "").strip() if c.returncode == 0 and (c.stdout or "").strip() else "HEAD"
+    r = git("push", "origin", "%s:refs/heads/%s" % (ref, branch))
     if r.returncode != 0:
         tail = (r.stderr or r.stdout or "").strip().splitlines()[-3:]
         raise RequestError(
