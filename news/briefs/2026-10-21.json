@@ -1,0 +1,100 @@
+{
+  "schema": "afr-brief-v1",
+  "date": "2026-10-21",
+  "stage": "headlines",
+  "model": "claude-opus-5-5",
+  "generated_at": "2026-10-21T20:10:00+11:00",
+  "generated_by": "Claude (claude-opus-5-5)",
+  "market": {
+    "text_zh": "ASX 200 收 8831.3 点，涨 0.16%，尾盘拉升，没被加息预期压住。NextDC 暴跌 41.7% 是当天最大的事；Corporate Travel 涨 7.5%、Xero 涨 5%，Telix 跌 7.9%。",
+    "index_close": 8831.3,
+    "index_pct": 0.16
+  },
+  "items": [
+    {
+      "title_zh": "NextDC 大砍盈利指引，股价暴跌 42%",
+      "afr_headline": "NextDC slashes earnings forecast, triggering 42pc share plunge",
+      "afr_url": "https://www.afr.com/companies/infrastructure/nextdc-slashes-earnings-forecast-triggering-42pc-share-plunge-20261021-p616u7",
+      "afr_section": "Companies / Infrastructure",
+      "what_zh": "NextDC 复牌当天跌 41.7%，收 5.35 澳元，九年来最低，市值蒸发约 30 亿澳元。原因是墨尔本 M3 数据中心接不上电：电网公司 Jemena 因当地居民反对 22 米高的新电线杆而暂停施工，最早明年 2 月才复工，M3 新增供电推迟到 FY28。公司把 FY27 基础 EBITDA 指引从 3.85–4.10 亿澳元砍到 2.45–2.65 亿（按中值少约 36%），削减资本开支，并考虑出售暂时用不上的开发用地。",
+      "sources": [
+        {"name": "AFR", "url": "https://www.afr.com/companies/infrastructure/nextdc-slashes-earnings-forecast-triggering-42pc-share-plunge-20261021-p616u7"},
+        {"name": "The Motley Fool", "url": "https://www.fool.com.au/2026/10/21/nextdc-slashes-fy27-guidance-after-m3-melbourne-power-delay/"},
+        {"name": "公司公告（TradingView 转载）", "url": "https://www.tradingview.com/news/eqs:82f924597094b:0-nextdc-limited-m3-melbourne-power-delay-and-revised-fy27-guidance/"}
+      ]
+    },
+    {
+      "title_zh": "RBA 副行长：通胀明显更糟，加息押注升温",
+      "afr_headline": "Rate rise bets jump after RBA warns of ‘materially worse’ inflation",
+      "afr_url": "https://www.afr.com/policy/economy/hard-choices-await-rba-as-inflation-and-employment-worsen-20261021-p617d5",
+      "afr_section": "Policy / Economy",
+      "what_zh": "澳储行副行长 Andrew Hauser 说，通胀比央行预期的明显更糟，虽然就业和消费在走软，央行仍面临要不要今年第五次加息的艰难决定。这是 11 月 2–3 日议息会议前他最后一次单独公开讲话。交易员现在认为第五次加息的可能性大于一半；一旦加息，现金利率将升到 2008 年以来最高。",
+      "sources": [
+        {"name": "AFR", "url": "https://www.afr.com/policy/economy/hard-choices-await-rba-as-inflation-and-employment-worsen-20261021-p617d5"}
+      ]
+    },
+    {
+      "title_zh": "CSL 选定新 CEO：GSK 高管 Deborah Waterhouse",
+      "afr_headline": "CSL names British pharma executive as new CEO",
+      "afr_url": "https://www.afr.com/companies/healthcare-and-fitness/csl-names-british-pharma-executive-as-new-ceo-20261021-p617km",
+      "afr_section": "Companies / Healthcare and fitness",
+      "what_zh": "血液制品巨头 CSL 经过半年全球招聘，选定英国药企 GSK 的高管 Deborah Waterhouse 出任首席执行官，明年 2 月接替临时 CEO Gordon Naylor，她会继续常驻英国。消息在收盘后公布，CSL 当天收 196.08 澳元，跌 0.1%。",
+      "sources": [
+        {"name": "AFR", "url": "https://www.afr.com/companies/healthcare-and-fitness/csl-names-british-pharma-executive-as-new-ceo-20261021-p617km"},
+        {"name": "AFR 收盘播报", "url": "https://www.afr.com/markets/equity-markets/asx-to-rise-spacex-to-report-oil-retreats-20261021-p6179b"}
+      ]
+    },
+    {
+      "title_zh": "Woodside 卖掉美国氨厂，下调产量指引上限",
+      "afr_headline": "Woodside trims output guidance as ammonia heads for chopping block",
+      "afr_url": "https://www.afr.com/companies/energy/woodside-trims-output-guidance-as-ammonia-heads-for-chopping-block-20261021-p61780",
+      "afr_section": "Companies / Energy",
+      "what_zh": "Woodside 把两年多前花 33 亿澳元买下的美国得州 Beaumont 氨厂挂牌出售，这笔收购当初就不被市场看好。氨厂表现不佳——因安全事故停产 30 天、原料供应受限——也让 Woodside 下调了 2026 年产量指引的上限。Woodside 当天收 33.96 澳元，涨 0.4%。",
+      "sources": [
+        {"name": "AFR", "url": "https://www.afr.com/companies/energy/woodside-trims-output-guidance-as-ammonia-heads-for-chopping-block-20261021-p61780"}
+      ]
+    },
+    {
+      "title_zh": "Northern Star 成本上升，等 Gold Fields 加价",
+      "afr_headline": "Northern Star’s costs jump as board awaits sweetened Gold Fields bid",
+      "afr_url": "https://www.afr.com/companies/mining/northern-star-s-costs-jump-as-board-awaits-sweetened-gold-fields-bid-20261021-p616z1",
+      "afr_section": "Companies / Mining",
+      "what_zh": "澳洲最大的本土金矿商 Northern Star 公布 9 月季度：卖出约 36.4 万盎司黄金，比上季度少；全维持成本（AISC，挖一盎司金的总成本）3217 澳元/盎司，据 Grafa 报道比上季度高约两成，主要是 KCGM 新磨矿厂投产调试拖累，但仍在全年 3050–3450 的指引区间内，全年指引不变。上任两周的新 CEO Suresh Vadnagra 对南非 Gold Fields 近 390 亿澳元、上月被拒的收购报价是否会加价不置可否。Northern Star 收涨 1.8%。",
+      "sources": [
+        {"name": "AFR", "url": "https://www.afr.com/companies/mining/northern-star-s-costs-jump-as-board-awaits-sweetened-gold-fields-bid-20261021-p616z1"},
+        {"name": "The Motley Fool", "url": "https://www.fool.com.au/2026/10/21/northern-star-resources-posts-production-and-commissioning-update/"},
+        {"name": "Grafa", "url": "https://grafa.com/en/news/australia/northern-star-reports-higher-costs-and-lower-output"}
+      ]
+    },
+    {
+      "title_zh": "大摩：澳洲房价可能再跌最多 15%",
+      "afr_headline": "‘The backdrop has worsened’: Morgan Stanley flags 15pc house price hit",
+      "afr_url": "https://www.afr.com/property/residential/the-backdrop-has-worsened-morgan-stanley-flags-15pc-house-price-hit-20261021-p617e3",
+      "afr_section": "Property / Residential",
+      "what_zh": "摩根士丹利预测，到明年底澳洲房价可能下跌最多 15%，原因是加息的可能性变大。今年 5 月联邦预算改了投资房的税务规定后，大摩曾预测房价跌 5–10%、称之为「40 年来最大调整」，现在全国房价已经跌进这个区间，所以把预测下调。",
+      "sources": [
+        {"name": "AFR", "url": "https://www.afr.com/property/residential/the-backdrop-has-worsened-morgan-stanley-flags-15pc-house-price-hit-20261021-p617e3"}
+      ]
+    },
+    {
+      "title_zh": "MA Financial 暂停地产信贷基金赎回",
+      "afr_headline": "MA Financial halts property credit redemptions, winds up retail fund",
+      "afr_url": "https://www.afr.com/companies/financial-services/ma-financial-halts-redemptions-in-property-funds-winds-up-retail-fund-20261021-p617ez",
+      "afr_section": "Companies / Financial services",
+      "what_zh": "MA Financial 暂停旗下 23 亿澳元房地产相关贷款基金的全部赎回，并清盘规模 1 亿澳元、面向散户的 MA Secured Real Estate Income Fund，理由是房地产和私募信贷市场都在恶化。MA Financial 管理约 75 亿澳元私募信贷资产。公司股价当天收涨 3%。",
+      "sources": [
+        {"name": "AFR", "url": "https://www.afr.com/companies/financial-services/ma-financial-halts-redemptions-in-property-funds-winds-up-retail-fund-20261021-p617ez"}
+      ]
+    },
+    {
+      "title_zh": "西太：伊朗战事拖下去，油价可能冲到 150 美元",
+      "afr_headline": "Oil price tipped to hit $US150 if Iran war drags on",
+      "afr_url": "https://www.afr.com/markets/commodities/oil-price-tipped-to-hit-us150-if-iran-war-drags-on-20261021-p617du",
+      "afr_section": "Markets / Commodities",
+      "what_zh": "西太银行提醒客户，如果伊朗冲突继续升级，明年上半年油价可能冲向每桶 150 美元，比现在约 110 美元的布伦特油价再高三成多。周二油价一度到 112 美元，是五个月来最高；尽管最近几周出口有所恢复，风险并没有解除。",
+      "sources": [
+        {"name": "AFR", "url": "https://www.afr.com/markets/commodities/oil-price-tipped-to-hit-us150-if-iran-war-drags-on-20261021-p617du"}
+      ]
+    }
+  ]
+}
