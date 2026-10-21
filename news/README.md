@@ -14,30 +14,39 @@
 两个阶段写的是同一个文件 `news/briefs/<日期>.json`。同一天已经有分析版（`analysis`）时，收件流程不会让
 标题版把它盖掉，所以 A 晚于 B 跑也没关系。
 
+## 云端环境的限制（2026-10-21 实测，先读）
+
+Claude 云端任务的沙箱**连不上 afr.com**（代理 403；AFR 还屏蔽了 Anthropic 的 WebFetch 和 WebSearch），
+Market Index、ABC、Capital Brief、Yahoo 行情也都打不开。能用的只有 **WebSearch（不要限定 afr.com）** 和 git。
+所以 AFR 标题和收盘行情由 GitHub Actions 去抓（`.github/workflows/news-collect.yml`），存在
+`news/inbox/<日期>.json`；你只从收件箱拿 AFR 标题、链接和涨跌，事实用 WebSearch 核实。
+**不要**再用 curl、WebFetch 或 `headlines` / `lead` / `moves` 命令去碰这些网站——一定失败，白白浪费时间。
+
 ## 共同步骤
 
 1. **日期**：`python -m asxquant.news today` 给出悉尼今天的日期和 ASX 开不开市。
    - A：输出「休市」就**什么都不写，直接结束**。
    - B：用户主动点的，休市也照做（`market.text_zh` 里写明今天休市）。
-2. **AFR 标题**：`python -m asxquant.news headlines`（RSS + 首页，只留和股市有关的栏目）。
-   命令联不上网时，用 WebFetch 读 https://www.afr.com/rss/feed.xml 和 https://www.afr.com/ 。
-3. **挑 5–8 条真正会动股价的**（标题和链接必须是 AFR 的，链接里 `-YYYYMMDD-` 是发稿日期，只选最近两三天的）：
+2. **请 GitHub 抓今天的 AFR 标题和行情**：`python -m asxquant.news request`（会等几分钟，最多 15 分钟）。
+   成功会打印收件箱路径。失败时**不要硬写**，按退出码报告后结束：
+   - 退出码 3：推不上 GitHub——Claude GitHub App 没装到 `lokliaoau-bot/asx-radarr`，原话报告给用户；
+   - 退出码 4：GitHub 没在时间内抓回来——报告，并提醒去 Actions 看「抓 AFR 标题和收盘行情」。
+3. **看收件箱**：`python -m asxquant.news inbox`。列出 AFR 标题（带链接和发稿日期）、ASX 200 收盘、
+   涨跌最大的股票、停牌的股票；全部个股涨跌在 `news/inbox/<日期>.json` 的 `moves` 里。
+4. **挑 5–8 条真正会动股价的**——**只能从收件箱的 AFR 标题里选，`afr_url` 原样照抄**（校验会核对，
+   编出来的链接一律不收）。只选最近两三天的：
    - 公司：收购报价、业绩和指引、停牌复牌、裁员重组、监管处罚、券商大幅调整评级
    - 宏观：RBA 和利率、债券收益率、油价金价铁矿石、中国数据、美股和 AI 情绪
    - 不选：政治社会新闻、生活文化、没有新事实的纯评论
-4. **弄清楚发生了什么**：
-   - `python -m asxquant.news lead <AFR 链接>` 读 AFR 在订阅墙前公开的开头几段（只供你读，不要照抄上页面）。
-     返回 404 的是还没上线的文章，跳过。
-   - AFR 只露开头时，用 WebSearch 找同一件事的权威报道补全：公司在 ASX 的公告、Market Index 当天的
-     「ASX 200 Live Today – 星期, 日期」直播帖、ABC 市场直播、Reuters、Capital Brief、公司新闻稿。
-   - 每个写进去的数字，都要能在列出的来源里找到。找不到就不写，**不编**。
-5. **当天涨跌**：`python -m asxquant.news moves <日期> NAB BHP XJO …`（XJO 是 ASX 200 指数；需要 yfinance，
-   `pip install yfinance` 装不上就从来源里取）。发布时系统会再用行情重算一遍并覆盖。
+   - 涨跌最大的股票如果有对应的 AFR 标题，优先选（它们是当天真正动了股价的事）。
+5. **弄清楚发生了什么**：用 WebSearch 找同一件事的报道（ASX 公告、Reuters、ABC、Capital Brief、
+   Market Index、The Motley Fool、Stockhead 等），读搜索结果里的摘要。每个写进去的数字都要能在列出的
+   来源里找到；找不到就不写，**不编**。当天涨跌、收盘价、指数一律用收件箱的数字（发布时还会再核一次）。
 
 ## A. 抓标题（`stage: "headlines"`）
 
 1. 如果 `news/briefs/<日期>.json` 已经存在而且 `stage` 是 `analysis`：**直接结束**（用户已经要过深度分析）。
-2. 按共同步骤 1–5 做，写 `news/briefs/<日期>.json`：
+2. 按共同步骤 1–5 做，写 `news/briefs/<日期>.json`（`market.index_close` / `index_pct` 用收件箱的 ASX 200 数字）：
    ```json
    {"schema": "afr-brief-v1", "date": "<日期>", "stage": "headlines",
     "model": "claude-opus-5-5", "effort": "medium",
@@ -51,8 +60,9 @@
 
 ## B. 深度分析（`stage: "analysis"`）
 
-1. 如果 `news/briefs/<日期>.json` 已经存在，以它为底稿：逐条核实事实和数字（有错就改），可以换掉不重要的、
-   补上漏掉的（总数 5–8 条）。不存在就按共同步骤 1–5 从头做。
+1. 先做共同步骤 1–3（拿到今天的收件箱）。`news/briefs/<日期>.json` 已经存在就以它为底稿：逐条核实事实和
+   数字（有错就改），可以换掉不重要的、补上漏掉的（总数 5–8 条，链接同样只能来自收件箱）。不存在就接着做
+   共同步骤 4–5，从头写。
 2. 每条补上：
    - `impact`：受影响的股票或板块（1–5 个）。股票填 3 位 ASX 代码，板块 `code` 填 null；
      `direction` 只能是下面五档之一；股票带上 `move_pct`（当天涨跌 %）

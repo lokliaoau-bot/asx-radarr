@@ -6,7 +6,8 @@ name: 收 AFR 简报
 # 校验程序来自 main，不来自分支，所以分支里的内容没法改掉检查规则。
 on:
   push:
-    branches: ['claude/**']
+    # claude/news-request-* 是云端 Claude 请 GitHub 抓 AFR 标题用的（news-collect.yml），不是简报
+    branches: ['claude/**', '!claude/news-request-**']
 
 permissions:
   contents: write     # 把简报提交进 main、删掉用完的简报分支

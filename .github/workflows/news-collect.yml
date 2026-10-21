@@ -1,0 +1,71 @@
+name: 抓 AFR 标题和收盘行情
+
+# 云端 Claude 的沙箱连不上 afr.com 和行情网站（代理 403；AFR 也屏蔽 Anthropic 的抓取），2026-10-21 每日任务
+# 因此一条标题都拿不到。所以联网抓取全部放在这里做（GitHub 的机器能正常访问 AFR 和 Yahoo）：
+# 结果写进 news/inbox/<悉尼日期>.json——只有 AFR 标题、链接、栏目、时间和行情数字，不存 AFR 的摘要或正文。
+#
+# 三种触发：
+#   ① 云端 Claude 开工时推一个 claude/news-request-* 分支（python -m asxquant.news request），几十秒内就跑；
+#   ② 每个交易日收盘后定时跑一次兜底（GitHub 的定时任务常常晚几个小时，所以不能只靠它）；
+#   ③ 手动 Run workflow。
+on:
+  push:
+    branches: ['claude/news-request-**']
+  schedule:
+    - cron: "30 6 * * 1-5"    # UTC 06:30 = 悉尼 17:30（夏令时）/ 16:30（冬令时），都在收盘之后
+  workflow_dispatch:
+
+permissions:
+  contents: write     # 把收件箱提交进 main、删掉用完的请求分支
+  actions: write      # 定时那次顺手触发一次部署，页面先显示当天的 AFR 标题
+
+concurrency:
+  group: news-collect
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: 安装依赖
+        run: pip install -r requirements.txt
+
+      - name: 抓取并提交到 main
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: ${{ github.ref_name }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          set -e
+          python -m asxquant.news collect
+          git config user.name  "asx-radar-bot"
+          git config user.email "actions@github.com"
+          git add news/inbox
+          if git diff --staged --quiet; then
+            echo "收件箱没有变化"
+          else
+            git commit -m "AFR 标题收件 $(TZ=Australia/Sydney date +%Y-%m-%d)"
+            for i in 1 2 3; do
+              if git push origin HEAD:main; then break; fi
+              echo "推送被拒，变基后重试 $i/3"
+              git pull --rebase origin main
+            done
+            git fetch origin main
+            git merge-base --is-ancestor HEAD origin/main || { echo "三次都没推上去"; exit 1; }
+          fi
+          if [ "$EVENT" = "push" ]; then
+            git push origin --delete "$BRANCH" || true
+          fi
+          if [ "$EVENT" = "schedule" ]; then
+            gh workflow run daily.yml --ref main
+          fi

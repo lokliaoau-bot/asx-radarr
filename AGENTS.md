@@ -56,6 +56,12 @@ Windows：所有文本读写写明 `encoding="utf-8"`；改 JS 文件不要用�
   「深度分析」按钮 → 云端任务「AFR 深度分析」调用 `.claude/agents/afr-analysis.md`（Opus 5.5，effort high）补上
   影响和分析（`stage: analysis`）。云端任务本身设不了思考强度，所以强度写在子代理定义里——**不要改这两个文件的
   `model` / `effort`**，除非用户要求。同一天已有分析版时，标题版不会覆盖它（`news.accept_brief`）。
+- **云端 Claude 的沙箱连不上 afr.com 和行情网站**（2026-10-21 实测；AFR 还屏蔽 Anthropic 的抓取）。联网抓取全部在
+  GitHub Actions 做：`.github/workflows/news-collect.yml` 把 AFR 标题和收盘行情写进 `news/inbox/<日期>.json`
+  （只有标题、链接和行情数字，不存 AFR 正文——仓库是公开的）。云端 Claude 用 `python -m asxquant.news request`
+  请它现抓，再只从收件箱选新闻；有收件箱时，简报里的 AFR 链接必须在收件箱里（`news.check_urls`）。
+  云端推送需要 Claude GitHub App 装在本仓库。`news-watchdog.yml` 每个交易日晚上检查，没有简报就开 issue。
 - **唯一允许不走 Pull Request 进 main 的改动**：推到 `claude/` 开头分支、且只新增或修改
-  `news/briefs/YYYY-MM-DD.json` 的提交，由 `.github/workflows/news-intake.yml` 用 main 上的校验程序检查后自动并入。
+  `news/briefs/YYYY-MM-DD.json` 的提交，由 `.github/workflows/news-intake.yml` 用 main 上的校验程序检查后自动并入；
+  以及 `news-collect.yml` 自己提交的 `news/inbox/` 收件箱。
   别的改动混在同一分支里，它就不合并。改 `news-intake.yml` 或 `validate()` 规则要先问用户。

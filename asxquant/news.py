@@ -18,6 +18,9 @@
   python -m asxquant.news moves 2026-10-20 NAB CGF XJO    # 按收盘价算当天涨跌（XJO = ASX 200 指数；需要 yfinance）
   python -m asxquant.news check news/briefs/2026-10-20.json
   python -m asxquant.news accept <git 引用> <文件…>        # news-intake.yml 用：校验 + 不许标题版盖掉分析版
+  python -m asxquant.news collect [日期]                  # GitHub Actions 用：抓 AFR 标题和收盘行情 → news/inbox/
+  python -m asxquant.news request                         # 云端 Claude 用：请 GitHub 现抓一份，等它提交后拉下来
+  python -m asxquant.news inbox [日期]                    # 云端 Claude 用：看收件箱里的 AFR 标题和涨跌
 """
 from __future__ import annotations
 
@@ -34,6 +37,10 @@ import xml.etree.ElementTree as ET
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BRIEFS = os.path.join(ROOT, "news", "briefs")
+# GitHub Actions 抓回来的 AFR 标题和收盘行情（news-collect.yml）。云端 Claude 的沙箱连不上 afr.com 和
+# 行情网站（2026-10-21 每日任务因此失败），所以它只从这里取 AFR 标题和链接。
+INBOX = os.path.join(ROOT, "news", "inbox")
+INBOX_SCHEMA = "afr-inbox-v1"
 
 SCHEMA = "afr-brief-v1"
 DIRECTIONS = ("空", "偏空", "中性", "偏多", "多")
@@ -281,7 +288,34 @@ def stage_of(b):
     return b.get("stage", "analysis") if isinstance(b, dict) else None
 
 
-def accept_brief(name, new_text, old_text=None):
+def inbox_urls(day, inbox_dir=INBOX):
+    """简报日期当天及前 3 天收件箱里的 AFR 链接。当天的收件箱不存在时返回 None（不检查，兼容手写的老简报）。"""
+    day = _date(day) if isinstance(day, str) else day
+    if day is None or not os.path.exists(os.path.join(inbox_dir, day.isoformat() + ".json")):
+        return None
+    urls = set()
+    for k in range(4):
+        path = os.path.join(inbox_dir, (day - dt.timedelta(days=k)).isoformat() + ".json")
+        if os.path.exists(path):
+            try:
+                with io.open(path, encoding="utf-8") as f:
+                    urls |= {h.get("url") for h in json.load(f).get("headlines") or []}
+            except Exception:
+                pass
+    return urls
+
+
+def check_urls(b, inbox_dir=INBOX):
+    """有收件箱时，每条的 AFR 链接都必须是 GitHub 真实抓到的——挡住编出来的链接。"""
+    urls = inbox_urls(b.get("date"), inbox_dir) if isinstance(b, dict) else None
+    if urls is None:
+        return []
+    return ["第 %d 条：AFR 链接不在收件箱里（只能用 news/inbox 里真实抓到的 AFR 文章）：%s" % (i, it.get("afr_url"))
+            for i, it in enumerate(b.get("items") or [], 1)
+            if isinstance(it, dict) and it.get("afr_url") not in urls]
+
+
+def accept_brief(name, new_text, old_text=None, inbox_dir=INBOX):
     """news-intake.yml 收简报时的把关：(能不能收, 原因)。
     规则：通过校验、文件名和日期一致；同一天 main 上已经是分析版时，不收标题版（不然每日自动抓标题会把
     用户点按钮换来的分析盖掉）。分析版可以覆盖任何版本（用户又点了一次深度分析）。"""
@@ -292,6 +326,8 @@ def accept_brief(name, new_text, old_text=None):
     P = validate(b)
     if isinstance(b, dict) and b.get("date") != os.path.basename(name)[:10]:
         P.append("文件名和 date 对不上")
+    if not P:
+        P = check_urls(b, inbox_dir)
     if P:
         return False, "没过校验: " + "；".join(P[:5])
     if old_text:
@@ -356,8 +392,124 @@ def fill_moves(briefs, prices=None, log=print):
                 t["halted"] = v1 == 0 and t["code"] != "XJO"      # 指数没有成交量
                 t["move_pct"] = 0.0 if t["halted"] else round((c1 / before[-1][1] - 1) * 100, 2)
                 t["move_checked"] = True
+                t["close"] = round(c1, 4)
                 n += 1
     return n
+
+
+# ---------------------------------------------------------------- 收件箱（GitHub Actions 抓，云端 Claude 读）
+
+def sydney_today():
+    from zoneinfo import ZoneInfo
+    return dt.datetime.now(ZoneInfo("Australia/Sydney")).date()
+
+
+def _now_iso():
+    return dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
+
+
+def collect(day=None, get=_get, prices=None, codes=None, log=print):
+    """GitHub Actions 里跑：今天的 AFR 标题 + 股票池和 ASX 200 的收盘涨跌。
+    只存标题、链接、栏目、时间和行情数字，不存 AFR 的摘要或正文（仓库是公开的）。"""
+    day = day or sydney_today()
+    lo = day - dt.timedelta(days=3)
+    heads = [h for h in headlines(get=get, log=log)
+             if not h.get("date") or lo <= dt.date.fromisoformat(h["date"]) <= day]
+    if codes is None:
+        from . import config as C
+        codes = sorted({C.asx_code(t) for t in C.all_stock_tickers()})
+    probe = {"date": day.isoformat(), "items": [{"impact": [{"code": c} for c in list(codes) + ["XJO"]]}]}
+    try:
+        fill_moves([probe], prices=prices, log=log)
+    except Exception as e:
+        log("收件箱：取行情失败（只存标题）: %s" % e)
+    got = {t["code"]: t for t in probe["items"][0]["impact"] if t.get("move_checked")}
+    idx = got.pop("XJO", None)
+    moves = {c: {"pct": t["move_pct"], "close": t["close"], "halted": t["halted"]} for c, t in sorted(got.items())}
+    movers = sorted((c for c in moves if not moves[c]["halted"]), key=lambda c: -abs(moves[c]["pct"]))[:15]
+    return {
+        "schema": INBOX_SCHEMA, "date": day.isoformat(), "collected_at": _now_iso(),
+        "headlines": [{k: h.get(k) for k in ("title", "url", "section", "date", "published")} for h in heads],
+        "index": {"code": "XJO", "pct": idx["move_pct"], "close": idx["close"]} if idx else None,
+        "moves": moves, "top_movers": movers,
+    }
+
+
+def load_inbox(day, inbox_dir=INBOX):
+    path = os.path.join(inbox_dir, (day.isoformat() if hasattr(day, "isoformat") else day) + ".json")
+    if not os.path.exists(path):
+        return None
+    with io.open(path, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _git(*args):
+    import subprocess
+    return subprocess.run(["git"] + list(args), capture_output=True, text=True, encoding="utf-8")
+
+
+class RequestError(RuntimeError):
+    def __init__(self, msg, code):
+        RuntimeError.__init__(self, msg)
+        self.code = code
+
+
+def request_inbox(day=None, wait=900, poll=20, git=_git, sleep=None, clock=None, log=print):
+    """云端 Claude 开工时调用：推一个 claude/news-request-* 分支 → GitHub 上的 news-collect.yml 几十秒内开跑，
+    抓好后把 news/inbox/<日期>.json 提交到 main → 这里等到它出现，再把 main 快进拉下来。
+    推不上（没装 Claude GitHub App）立刻报错 code=3；等超时但当天已有定时抓的收件箱就用它，否则 code=4。"""
+    import time
+    sleep = sleep or time.sleep
+    clock = clock or time.time
+    day = day or sydney_today()
+    path = "news/inbox/%s.json" % day.isoformat()
+    asked = _now_iso()
+    branch = "claude/news-request-%s-%s" % (day.isoformat(), dt.datetime.now(dt.timezone.utc).strftime("%H%M%S"))
+    r = git("push", "origin", "HEAD:refs/heads/" + branch)
+    if r.returncode != 0:
+        tail = (r.stderr or r.stdout or "").strip().splitlines()[-3:]
+        raise RequestError(
+            "推不上 GitHub，没法请 GitHub 抓 AFR 标题：%s\n多半是 Claude GitHub App 没有装到 lokliaoau-bot/asx-radarr"
+            "（https://github.com/apps/claude/installations/select_target）。" % " / ".join(tail), 3)
+    log("已请 GitHub 抓今天的 AFR 标题和行情（分支 %s），等它提交 …" % branch)
+    deadline = clock() + wait
+    fresh = False
+    while clock() < deadline:
+        sleep(poll)
+        git("fetch", "-q", "origin", "main")
+        show = git("show", "origin/main:" + path)
+        if show.returncode == 0:
+            try:
+                fresh = json.loads(show.stdout).get("collected_at", "") >= asked
+            except Exception:
+                fresh = False
+            if fresh:
+                break
+    if git("show", "origin/main:" + path).returncode != 0:
+        raise RequestError("等了 %d 分钟，GitHub 还没把今天的 AFR 标题提交回来（去 Actions 看「抓 AFR 标题和收盘行情」"
+                           "有没有失败）。" % (wait // 60), 4)
+    if git("merge", "--ff-only", "origin/main").returncode != 0:
+        git("checkout", "origin/main", "--", path)
+    if not fresh:
+        log("没等到这次请求的结果，先用当天早些时候定时抓的收件箱。")
+    return path
+
+
+def print_inbox(inbox, out=None):
+    out = out or sys.stdout
+    ix = inbox.get("index") or {}
+    print("日期 %s，抓取于 %s" % (inbox["date"], inbox.get("collected_at")), file=out)
+    if ix:
+        print("ASX 200（XJO）收 %s，%+.2f%%" % (ix.get("close"), ix.get("pct")), file=out)
+    print("\n涨跌最大的 15 只（股票池内）：" + "，".join(
+        "%s %+.2f%%" % (c, inbox["moves"][c]["pct"]) for c in inbox.get("top_movers") or []), file=out)
+    halted = [c for c, v in (inbox.get("moves") or {}).items() if v.get("halted")]
+    if halted:
+        print("停牌：" + "，".join(halted), file=out)
+    print("\nAFR 标题（只能从这里选，链接原样照抄）：", file=out)
+    for h in inbox.get("headlines") or []:
+        print("- [%s] %s | %s | %s" % (h.get("date"), h.get("section"), h.get("title"), h.get("url")), file=out)
+    print("\n其余股票的涨跌在 JSON 的 moves 里（股票池外的，发布时会自动补）。", file=out)
 
 
 # ---------------------------------------------------------------- 发布
@@ -390,7 +542,7 @@ def _write(path, obj):
     atomic_bytes(path, json.dumps(obj, ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
 
 
-def build_site(out_dir, briefs_dir=BRIEFS, log=print, fetch=True, prices=None):
+def build_site(out_dir, briefs_dir=BRIEFS, log=print, fetch=True, prices=None, inbox_dir=INBOX):
     """写 <out_dir>/news/：brief.json（最新一期）、briefs/<日期>.json、index.json、headlines.json。
     fetch=False 时不联网（不重算涨跌、不抓标题），测试和本地预览用。"""
     nd = os.path.join(out_dir, "news")
@@ -413,6 +565,10 @@ def build_site(out_dir, briefs_dir=BRIEFS, log=print, fetch=True, prices=None):
             heads = headlines(log=log)[:MAX_HEADLINES]
         except Exception as e:
             log("AFR 标题抓取失败（页面照常显示简报）: %s" % e)
+    if not heads and os.path.isdir(inbox_dir):     # 现抓失败就用最近一份收件箱，页面至少有标题可看
+        latest = sorted(n for n in os.listdir(inbox_dir) if _FILE.match(n))[-1:]
+        if latest:
+            heads = (load_inbox(latest[0][:10], inbox_dir) or {}).get("headlines", [])[:MAX_HEADLINES]
     _write(os.path.join(nd, "headlines.json"), {
         "fetched_at": dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
         "items": [{k: h.get(k) for k in ("title", "url", "section", "date")} for h in heads]})
@@ -459,6 +615,8 @@ def main(argv=None):
                 P = validate(b)
                 if isinstance(b, dict) and b.get("date") != os.path.basename(path)[:10]:
                     P.append("文件名和 date 对不上")
+                if not P:
+                    P = check_urls(b)
             except Exception as e:
                 P = ["读不了: %s" % e]
             print("%s: %s" % (path, "通过" if not P else "不通过"))
@@ -466,6 +624,35 @@ def main(argv=None):
                 print("  - " + p)
             bad += bool(P)
         return 1 if bad else 0
+    if cmd == "collect":
+        day = dt.date.fromisoformat(a[0]) if a else sydney_today()
+        inbox = collect(day, log=lambda m: print("!", m, file=sys.stderr))
+        if not inbox["headlines"]:
+            print("一条 AFR 标题都没抓到，不写收件箱", file=sys.stderr)
+            return 1
+        os.makedirs(INBOX, exist_ok=True)
+        path = os.path.join(INBOX, day.isoformat() + ".json")
+        with io.open(path, "w", encoding="utf-8", newline="\n") as f:
+            json.dump(inbox, f, ensure_ascii=False, indent=1)
+            f.write("\n")
+        print("%s：AFR 标题 %d 条，行情 %d 只，ASX 200 %s"
+              % (path, len(inbox["headlines"]), len(inbox["moves"]), inbox["index"]))
+        return 0
+    if cmd == "request":
+        try:
+            print(request_inbox(log=lambda m: print(m, file=sys.stderr)))
+            return 0
+        except RequestError as e:
+            print("失败：%s" % e, file=sys.stderr)
+            return e.code
+    if cmd == "inbox":
+        day = dt.date.fromisoformat(a[0]) if a else sydney_today()
+        inbox = load_inbox(day)
+        if not inbox:
+            print("没有 news/inbox/%s.json，先运行 python -m asxquant.news request" % day, file=sys.stderr)
+            return 1
+        print_inbox(inbox)
+        return 0
     if cmd == "accept" and len(a) >= 2:
         # 标准输出只打印收下的文件路径（给 shell 用），说明都写到标准错误
         import subprocess

@@ -134,7 +134,7 @@ def test_build_site():
             json.dump(sample("2026-10-20"), f, ensure_ascii=False)        # 文件名和日期对不上
         logs = []
         out = os.path.join(tmp, "site")
-        r = NW.build_site(out, briefs_dir=src, log=logs.append, fetch=False)
+        r = NW.build_site(out, briefs_dir=src, log=logs.append, fetch=False, inbox_dir=os.path.join(tmp, "no-inbox"))
         nd = os.path.join(out, "news")
         latest = json.load(io.open(os.path.join(nd, "brief.json"), encoding="utf-8"))
         idx = json.load(io.open(os.path.join(nd, "index.json"), encoding="utf-8"))["briefs"]
@@ -186,6 +186,120 @@ def test_stages():
     check("标题版没有影响对象，重算涨跌不出错", NW.fill_moves([hb], prices={}, log=lambda m: None) == 0)
 
 
+class FakeGit:
+    """假的 git：记录调用；push 成不成功、第几次 fetch 后 main 上出现收件箱，都由测试指定。"""
+
+    def __init__(self, push_ok=True, appear_after=None, inbox=None):
+        self.calls, self.fetches = [], 0
+        self.push_ok, self.appear_after, self.inbox = push_ok, appear_after, inbox
+
+    def __call__(self, *args):
+        import types
+        self.calls.append(args)
+        ok = lambda out="": types.SimpleNamespace(returncode=0, stdout=out, stderr="")
+        bad = lambda err="": types.SimpleNamespace(returncode=1, stdout="", stderr=err)
+        if args[0] == "push":
+            return ok() if self.push_ok else bad(
+                "remote: Claude doesn't have GitHub access to lokliaoau-bot/asx-radarr\nfatal: 403")
+        if args[0] == "fetch":
+            self.fetches += 1
+            return ok()
+        if args[0] == "show":
+            if self.appear_after is not None and self.fetches >= self.appear_after:
+                return ok(json.dumps(self.inbox))
+            return bad("does not exist")
+        return ok()
+
+
+def test_inbox():
+    print("\n[N7] 收件箱：GitHub 抓 AFR 标题和行情，云端 Claude 只从这里取；编出来的 AFR 链接不收")
+    import datetime as dt
+    pages = {NW.AFR_RSS: RSS, NW.AFR + "/": HOME.replace(
+        "</a>\n<a href=\"/life", "</a>\n<a href=\"/companies/old-story-20261001-p600aa\">An old story from early October here</a>\n<a href=\"/life", 1)}
+    prices = {"NAB": [("2026-10-19", 39.90, 1e6), ("2026-10-20", 39.20, 1e6)],
+              "NXT": [("2026-10-19", 9.18, 0.0), ("2026-10-20", 9.18, 0.0)],
+              "BHP": [("2026-10-19", 60.46, 1e6), ("2026-10-20", 59.50, 1e6)],
+              "XJO": [("2026-10-19", 8845.7, 0.0), ("2026-10-20", 8816.9, 0.0)]}
+    box = NW.collect(dt.date(2026, 10, 20), get=lambda u: pages[u], prices=prices,
+                     codes=["NAB", "NXT", "BHP"], log=lambda m: None)
+    urls = [h["url"] for h in box["headlines"]]
+    check("抓到当天的 AFR 标题", any("nab-to-cut" in u for u in urls) and any("gold-miners" in u for u in urls), str(urls))
+    check("太旧的文章（三天以前）不进收件箱", not any("old-story" in u for u in urls))
+    check("收件箱不存 AFR 摘要正文", all(set(h) == {"title", "url", "section", "date", "published"} for h in box["headlines"]))
+    check("指数收盘和涨跌（指数没有成交量，不算停牌）",
+          box["index"] == {"code": "XJO", "pct": -0.33, "close": 8816.9}, str(box["index"]))
+    check("个股涨跌按收盘价算", box["moves"]["NAB"]["pct"] == -1.75 and box["moves"]["NAB"]["close"] == 39.2)
+    check("涨跌最大的排前面，停牌的不算", box["top_movers"] == ["NAB", "BHP"], str(box["top_movers"]))
+
+    tmp = tempfile.mkdtemp()
+    try:
+        with io.open(os.path.join(tmp, "2026-10-20.json"), "w", encoding="utf-8") as f:
+            json.dump(box, f, ensure_ascii=False)
+        b = sample()
+        b["items"][0]["afr_url"] = "https://www.afr.com/companies/financial-services/nab-to-cut-2500-jobs-20261020-p616yh"
+        check("链接在收件箱里 → 通过", NW.check_urls(b, tmp) == [], str(NW.check_urls(b, tmp)))
+        b2 = sample()
+        b2["items"][0]["afr_url"] = "https://www.afr.com/companies/made-up-story-20261020-p699zz"
+        check("编出来的 AFR 链接 → 挡下", NW.check_urls(b2, tmp))
+        ok, why = NW.accept_brief("news/briefs/2026-10-20.json", json.dumps(b2, ensure_ascii=False), None, tmp)
+        check("收件流程同样挡下编出来的链接", not ok and "收件箱" in why, why)
+        check("当天没有收件箱的老简报照常通过（兼容手写的）", NW.check_urls(sample("2026-10-19"), tmp) == [])
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+    day = dt.date(2026, 10, 20)
+    g = FakeGit(push_ok=False)
+    try:
+        NW.request_inbox(day, git=g, sleep=lambda s: None, log=lambda m: None)
+        code = None
+    except NW.RequestError as e:
+        code, msg = e.code, str(e)
+    check("没装 Claude GitHub App（推不上）→ 立刻报错，退出码 3，并说明怎么修",
+          code == 3 and "github.com/apps/claude" in msg)
+    fresh = dict(box, collected_at="2099-01-01T00:00:00+00:00")
+    g = FakeGit(appear_after=2, inbox=fresh)
+    path = NW.request_inbox(day, git=g, sleep=lambda s: None, log=lambda m: None)
+    pushed = [c for c in g.calls if c[0] == "push"]
+    check("先推一个 claude/news-request-* 分支请 GitHub 去抓",
+          len(pushed) == 1 and pushed[0][2].startswith("HEAD:refs/heads/claude/news-request-2026-10-20-"), str(pushed))
+    check("等到 GitHub 提交了新的收件箱就拉下来", path == "news/inbox/2026-10-20.json" and g.fetches == 2
+          and ("merge", "--ff-only", "origin/main") in g.calls)
+    t = [0]
+
+    def clock():
+        t[0] += 30
+        return t[0]
+    g = FakeGit(appear_after=None)
+    try:
+        NW.request_inbox(day, git=g, sleep=lambda s: None, clock=clock, wait=300, log=lambda m: None)
+        code = None
+    except NW.RequestError as e:
+        code = e.code
+    check("等超时、当天一份都没有 → 退出码 4，不硬写", code == 4)
+    stale = dict(box, collected_at="2000-01-01T00:00:00+00:00")
+    t[0] = 0
+    g = FakeGit(appear_after=0, inbox=stale)
+    check("等超时但当天早些时候定时抓过 → 用那一份",
+          NW.request_inbox(day, git=g, sleep=lambda s: None, clock=clock, wait=300, log=lambda m: None)
+          == "news/inbox/2026-10-20.json")
+
+
+def test_workflows():
+    print("\n[N8] GitHub 上的三道保险：抓标题、收简报、看门狗")
+    col = io.open(".github/workflows/news-collect.yml", encoding="utf-8").read()
+    intake = io.open(".github/workflows/news-intake.yml", encoding="utf-8").read()
+    dog = io.open(".github/workflows/news-watchdog.yml", encoding="utf-8").read()
+    check("推 claude/news-request-* 分支就会触发抓取", "claude/news-request-**" in col and "news collect" in col)
+    check("抓取也有定时兜底和手动触发", "schedule:" in col and "workflow_dispatch" in col)
+    check("收简报的流程不理请求分支", "'!claude/news-request-**'" in intake)
+    check("收简报用 accept（校验 + 链接核对 + 不让标题版盖掉分析版）", "news accept" in intake)
+    check("看门狗：交易日晚上没有简报就开 issue 提醒", "news/briefs/$DAY.json" in dog and "gh issue create" in dog)
+    for name in ("afr-headlines", "afr-analysis"):
+        md = io.open(".claude/agents/%s.md" % name, encoding="utf-8").read()
+        check("子代理 %s 先请 GitHub 抓标题、只从收件箱选" % name,
+              "news request" in md and "news inbox" in md and "原样照抄" in md)
+
+
 def test_page_wiring():
     print("\n[N5] 页面：默认 AFR 要闻，原来的分析一行没删、收在「多角度分析」里")
     html = io.open("web/index.html", encoding="utf-8").read()
@@ -212,7 +326,8 @@ def main():
     print("=" * 68)
     print("AFR 要闻回归测试")
     print("=" * 68)
-    for fn in (test_validate, test_headlines, test_moves, test_build_site, test_stages, test_page_wiring):
+    for fn in (test_validate, test_headlines, test_moves, test_build_site, test_stages, test_inbox,
+               test_workflows, test_page_wiring):
         try:
             fn()
         except Exception as e:

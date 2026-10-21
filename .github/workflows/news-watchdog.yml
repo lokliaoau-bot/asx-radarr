@@ -1,0 +1,50 @@
+name: AFR 要闻看门狗
+
+# 每个交易日晚上检查：今天的 AFR 要闻有没有生成。没有就在仓库开（或更新）一个 issue——GitHub 会发邮件
+# 通知仓库主人，而且写明最常见的几个原因和去哪里看。云端任务自己失败时会推手机通知，但如果它根本没跑
+# （被停用、额度用完、平台故障），只有这里能发现。
+on:
+  schedule:
+    - cron: "0 10 * * 1-5"    # UTC 10:00 = 悉尼 21:00（夏令时）/ 20:00（冬令时）
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: 今天的简报在不在
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+          read DAY STATE <<< "$(python -m asxquant.news today)"
+          echo "悉尼 $DAY $STATE"
+          if [ "$STATE" != "交易日" ]; then echo "休市，不检查"; exit 0; fi
+          if [ -f "news/briefs/$DAY.json" ]; then echo "今天的简报已生成"; exit 0; fi
+          INBOX="没有（GitHub 抓 AFR 标题也失败了，看 Actions 里「抓 AFR 标题和收盘行情」）"
+          [ -f "news/inbox/$DAY.json" ] && INBOX="有（AFR 标题抓到了，问题出在 Claude 云端任务）"
+          TITLE="AFR 要闻 $DAY 没有生成"
+          BODY="今天（$DAY，交易日）到悉尼晚上还没有 news/briefs/$DAY.json。
+
+          - 今天的收件箱 news/inbox/$DAY.json：$INBOX
+          - 云端任务运行记录：https://claude.ai/code/routines/trig_01PefxYsQDR9nebgt8Rsak5T
+          - 最常见原因：Claude GitHub App 没装到这个仓库（云端推不上来），装：https://github.com/apps/claude/installations/select_target
+
+          页面不会空白：会显示最近一期简报，并列出 AFR 最新标题。这个 issue 由 news-watchdog.yml 自动开。"
+          NUM=$(gh issue list --state open --search "in:title AFR 要闻 没有生成" --json number --jq '.[0].number')
+          if [ -n "$NUM" ]; then
+            gh issue comment "$NUM" --body "$BODY"
+          else
+            gh issue create --title "$TITLE" --body "$BODY"
+          fi
