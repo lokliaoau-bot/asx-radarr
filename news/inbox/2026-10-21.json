@@ -1,7 +1,7 @@
 {
  "schema": "afr-inbox-v1",
  "date": "2026-10-21",
- "collected_at": "2026-10-21T10:02:49+00:00",
+ "collected_at": "2026-10-21T10:17:09+00:00",
  "headlines": [
   {
    "title": "Unis reject AI detection tools amid ‘futile’ fight against cheating",
@@ -336,6 +336,49 @@
    }
   },
   {
+   "title": "Cannon-Brookes’ private jet does a 32-minute flight",
+   "url": "https://www.afr.com/rear-window/cannon-brookes-private-jet-does-a-32-minute-flight-20261021-p617js",
+   "section": "rear-window",
+   "date": "2026-10-21",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Was",
+     "Atlassian",
+     "Utah",
+     "Another",
+     "Positano",
+     "Mike Cannon-Brookes",
+     "LinkedIn",
+     "Buying"
+    ]
+   }
+  },
+  {
+   "title": "Nassif family list Sydney’s biggest mansion with $45m price tag",
+   "url": "https://www.afr.com/property/residential/nassif-family-list-sydney-s-biggest-mansion-with-45m-price-tag-20261021-p6178n",
+   "section": "property",
+   "date": "2026-10-21",
+   "codes": [],
+   "hints": {
+    "amounts": [
+     "$41 million",
+     "$45 million"
+    ],
+    "names": [
+     "Sydney",
+     "Sid Nassif",
+     "Dural",
+     "Le Palais",
+     "Billed",
+     "Hills District",
+     "Netflix",
+     "Selling Sunset"
+    ]
+   }
+  },
+  {
    "title": "$3b gone in 40 minutes: Inside the NextDC bloodbath",
    "url": "https://www.afr.com/chanticleer/australia-s-data-centre-dream-just-crashed-into-a-22-metre-power-pole-20261021-p617fd",
    "section": "chanticleer",
@@ -394,26 +437,6 @@
    }
   },
   {
-   "title": "Cannon-Brookes’ private jet does a 32-minute flight",
-   "url": "https://www.afr.com/rear-window/cannon-brookes-private-jet-does-a-32-minute-flight-20261021-p617js",
-   "section": "rear-window",
-   "date": "2026-10-21",
-   "codes": [],
-   "hints": {
-    "amounts": [],
-    "names": [
-     "Was",
-     "Atlassian",
-     "Utah",
-     "Another",
-     "Positano",
-     "Mike Cannon-Brookes",
-     "LinkedIn",
-     "Buying"
-    ]
-   }
-  },
-  {
    "title": "NextDC’s electrician family dumped $100m in shares ahead of crash",
    "url": "https://www.afr.com/rear-window/nextdc-s-electrician-family-dumped-100m-in-shares-ahead-of-crash-20261020-p6170s",
    "section": "rear-window",
@@ -436,6 +459,26 @@
      "Wes Maas",
      "Craig Scroggie",
      "Melbourne"
+    ]
+   }
+  },
+  {
+   "title": "NextDC slashes earnings forecast, triggering 42pc share plunge",
+   "url": "https://www.afr.com/companies/infrastructure/nextdc-slashes-earnings-forecast-triggering-42pc-share-plunge-20261021-p616u7",
+   "section": "companies",
+   "date": "2026-10-21",
+   "codes": [
+    "NXT"
+   ],
+   "hints": {
+    "amounts": [
+     "$3 billion",
+     "41.7 per cent"
+    ],
+    "names": [
+     "NextDC",
+     "Melbourne",
+     "Australia"
     ]
    }
   },
@@ -540,26 +583,6 @@
      "Glencore",
      "Suresh Vadnagra",
      "South African"
-    ]
-   }
-  },
-  {
-   "title": "Firmus signs Thinking Machines in first big contract since failed IPO",
-   "url": "https://www.afr.com/companies/infrastructure/firmus-signs-thinking-machines-in-first-big-contract-since-failed-ipo-20261021-p617ap",
-   "section": "companies",
-   "date": "2026-10-21",
-   "codes": [],
-   "hints": {
-    "amounts": [],
-    "names": [
-     "Firmus Technologies",
-     "IPO",
-     "Thinking Machines Lab",
-     "OpenAI",
-     "Mira Murati",
-     "Under",
-     "Firmus",
-     "Asia"
     ]
    }
   },
@@ -851,19 +874,15 @@
    }
   },
   {
-   "title": "High Court barrister guilty of contempt after dodging ATO since 2016",
-   "url": "https://www.afr.com/companies/professional-services/high-court-barrister-guilty-of-contempt-after-dodging-ato-since-2016-20261020-p6171v",
-   "section": "companies",
-   "date": "2026-10-20",
-   "codes": [
-    "HPR"
-   ],
+   "title": "The real reason screens have replaced socialising",
+   "url": "https://www.afr.com/technology/death-of-hosting-the-real-reason-screens-have-replaced-socialising-20261021-p617as",
+   "section": "technology",
+   "date": "2026-10-21",
+   "codes": [],
    "hints": {
     "amounts": [],
     "names": [
-     "Sydney",
-     "Philip Bates",
-     "NSW Supreme Court"
+     "What"
     ]
    }
   },
@@ -1248,26 +1267,6 @@
    }
   },
   {
-   "title": "NextDC slashes earnings forecast, triggering 42pc share plunge",
-   "url": "https://www.afr.com/companies/infrastructure/nextdc-slashes-earnings-forecast-triggering-42pc-share-plunge-20261021-p616u7",
-   "section": "companies",
-   "date": "2026-10-21",
-   "codes": [
-    "NXT"
-   ],
-   "hints": {
-    "amounts": [
-     "$3 billion",
-     "41.7 per cent"
-    ],
-    "names": [
-     "NextDC",
-     "Melbourne",
-     "Australia"
-    ]
-   }
-  },
-  {
    "title": "Spotify is letting your favourite podcasters charge listeners more",
    "url": "https://www.afr.com/companies/media-and-marketing/spotify-is-letting-your-favourite-podcasters-charge-listeners-more-20261021-p61742",
    "section": "companies",
@@ -1281,6 +1280,26 @@
      "Hamish & Andy and Casefile True Crime",
      "Like",
      "Joe Rogan and Jay Shetty"
+    ]
+   }
+  },
+  {
+   "title": "Firmus signs Thinking Machines in first big contract since failed IPO",
+   "url": "https://www.afr.com/companies/infrastructure/firmus-signs-thinking-machines-in-first-big-contract-since-failed-ipo-20261021-p617ap",
+   "section": "companies",
+   "date": "2026-10-21",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Firmus Technologies",
+     "IPO",
+     "Thinking Machines Lab",
+     "OpenAI",
+     "Mira Murati",
+     "Under",
+     "Firmus",
+     "Asia"
     ]
    }
   },
@@ -1702,6 +1721,23 @@
    }
   },
   {
+   "title": "High Court barrister guilty of contempt after dodging ATO since 2016",
+   "url": "https://www.afr.com/companies/professional-services/high-court-barrister-guilty-of-contempt-after-dodging-ato-since-2016-20261020-p6171v",
+   "section": "companies",
+   "date": "2026-10-20",
+   "codes": [
+    "HPR"
+   ],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Sydney",
+     "Philip Bates",
+     "NSW Supreme Court"
+    ]
+   }
+  },
+  {
    "title": "Deloitte cuts 170 jobs as big four race to target outsourcing",
    "url": "https://www.afr.com/companies/professional-services/deloitte-cuts-170-jobs-as-big-four-race-to-target-outsourcing-20261018-p616cg",
    "section": "companies",
@@ -2078,19 +2114,6 @@
      "Ex-partner Michael McNamara",
      "Potentia",
      "PartsCheck"
-    ]
-   }
-  },
-  {
-   "title": "The real reason screens have replaced socialising",
-   "url": "https://www.afr.com/technology/death-of-hosting-the-real-reason-screens-have-replaced-socialising-20261021-p617as",
-   "section": "technology",
-   "date": "2026-10-21",
-   "codes": [],
-   "hints": {
-    "amounts": [],
-    "names": [
-     "What"
     ]
    }
   },
