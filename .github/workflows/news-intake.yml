@@ -35,6 +35,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           BRANCH: ${{ github.ref_name }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           set -e
           # 同一分支连推两次（比如变基后强推）时，前一次运行可能已经收下并删掉了分支——这不是错误
@@ -56,22 +57,30 @@ jobs:
           fi
           # 逐个校验；同一天 main 上已经是「分析版」时不收「标题版」（每日自动抓标题不能盖掉点按钮换来的分析）。
           # 校验不过会让这一步失败（Actions 里标红，方便发现）；被「不覆盖」挡下的不算失败。
-          ACCEPTED=$(python -m asxquant.news accept FETCH_HEAD $FILES)
+          DAY=$(echo "$FILES" | head -1 | sed 's#.*/##; s#\.json$##')
+          echo "DAY=$DAY" >> "$GITHUB_ENV"
+          ACCEPTED=$(python -m asxquant.news accept FETCH_HEAD $FILES 2>accept.log) || { cat accept.log; exit 1; }
+          cat accept.log
+          git config user.name  "asx-radar-bot"
+          git config user.email "actions@github.com"
           if [ -z "$ACCEPTED" ]; then
             echo "没有需要并入的简报"
+            # 记下结果（「已有分析版，标题版不覆盖」不是错误），云端的 confirm 据此不会误报
+            python -m asxquant.news status intake ok "$(tail -n 2 accept.log | tr '\n' ' ')" "$DAY"
+            git add news/inbox/_status.json
+            git commit -q -m "AFR 收件记录 $DAY" && { git push origin HEAD:main || { git pull --rebase origin main && git push origin HEAD:main; } || true; }
             case "$BRANCH" in
               claude/afr-brief-*) git push origin --delete "$BRANCH" || true ;;
             esac
             exit 0
           fi
 
-          git config user.name  "asx-radar-bot"
-          git config user.email "actions@github.com"
           FILES="$ACCEPTED"
           # 数字核对：打开每条的来源网页逐个找出处，结果写进简报（页面上标出没找到的）。
           # 算错、大盘数字不对这种硬错误上面 accept 已经挡掉了；这里网页打不开之类的问题不挡发布。
           python -m asxquant.news verify $FILES || echo "数字核对没跑完，照常发布（页面不显示核对结果）"
-          git add $FILES
+          python -m asxquant.news status intake ok "并入 $(echo $FILES | tr '\n' ' ')" "$DAY"
+          git add $FILES news/inbox/_status.json
           if git diff --staged --quiet; then
             echo "和 main 上的完全一样，不用提交"
           else
@@ -91,3 +100,18 @@ jobs:
           case "$BRANCH" in
             claude/afr-brief-*) git push origin --delete "$BRANCH" || true ;;
           esac
+
+      # 校验没过（或别的原因失败）：把原因写进 news/inbox/_status.json，云端 Claude 的 confirm
+      # 几十秒内就能看到并告诉用户，不用干等
+      - name: 失败时记下原因
+        if: failure()
+        env:
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          git config user.name  "asx-radar-bot"
+          git config user.email "actions@github.com"
+          git fetch -q origin main && git reset -q --hard origin/main
+          python -m asxquant.news status intake fail "$(tail -n 4 accept.log 2>/dev/null | tr '\n' ' ')" "${DAY:-}"
+          git add news/inbox/_status.json
+          git commit -q -m "AFR 收件失败记录 ${DAY:-}" || exit 0
+          for i in 1 2 3; do git push origin HEAD:main && break; git pull -q --rebase origin main; done

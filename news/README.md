@@ -30,7 +30,8 @@ Market Index、ABC、Capital Brief、Yahoo 行情也都打不开。能用的只�
 2. **请 GitHub 抓今天的 AFR 标题和行情**：`python -m asxquant.news request`（会等几分钟，最多 15 分钟）。
    成功会打印收件箱路径。失败时**不要硬写**，按退出码报告后结束：
    - 退出码 3：推不上 GitHub——Claude GitHub App 没装到 `lokliaoau-bot/asx-radarr`，原话报告给用户；
-   - 退出码 4：GitHub 没在时间内抓回来——报告，并提醒去 Actions 看「抓 AFR 标题和收盘行情」。
+   - 退出码 4：GitHub 没在时间内抓回来——报告，并提醒去 Actions 看「抓 AFR 标题和收盘行情」；
+   - 退出码 5：GitHub 抓取失败了（原因会打印出来，也记在 `news/inbox/_status.json`）——原样报告。
 3. **看收件箱**：`python -m asxquant.news inbox`。内容：
    - ASX 200 收盘、涨跌最大的股票、停牌的股票；
    - AFR 标题分两组：**Street Talk**（交易内幕：收购、出售资产、融资、IPO、大宗交易）和其他栏目，
@@ -56,7 +57,8 @@ Market Index、ABC、Capital Brief、Yahoo 行情也都打不开。能用的只�
 
 ## A. 抓标题（`stage: "headlines"`）
 
-1. 如果 `news/briefs/<日期>.json` 已经存在而且 `stage` 是 `analysis`：**直接结束**（用户已经要过深度分析）。
+1. 如果 `news/briefs/<日期>.json` 已经存在（不管哪个阶段）：**直接结束**。这个任务一天排两次（悉尼 18:00 和
+   20:00），第二次只是在第一次失败时补跑。
 2. 按共同步骤 1–5 做，写 `news/briefs/<日期>.json`（`market.index_close` / `index_pct` 用收件箱的 ASX 200 数字）：
    ```json
    {"schema": "afr-brief-v1", "date": "<日期>", "stage": "headlines",
@@ -122,7 +124,8 @@ Market Index、ABC、Capital Brief、Yahoo 行情也都打不开。能用的只�
    git commit -m "AFR 简报 <日期>"
    git push -u origin <分支名>
    ```
-   **只推一次**：推完不要再变基、强推或补推。main 上后来多出的存档提交不影响——收件流程只看你这个分支
+   **只推一次**：推完不要再变基、强推或补推。推完运行 `python -m asxquant.news confirm <日期>`：它等 GitHub
+   收下并上线（最多 10 分钟）；输出「没上线」时把原因原样汇报（多半是收件时校验没过）。main 上后来多出的存档提交不影响——收件流程只看你这个分支
    自己改了哪些文件。
    不用开 Pull Request：`.github/workflows/news-intake.yml` 会再校验一遍、并进 main、触发部署，
    约 10 分钟后手机上可见。分支里多改了任何别的文件，它就不会合并。

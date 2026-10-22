@@ -352,7 +352,8 @@ def test_more_news():
             return pages[u]
         if "eqt-set-to-sweep" in u or "nab-to-cut" in u:
             return ARTICLE
-        raise OSError("404")
+        import urllib.error
+        raise urllib.error.HTTPError(u, 404, "not found", {}, None)
     prices = {"PPC": [("2026-10-20", 1.55, 1e5), ("2026-10-21", 1.44, 1e5)],
               "INA": [("2026-10-20", 4.24, 1e5), ("2026-10-21", 4.65, 1e5)]}
     box = NW.collect(dt.date(2026, 10, 21), get=get, prices=prices, codes=["NAB"], log=lambda m: None,
@@ -399,7 +400,7 @@ def test_round2():
     rss = RSS.replace("nab-to-cut-2500-jobs-20261020-p616yh", "nab-to-cut-2500-jobs-20261026-p616yh")
     st = ('<a href="/street-talk/weekend-deal-for-ingenia-20261024-p618aa">Weekend Street Talk deal for Ingenia here</a>'
           '<a href="/street-talk/older-deal-20261021-p618bb">Older Street Talk deal from Wednesday here</a>')
-    pages = {NW.AFR_RSS: rss, NW.AFR + "/": "", NW.AFR + "/street-talk": st, NW.ASX_LIST: ASX_CSV}
+    pages = {NW.AFR_RSS: rss, NW.AFR + "/": "", NW.AFR + "/street-talk": st, NW.ASX_LIST: ASX_CSV, NW.BING_RSS: ""}
     read = []
 
     def get(u):
@@ -564,6 +565,144 @@ def test_scorecard():
           and "news score" in col and "news/scorecard.json" in col)
 
 
+BING = '''<rss><channel>
+<item><title>NextDC draws investor ire over slow disclosure of power delays</title>
+<link>https://www.bing.com/news/apiclick.aspx?ref=FexRss&amp;aid=&amp;tid=x&amp;url=https%3a%2f%2fwww.afr.com%2fcompanies%2finfrastructure%2fnextdc-draws-investor-ire-20261022-p617pi&amp;c=1</link></item>
+<item><title>Some other site story that is long enough</title>
+<link>https://www.bing.com/news/apiclick.aspx?url=https%3a%2f%2fexample.com%2fx-20261022-p617aa</link></item>
+</channel></rss>'''
+
+
+def test_round1_reliability():
+    print("\n[N13] 第三阶段第一轮：抓新闻成功率（备用来源、重试、失败快报、确认上线、看门狗不误报）")
+    import datetime as dt
+    import urllib.error
+    b = NW.parse_bing(BING)
+    check("Bing 新闻 RSS：从跳转链接里取出 AFR 真实地址，别的网站不要",
+          [x["url"] for x in b] == ["https://www.afr.com/companies/infrastructure/nextdc-draws-investor-ire-20261022-p617pi"],
+          str(b))
+    pages = {NW.AFR_RSS: RSS, NW.AFR + "/": HOME, NW.BING_RSS: BING}
+    got = NW.headlines(get=lambda u: pages[u], fallback=True)
+    check("收件时 Bing 补进 AFR 首页没有的标题", any("nextdc-draws" in h["url"] for h in got))
+    down = {NW.BING_RSS: BING}
+
+    def afr_blocked(u):
+        if u in down:
+            return down[u]
+        raise urllib.error.HTTPError(u, 403, "forbidden", {}, None)
+    got = NW.headlines(get=afr_blocked, fallback=True)
+    check("AFR 整个挡住 GitHub 时，靠 Bing 照样有 AFR 标题", len(got) == 1, str(got))
+
+    calls, naps = [], []
+
+    def flaky(u):
+        calls.append(u)
+        if len(calls) < 3:
+            raise urllib.error.URLError("timed out")
+        return "ok"
+    check("超时之类的偶发错误会重试（隔几秒）", NW._retrying(flaky, naps.append)("u") == "ok" and naps == [2, 4])
+    calls.clear()
+    naps.clear()
+
+    def gone(u):
+        calls.append(u)
+        raise urllib.error.HTTPError(u, 404, "nf", {}, None)
+    try:
+        NW._retrying(gone, naps.append)("u")
+    except urllib.error.HTTPError:
+        pass
+    check("404/403 这种明确拒绝不重试", len(calls) == 1 and naps == [])
+
+    tmp = tempfile.mkdtemp()
+    try:
+        sp = os.path.join(tmp, "_status.json")
+        NW.write_status("collect", False, "AFR 403", "2026-10-22", path=sp)
+        st = NW.write_status("intake", True, "并入", "2026-10-22", path=sp)
+        check("状态文件同时记抓取和收件两步", st["collect"]["ok"] is False and st["intake"]["ok"] is True)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+    day = dt.date(2026, 10, 22)
+    fail = json.dumps({"collect": {"at": "2099-01-01T00:00:00+00:00", "ok": False, "info": "AFR 403", "run": "R"}})
+
+    class G(FakeGit):
+        def __init__(self, status, inbox=None):
+            FakeGit.__init__(self, appear_after=0 if inbox else None, inbox=inbox)
+            self.status = status
+
+        def __call__(self, *args):
+            if args[0] == "show" and args[1].endswith("_status.json"):
+                import types
+                return types.SimpleNamespace(returncode=0, stdout=self.status, stderr="")
+            return FakeGit.__call__(self, *args)
+    try:
+        NW.request_inbox(day, git=G(fail), sleep=lambda s: None, log=lambda m: None)
+        code = None
+    except NW.RequestError as e:
+        code, msg = e.code, str(e)
+    check("GitHub 抓取失败时马上报（退出码 5，带原因），不用干等 15 分钟", code == 5 and "AFR 403" in msg)
+    stale = {"date": "2026-10-22", "collected_at": "2000-01-01T00:00:00+00:00", "headlines": []}
+    check("抓取失败但当天早些时候有收件箱：先用那份",
+          NW.request_inbox(day, git=G(fail, stale), sleep=lambda s: None, log=lambda m: None)
+          == "news/inbox/2026-10-22.json")
+
+    tmp = tempfile.mkdtemp()
+    try:
+        mine = dict(sample("2026-10-22"), stage="headlines", generated_at="2026-10-22T18:09:01+11:00")
+        local = os.path.join(tmp, "2026-10-22.json")
+        with io.open(local, "w", encoding="utf-8") as f:
+            json.dump(mine, f, ensure_ascii=False)
+
+        class C(FakeGit):
+            def __init__(self, main_brief=None, status=""):
+                FakeGit.__init__(self)
+                self.main_brief, self.status = main_brief, status
+
+            def __call__(self, *args):
+                import types
+                if args[0] == "show" and args[1].endswith("_status.json"):
+                    return types.SimpleNamespace(returncode=0, stdout=self.status, stderr="")
+                if args[0] == "show":
+                    if self.main_brief is None:
+                        return types.SimpleNamespace(returncode=1, stdout="", stderr="no")
+                    return types.SimpleNamespace(returncode=0, stdout=json.dumps(self.main_brief), stderr="")
+                return FakeGit.__call__(self, *args)
+        quick = dict(sleep=lambda s: None, log=lambda m: None)
+        check("推送后确认：main 上是这一期 → 上线了", NW.confirm_brief("2026-10-22", local, git=C(mine), **quick) is None)
+        check("main 上已经是更新的分析版 → 也算成功（标题版本来就不该覆盖）",
+              NW.confirm_brief("2026-10-22", local, git=C(dict(mine, stage="analysis", generated_at="x")), **quick) is None)
+        rej = json.dumps({"intake": {"at": "2099-01-01T00:00:00+00:00", "ok": False, "date": "2026-10-22",
+                                     "info": "没过校验: 第 1 条 AFR 链接不在收件箱里", "run": "R"}})
+        why = NW.confirm_brief("2026-10-22", local, git=C(None, rej), **quick)
+        check("收件流程退回时马上说原因", why and "没过校验" in why, str(why))
+        t = [0]
+
+        def clock():
+            t[0] += 30
+            return t[0]
+        why = NW.confirm_brief("2026-10-22", local, git=C(None), wait=120, clock=clock, **quick)
+        check("一直没上线：超时后说去哪里看", why and "收 AFR 简报" in why, str(why))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+    u = lambda s: dt.datetime.fromisoformat(s)
+    check("看门狗：GitHub 晚跑到悉尼凌晨时查前一天（10-21 误报的情况）",
+          NW.due_day(u("2026-10-21T14:50:00+00:00")) == dt.date(2026, 10, 21))
+    check("看门狗：悉尼 19:00 前查前一个交易日、之后查今天；周末查周五",
+          NW.due_day(u("2026-10-22T07:00:00+00:00")) == dt.date(2026, 10, 21)
+          and NW.due_day(u("2026-10-22T08:30:00+00:00")) == dt.date(2026, 10, 22)
+          and NW.due_day(u("2026-10-24T02:00:00+00:00")) == dt.date(2026, 10, 23))
+    dog = io.open(".github/workflows/news-watchdog.yml", encoding="utf-8").read()
+    col = io.open(".github/workflows/news-collect.yml", encoding="utf-8").read()
+    intake = io.open(".github/workflows/news-intake.yml", encoding="utf-8").read()
+    check("看门狗用 news due，补上的那天自动关 issue", "news due" in dog and "gh issue close" in dog)
+    check("抓取一天排两次定时（GitHub 会丢定时任务），失败写状态", col.count("cron:") == 2 and "status collect fail" in col)
+    check("收件失败写状态（云端 confirm 能马上看到）", "status intake fail" in intake and "status intake ok" in intake)
+    for name in ("afr-headlines", "afr-analysis"):
+        md = io.open(".claude/agents/%s.md" % name, encoding="utf-8").read()
+        check("子代理 %s 推送后确认上线、认得退出码 5" % name, "news confirm" in md and "3、4 或 5" in md)
+
+
 def test_workflows():
     print("\n[N8] GitHub 上的三道保险：抓标题、收简报、看门狗")
     col = io.open(".github/workflows/news-collect.yml", encoding="utf-8").read()
@@ -607,7 +746,8 @@ def main():
     print("AFR 要闻回归测试")
     print("=" * 68)
     for fn in (test_validate, test_headlines, test_moves, test_build_site, test_stages, test_inbox,
-               test_more_news, test_round2, test_number_check, test_scorecard, test_workflows, test_page_wiring):
+               test_more_news, test_round2, test_number_check, test_scorecard, test_round1_reliability,
+               test_workflows, test_page_wiring):
         try:
             fn()
         except Exception as e:

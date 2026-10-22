@@ -1,8 +1,13 @@
 name: AFR 要闻看门狗
 
-# 每个交易日晚上检查：今天的 AFR 要闻有没有生成。没有就在仓库开（或更新）一个 issue——GitHub 会发邮件
-# 通知仓库主人，而且写明最常见的几个原因和去哪里看。云端任务自己失败时会推手机通知，但如果它根本没跑
+# 每个交易日晚上检查：该有的那期 AFR 要闻有没有生成。没有就在仓库开（或更新）一个 issue——GitHub 会发邮件
+# 通知仓库主人，并写明最常见的几个原因和去哪里看。云端任务自己失败时会推手机通知，但如果它根本没跑
 # （被停用、额度用完、平台故障），只有这里能发现。
+# 已经补上的那几天，它开的 issue 会自动关掉。
+#
+# 2026-10-22 修：GitHub 的定时任务常常晚好几个小时（10-21 那次拖到悉尼第二天凌晨 1:50 才跑），原来拿
+# 「悉尼今天」去查，结果把还没到时间的 10-22 当成「没生成」误报。现在用 `news due`：悉尼 19:00 前查上一个
+# 交易日，之后才查今天。
 on:
   schedule:
     - cron: "0 10 * * 1-5"    # UTC 10:00 = 悉尼 21:00（夏令时）/ 20:00（冬令时）
@@ -23,26 +28,34 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: 今天的简报在不在
+      - name: 该有的那期简报在不在
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -e
-          read DAY STATE <<< "$(python -m asxquant.news today)"
-          echo "悉尼 $DAY $STATE"
-          if [ "$STATE" != "交易日" ]; then echo "休市，不检查"; exit 0; fi
-          if [ -f "news/briefs/$DAY.json" ]; then echo "今天的简报已生成"; exit 0; fi
+          # 先关掉已经补上的那几天的提醒
+          gh issue list --state open --search "in:title AFR 要闻 没有生成" --json number,title \
+            --jq '.[] | "\(.number) \(.title)"' | while read -r NUM _ _ D _; do
+            if [ -f "news/briefs/$D.json" ]; then
+              gh issue close "$NUM" --comment "news/briefs/$D.json 已经生成，自动关闭。"
+            fi
+          done
+
+          DAY=$(python -m asxquant.news due)
+          echo "现在应该已有简报的交易日：$DAY"
+          if [ -f "news/briefs/$DAY.json" ]; then echo "已生成"; exit 0; fi
           INBOX="没有（GitHub 抓 AFR 标题也失败了，看 Actions 里「抓 AFR 标题和收盘行情」）"
-          [ -f "news/inbox/$DAY.json" ] && INBOX="有（AFR 标题抓到了，问题出在 Claude 云端任务）"
+          [ -f "news/inbox/$DAY.json" ] && INBOX="有（AFR 标题抓到了，问题出在 Claude 云端任务或收件流程）"
           TITLE="AFR 要闻 $DAY 没有生成"
-          BODY="今天（$DAY，交易日）到悉尼晚上还没有 news/briefs/$DAY.json。
+          BODY="$DAY（交易日）到悉尼晚上还没有 news/briefs/$DAY.json。
 
-          - 今天的收件箱 news/inbox/$DAY.json：$INBOX
+          - 那天的收件箱 news/inbox/$DAY.json：$INBOX
+          - 最近一次抓取 / 收件的结果：news/inbox/_status.json
           - 云端任务运行记录：https://claude.ai/code/routines/trig_01PefxYsQDR9nebgt8Rsak5T
-          - 最常见原因：Claude GitHub App 没装到这个仓库（云端推不上来），装：https://github.com/apps/claude/installations/select_target
+          - 常见原因：云端任务没跑或额度用完；Claude GitHub App 被取消授权（云端推不上来）；简报没过校验被退回
 
-          页面不会空白：会显示最近一期简报，并列出 AFR 最新标题。这个 issue 由 news-watchdog.yml 自动开。"
-          NUM=$(gh issue list --state open --search "in:title AFR 要闻 没有生成" --json number --jq '.[0].number')
+          页面不会空白：会显示最近一期简报，并列出 AFR 最新标题。补上之后这个 issue 会自动关闭。"
+          NUM=$(gh issue list --state open --search "in:title \"$TITLE\"" --json number --jq '.[0].number')
           if [ -n "$NUM" ]; then
             gh issue comment "$NUM" --body "$BODY"
           else

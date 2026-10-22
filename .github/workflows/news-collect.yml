@@ -12,7 +12,9 @@ on:
   push:
     branches: ['claude/news-request-**']
   schedule:
-    - cron: "30 6 * * 1-5"    # UTC 06:30 = 悉尼 17:30（夏令时）/ 16:30（冬令时），都在收盘之后
+    # GitHub 的定时任务会晚跑甚至直接丢（10-22 的 06:30 那次就没跑），所以排两次，都在收盘之后
+    - cron: "30 6 * * 1-5"    # UTC 06:30 = 悉尼 17:30（夏令时）/ 16:30（冬令时）
+    - cron: "45 7 * * 1-5"    # UTC 07:45 = 悉尼 18:45 / 17:45
   workflow_dispatch:
 
 permissions:
@@ -45,11 +47,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           BRANCH: ${{ github.ref_name }}
           EVENT: ${{ github.event_name }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          set -e
-          python -m asxquant.news collect
+          set -eo pipefail
+          python -m asxquant.news collect 2>&1 | tee collect.log
           # 判断成绩单：给以前的分析版对账（失败不影响收件）
           python -m asxquant.news score || echo "成绩单没算成，下次再算"
+          python -m asxquant.news status collect ok "$(tail -n 1 collect.log)"
           git config user.name  "asx-radar-bot"
           git config user.email "actions@github.com"
           git add news/inbox
@@ -69,6 +73,20 @@ jobs:
           if [ "$EVENT" = "schedule" ]; then
             gh workflow run daily.yml --ref main
           fi
+
+      # 抓取失败：把原因写进 news/inbox/_status.json，正在等的云端 Claude 几十秒内就知道，不用干等 15 分钟
+      - name: 失败时记下原因
+        if: failure()
+        env:
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          git config user.name  "asx-radar-bot"
+          git config user.email "actions@github.com"
+          git fetch -q origin main && git reset -q --hard origin/main
+          python -m asxquant.news status collect fail "$(tail -n 5 collect.log 2>/dev/null | tr '\n' ' ')"
+          git add news/inbox/_status.json
+          git commit -q -m "AFR 抓取失败记录" || exit 0
+          for i in 1 2 3; do git push origin HEAD:main && break; git pull -q --rebase origin main; done
 
       # 抓取失败也要删掉请求分支，不然会越积越多（单独一步，前面失败了也照样跑）
       - name: 删掉用完的请求分支

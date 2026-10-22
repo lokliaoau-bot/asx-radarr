@@ -21,6 +21,8 @@
   python -m asxquant.news collect [日期]                  # GitHub Actions 用：抓 AFR 标题和收盘行情 → news/inbox/
   python -m asxquant.news request                         # 云端 Claude 用：请 GitHub 现抓一份，等它提交后拉下来
   python -m asxquant.news inbox [日期]                    # 云端 Claude 用：看收件箱里的 AFR 标题和涨跌
+  python -m asxquant.news confirm <日期>                  # 云端 Claude 用：推送后确认简报真的并进了 main
+  python -m asxquant.news due                             # 看门狗用：现在应该已有简报的那个交易日
   python -m asxquant.news verify <文件…>                  # news-intake.yml 用：打开来源网页逐个核对数字
   python -m asxquant.news score                           # news-collect.yml 用：判断成绩单 → news/scorecard.json
 """
@@ -35,6 +37,7 @@ import json
 import os
 import re
 import sys
+import urllib.error
 import urllib.request
 import xml.etree.ElementTree as ET
 
@@ -53,6 +56,9 @@ STAGES = ("headlines", "analysis")
 EFFORTS = ("low", "medium", "high")
 AFR = "https://www.afr.com"
 AFR_RSS = AFR + "/rss/feed.xml"
+# 备用标题来源（2026-10-22 加）：AFR 万一挡住 GitHub 的机器，Bing 新闻 RSS 仍能给出 AFR 的标题和真实链接
+BING_RSS = "https://www.bing.com/news/search?q=site%3aafr.com&format=rss&count=50"
+STATUS = "news/inbox/_status.json"          # 抓取 / 收件流程的最近一次结果，云端 Claude 靠它快速知道失败原因
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/126.0 Safari/537.36")
 # 和股市有关的栏目（链接路径第一段）。政治、国际、生活、文化不选。
@@ -142,11 +148,48 @@ def parse_home(text):
     return out
 
 
-def headlines(market_only=True, get=_get, log=lambda m: None, sections=()):
+def parse_bing(text):
+    """Bing 新闻 RSS → [{title, url}]：链接是 Bing 的跳转，真实地址在 url= 参数里；只留 afr.com 的。"""
+    import urllib.parse
+    out = []
+    for it in re.findall(r"<item>(.*?)</item>", text or "", flags=re.S):
+        t = re.search(r"<title>(.*?)</title>", it, flags=re.S)
+        l = re.search(r"<link>(.*?)</link>", it, flags=re.S)
+        if not (t and l):
+            continue
+        link = html.unescape(l.group(1).strip())
+        url = urllib.parse.parse_qs(urllib.parse.urlparse(link).query).get("url", [link])[0].split("?")[0]
+        title = _clean(re.sub(r"<!\[CDATA\[|\]\]>", "", t.group(1)))
+        if url.startswith(AFR + "/") and len(title) >= 20 and _SLUG_DATE.search(url):
+            out.append({"title": title, "url": url, "category": None, "published": None})
+    return out
+
+
+def _retrying(get, sleep, tries=3, log=lambda m: None):
+    """网络偶尔抽风（超时、5xx）就隔几秒重试；404/403 这种明确拒绝不重试。"""
+    def wrapped(url):
+        for i in range(tries):
+            try:
+                return get(url)
+            except urllib.error.HTTPError as e:
+                if e.code < 500 or i == tries - 1:
+                    raise
+            except Exception:
+                if i == tries - 1:
+                    raise
+            log("重试 %s（第 %d 次）" % (url, i + 2))
+            sleep(2 * (i + 1))
+    return wrapped
+
+
+def headlines(market_only=True, get=_get, log=lambda m: None, sections=(), fallback=False):
     """RSS 在前（有时间和栏目），首页补齐（RSS 只有最新 20 条，早上的大新闻常常已经掉出去），
-    再按 sections 逐个读栏目页（收件时用 SECTION_PAGES；发布时为了快，只读 RSS 和首页）。"""
+    再按 sections 逐个读栏目页（收件时用 SECTION_PAGES；发布时为了快，只读 RSS 和首页）。
+    fallback=True 时再读 Bing 新闻的 AFR 结果：平时补漏，AFR 挡住 GitHub 时就靠它。"""
     items, seen = [], set()
     pages = [(AFR_RSS, parse_rss), (AFR + "/", parse_home)] + [(AFR + p, parse_home) for p in sections]
+    if fallback:
+        pages.append((BING_RSS, parse_bing))
     for url, parse in pages:
         try:
             got = parse(get(url))
@@ -595,7 +638,8 @@ def collect(day=None, get=_get, prices=None, codes=None, log=print, sections=SEC
     sleep = sleep or time.sleep
     day = day or sydney_today()
     lo = day - dt.timedelta(days=3)
-    heads = [h for h in headlines(get=get, log=log, sections=sections)
+    get = _retrying(get, sleep, log=log)
+    heads = [h for h in headlines(get=get, log=log, sections=sections, fallback=True)
              if not h.get("date") or lo <= dt.date.fromisoformat(h["date"]) <= day]
     try:
         index = parse_asx_list(get(ASX_LIST))
@@ -665,6 +709,29 @@ def _git(*args):
     return subprocess.run(["git"] + list(args), capture_output=True, text=True, encoding="utf-8")
 
 
+def read_status(text):
+    try:
+        return json.loads(text) if text else {}
+    except Exception:
+        return {}
+
+
+def write_status(kind, ok, info="", day=None, path=None):
+    """GitHub Actions 用：把这一步（collect / intake）的结果记进 news/inbox/_status.json。"""
+    path = path or os.path.join(ROOT, STATUS)
+    st = {}
+    if os.path.exists(path):
+        with io.open(path, encoding="utf-8") as f:
+            st = read_status(f.read())
+    st[kind] = {"at": _now_iso(), "ok": bool(ok), "info": (info or "")[-600:],
+                "date": day or sydney_today().isoformat(), "run": os.environ.get("RUN_URL", "")}
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with io.open(path, "w", encoding="utf-8", newline="\n") as f:
+        json.dump(st, f, ensure_ascii=False, indent=1)
+        f.write("\n")
+    return st
+
+
 class RequestError(RuntimeError):
     def __init__(self, msg, code):
         RuntimeError.__init__(self, msg)
@@ -708,6 +775,13 @@ def request_inbox(day=None, wait=900, poll=20, git=_git, sleep=None, clock=None,
                 fresh = False
             if fresh:
                 break
+        # 抓取失败时 GitHub 会写 _status.json：马上知道原因，不用干等 15 分钟
+        st = read_status(git("show", "origin/main:" + STATUS).stdout).get("collect") or {}
+        if st.get("at", "") >= asked and st.get("ok") is False:
+            if git("show", "origin/main:" + path).returncode == 0:
+                log("这次抓取失败（%s），先用当天早些时候抓的收件箱。" % st.get("info", "")[-200:])
+                break
+            raise RequestError("GitHub 抓取失败：%s %s" % (st.get("info", "")[-400:], st.get("run", "")), 5)
     if git("show", "origin/main:" + path).returncode != 0:
         raise RequestError("等了 %d 分钟，GitHub 还没把今天的 AFR 标题提交回来（去 Actions 看「抓 AFR 标题和收盘行情」"
                            "有没有失败）。" % (wait // 60), 4)
@@ -716,6 +790,60 @@ def request_inbox(day=None, wait=900, poll=20, git=_git, sleep=None, clock=None,
     if not fresh:
         log("没等到这次请求的结果，先用当天早些时候定时抓的收件箱。")
     return path
+
+
+def confirm_brief(day, local_path, wait=600, poll=20, git=_git, sleep=None, clock=None, log=print):
+    """推送之后确认简报真的并进了 main（收件流程会再校验一遍，可能退回）。
+    返回 None = 上线了；否则返回原因（退回原因或超时）。"""
+    import time
+    sleep = sleep or time.sleep
+    clock = clock or time.time
+    with io.open(local_path, encoding="utf-8") as f:
+        mine = json.load(f)
+    path = "news/briefs/%s.json" % day
+    started = _now_iso()
+    deadline = clock() + wait
+    while clock() < deadline:
+        sleep(poll)
+        git("fetch", "-q", "origin", "main")
+        show = git("show", "origin/main:" + path)
+        if show.returncode == 0:
+            try:
+                theirs = json.loads(show.stdout)
+            except Exception:
+                theirs = {}
+            if (theirs.get("generated_at") == mine.get("generated_at")
+                    and theirs.get("stage") == mine.get("stage")):
+                return None
+            # 标题版推上去时，main 上已经有更新的分析版（用户点了深度分析）：标题版本来就不该覆盖它，算成功
+            if stage_of(mine) == "headlines" and stage_of(theirs) == "analysis":
+                log("main 上这天已经是分析版，标题版按规则不覆盖。")
+                return None
+        st = read_status(git("show", "origin/main:" + STATUS).stdout).get("intake") or {}
+        if st.get("at", "") >= started and st.get("ok") is False and st.get("date") == day:
+            return "收件流程退回了：%s %s" % (st.get("info", ""), st.get("run", ""))
+    return "等了 %d 分钟还没在 main 上看到这期简报（去 Actions 看「收 AFR 简报」）" % (wait // 60)
+
+
+def due_day(now=None):
+    """「到现在为止应该已经有简报的那个交易日」：悉尼 19:00 之前看上一个交易日，之后看今天。
+    看门狗用它——GitHub 的定时任务常常晚几个小时，跑到第二天凌晨时不能拿「新的一天」去查（10-21 误报过）。"""
+    from zoneinfo import ZoneInfo
+    now = (now or dt.datetime.now(dt.timezone.utc)).astimezone(ZoneInfo("Australia/Sydney"))
+    d = now.date() if now.hour >= 19 else now.date() - dt.timedelta(days=1)
+    for _ in range(10):
+        if is_trading_day(d):
+            return d
+        d -= dt.timedelta(days=1)
+    return d
+
+
+def is_trading_day(d):
+    try:
+        from short_radar.asx_calendar import session
+        return session(d) is not None
+    except Exception:                       # 日历只核查到 2027 年；之后退回「周一到周五」
+        return d.weekday() < 5
 
 
 def merge_inbox(old, new):
@@ -921,6 +1049,22 @@ def main(argv=None):
         print("%s：AFR 标题 %d 条（Street Talk %d 条，带线索 %d 条），行情 %d 只，ASX 200 %s"
               % (path, len(inbox["headlines"]), st, sum("hints" in h for h in inbox["headlines"]),
                  len(inbox["moves"]), inbox["index"]))
+        return 0
+    if cmd == "due":
+        print(due_day().isoformat())
+        return 0
+    if cmd == "status" and len(a) >= 2:
+        # GitHub Actions 用：python -m asxquant.news status collect|intake ok|fail [说明] [日期]
+        write_status(a[0], a[1] == "ok", a[2] if len(a) > 2 else "", a[3] if len(a) > 3 else None)
+        return 0
+    if cmd == "confirm" and a:
+        day = a[0]
+        why = confirm_brief(day, a[1] if len(a) > 1 else "news/briefs/%s.json" % day,
+                            log=lambda m: print(m, file=sys.stderr))
+        if why:
+            print("没上线：" + why)
+            return 6
+        print("已上线：main 上已经是这期简报，几分钟后手机上可见")
         return 0
     if cmd == "request":
         try:
