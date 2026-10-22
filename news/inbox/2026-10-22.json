@@ -1,7 +1,7 @@
 {
  "schema": "afr-inbox-v1",
  "date": "2026-10-22",
- "collected_at": "2026-10-22T10:08:53+00:00",
+ "collected_at": "2026-10-22T10:13:39+00:00",
  "headlines": [
   {
    "title": "Division clouds WA pitch for mega-uni to counter east coast dominance",
@@ -346,7 +346,18 @@
    "url": "https://www.afr.com/wealth/personal-finance/bank-of-mum-and-dad-gifts-revealed-how-do-you-compare-20261022-p60z3m",
    "section": "wealth",
    "date": "2026-10-22",
-   "codes": []
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Help",
+     "Bryan Cook In",
+     "Bold",
+     "John Bold",
+     "Australian Financial ReviewThe Daily",
+     "Habit of Successful People"
+    ]
+   }
   },
   {
    "title": "‘The Nvidia of biological computing’ is this year’s Gamechanger",
@@ -824,7 +835,20 @@
    "url": "https://www.afr.com/wealth/superannuation/instability-comes-for-big-super-governance-advisor-ahead-of-agm-season-20261022-p6176x",
    "section": "wealth",
    "date": "2026-10-22",
-   "codes": []
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Australian Council of Superannuation Investors",
+     "Known",
+     "ACSI",
+     "AustralianSuper",
+     "HESTA",
+     "Hostplus",
+     "Aware Super and Cbus",
+     "IFM Investors"
+    ]
+   }
   },
   {
    "title": "NDIS blowouts lead $145b surge in unexpected spending",
@@ -934,7 +958,17 @@
    "url": "https://www.afr.com/wealth/personal-finance/how-leaving-a-part-time-job-can-unlock-your-entire-superannuation-fund-20261022-p614pd",
    "section": "wealth",
    "date": "2026-10-22",
-   "codes": []
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Seven",
+     "Saturdays and Sundays",
+     "Both",
+     "Bruce",
+     "David McGregor of Perth-based Bruining Partners"
+    ]
+   }
   },
   {
    "title": "He left his son 2pc of a $25m estate – a court had other ideas",
@@ -1004,7 +1038,19 @@
    "url": "https://www.afr.com/property/commercial/billionaire-perich-clan-to-open-its-first-hotel-in-sydney-s-south-west-20261022-p616lv",
    "section": "property",
    "date": "2026-10-22",
-   "codes": []
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Billionaire",
+     "Perich",
+     "Oran Park",
+     "Sydney",
+     "Set",
+     "Atura Oran Park",
+     "Western Sydney International Airport"
+    ]
+   }
   },
   {
    "title": "Khuda spends $18m on neighbouring Mosman house for luxury development",
@@ -2558,14 +2604,37 @@
    "date": "2026-10-22",
    "codes": [
     "SGP"
-   ]
+   ],
+   "hints": {
+    "amounts": [
+     "$6.5 million"
+    ],
+    "names": [
+     "Stockland",
+     "Western Sydney International Airport",
+     "Bathla",
+     "Suman Lata",
+     "Bhart Bhushan",
+     "Neetu Dawar",
+     "Bhushan",
+     "Sanjeev Kumar"
+    ]
+   }
   },
   {
    "title": "Fire mapping and training makes buildings safer",
    "url": "https://www.afr.com/property/commercial/fire-mapping-and-training-makes-buildings-safer-20261022-p614jk",
    "section": "property",
    "date": "2026-10-22",
-   "codes": []
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Queensland",
+     "Scott Jackson",
+     "Locatrix"
+    ]
+   }
   },
   {
    "title": "Christian Brothers’ $25m headquarters up for sale amid collapse",
@@ -2830,6 +2899,11 @@
   "EBO": {
    "pct": 0.47,
    "close": 17.16,
+   "halted": false
+  },
+  "EDV": {
+   "pct": 1.55,
+   "close": 3.28,
    "halted": false
   },
   "ELD": {
