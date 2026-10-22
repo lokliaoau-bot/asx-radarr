@@ -1,0 +1,382 @@
+{
+  "schema": "afr-brief-v1",
+  "date": "2026-10-22",
+  "stage": "headlines",
+  "model": "claude-opus-5-5",
+  "effort": "medium",
+  "generated_at": "2026-10-22T18:09:01+11:00",
+  "generated_by": "Claude (claude-opus-5-5)",
+  "market": {
+    "text_zh": "ASX 200 收 8793.2 点，跌 0.43%。Nick Scali 跌 15.3%、Magellan 跌 9.5%、Fortescue 跌 4.5%；Corporate Travel 涨 16.1%，NextDC 反弹 7.5%。",
+    "index_close": 8793.2,
+    "index_pct": -0.43
+  },
+  "items": [
+    {
+      "title_zh": "房市降温，Nick Scali 预告上半年利润大降",
+      "afr_headline": "Nick Scali falls victim to housing downturn as furniture sales slump",
+      "afr_url": "https://www.afr.com/companies/retail/nick-scali-flags-profit-drop-after-taking-hit-from-housing-downturn-20261022-p617oi",
+      "afr_section": "Companies / Retail",
+      "what_zh": "家具零售商 Nick Scali 预计截至 12 月底的上半年基础净利润为 2800 万–3200 万澳元，去年同期是 4100 万。公司说主要原因是澳洲和新西兰房市放缓：第一季度澳新两地的书面订单比去年同期少 15%，进店人流少约 10%，预计澳新上半年收入比去年同期低 11%–14%。英国业务相反，书面订单增长 29%。另外 8 月的网络安全事件让公司 ERP（企业资源管理）系统停了约三周。股价收 12.03 澳元，跌 15.3%。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/retail/nick-scali-flags-profit-drop-after-taking-hit-from-housing-downturn-20261022-p617oi"
+        },
+        {
+          "name": "Capital Brief",
+          "url": "https://www.capitalbrief.com/briefing/nick-scali-slashes-profit-guidance-on-challenging-property-market-4cf597ad-744f-49fc-af2e-111214a2eabd/"
+        },
+        {
+          "name": "Grafa",
+          "url": "https://grafa.com/en/news/australia/nick-scali-expected-h1-fy27-profit-of-28m-to-32m"
+        },
+        {
+          "name": "Reuters（TradingView）",
+          "url": "https://www.tradingview.com/news/reuters.com,2026:newsml_L4N4680A9:0-australia-s-nick-scali-shares-sink-to-near-3-year-low-as-weak-housing-market-hits-profit-view/"
+        }
+      ],
+      "verify": {
+        "checked": 10,
+        "found": [
+          "2800 万",
+          "3200 万",
+          "4100 万",
+          "15%",
+          "约 10%",
+          "11%",
+          "14%",
+          "29%"
+        ],
+        "derived": [],
+        "market": [
+          "12.03",
+          "15.3%"
+        ],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "Capital Brief",
+          "Grafa",
+          "Reuters（TradingView）"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "与中方采购平台僵持，Fortescue 季度卖不出近 400 万吨矿",
+      "afr_headline": "Fortescue warns of Pilbara cuts if China deadlock continues",
+      "afr_url": "https://www.afr.com/companies/mining/fortescue-flags-trouble-ahead-if-china-talks-remain-unresolved-20261022-p61789",
+      "afr_section": "Companies / Mining",
+      "what_zh": "Fortescue 9 月季度发运铁矿石 46.8Mt（百万吨），同比少 6%，但实际卖出只有 42.9Mt，差了 3.9Mt。原因是它和中国国有铁矿石采购平台中国矿产资源集团（CMRG）的年度长协还没谈拢，CMRG 被报道让国内钢厂推迟采购。管理层说谈判再拖下去，本季度可能还有约 5Mt 卖不出去；CEO Dino Otranto 表示如果到 12 月仍未解决，产量和开支可能要调整。2027 财年发运指引 197–207Mt 暂时不变。柴油涨价把单位生产成本推到每吨 21.98 美元。股价收 14.57 澳元，跌 4.5%。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/mining/fortescue-flags-trouble-ahead-if-china-talks-remain-unresolved-20261022-p61789"
+        },
+        {
+          "name": "Market Matters",
+          "url": "https://marketmatters.com.au/why-fortescue-asx-fmg-is-down-5/"
+        },
+        {
+          "name": "Discovery Alert",
+          "url": "https://discoveryalert.com/analysis/fortescue-share-price-ore-shipped-sold-october-2026/"
+        },
+        {
+          "name": "Rask Media",
+          "url": "https://www.raskmedia.com.au/2026/10/22/fortescue-asxfmg-share-price-sinks-4-on-fy27-first-quarter-and-china-negotiations/"
+        }
+      ],
+      "verify": {
+        "checked": 9,
+        "found": [
+          "46.8",
+          "6%",
+          "42.9",
+          "3.9",
+          "197–207",
+          "197–207",
+          "21.98",
+          "14.57"
+        ],
+        "derived": [],
+        "market": [
+          "4.5%"
+        ],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "Market Matters",
+          "Rask Media"
+        ],
+        "sources_failed": [
+          "Discovery Alert"
+        ]
+      }
+    },
+    {
+      "title_zh": "Santos 季度产量创纪录，但阿拉斯加受阻收窄全年指引",
+      "afr_headline": "Pressure on Santos this quarter after Alaska oil hits snags",
+      "afr_url": "https://www.afr.com/companies/energy/santos-delivers-record-quarter-despite-alaska-snags-20261022-p617oh",
+      "afr_section": "Companies / Energy",
+      "what_zh": "油气公司 Santos 9 月季度产量 26.3 mmboe（百万桶油当量），创季度纪录，同比增 23%。Barossa 气田已进入稳定生产；阿拉斯加 Pikka 油田一度超过日产 8 万桶的目标，随后因海水处理厂受天气影响、Kuparuk 管道停运而被打断。公司把 2026 年产量指引从 99–105 mmboe 收窄到 99–102 mmboe。季度销售收入约 20.1 亿美元，经营自由现金流约 10.7 亿美元，也是纪录。股价收 9.19 澳元，跌 1.3%。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/energy/santos-delivers-record-quarter-despite-alaska-snags-20261022-p617oh"
+        },
+        {
+          "name": "The Motley Fool",
+          "url": "https://www.fool.com.au/2026/10/22/santos-delivers-record-q3-production-and-earnings-in-2026/"
+        },
+        {
+          "name": "Proactive Investors",
+          "url": "https://www.proactiveinvestors.com/companies/news/1100511/santos-posts-record-production-but-trims-2026-guidance-on-pikka-setbacks-1100511.html"
+        },
+        {
+          "name": "Grafa",
+          "url": "https://grafa.com/en/news/australia/santos-quarterly-production-jumps-to-record-high"
+        },
+        {
+          "name": "Reuters（Freedom 96.9）",
+          "url": "https://www.freedom969.com/business/australias-santos-cuts-2026-volume-forecast-as-pikka-disruptions-offset-strong-quarter"
+        }
+      ],
+      "verify": {
+        "checked": 11,
+        "found": [
+          "26.3",
+          "23%",
+          "8 万",
+          "99–105",
+          "99–105",
+          "99–102",
+          "99–102",
+          "约 20.1 亿",
+          "约 10.7 亿",
+          "9.19"
+        ],
+        "derived": [],
+        "market": [
+          "1.3%"
+        ],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "The Motley Fool",
+          "Proactive Investors",
+          "Grafa",
+          "Reuters（Freedom 96.9）"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "Mirvac 季度住宅销售比去年同期少约三成",
+      "afr_headline": "Mirvac says home sales slumped by almost a third in three months",
+      "afr_url": "https://www.afr.com/property/commercial/mirvac-says-home-sales-slumped-by-almost-a-third-in-three-months-20261022-p616b7",
+      "afr_section": "Property",
+      "what_zh": "地产商 Mirvac 公布 2027 财年第一季度运营情况：住宅净订金和换约共 429 套，比上一季度少 17%，比去年同期的 619 套少约 31%。公司把放缓归因于利率上升和税制变化，主要在新州和维州。本季度交房结算 291 套，手上预售合同约 14 亿澳元。全年营业利润指引每股 13.2–13.4 澳分、派息 9.9 澳分维持不变；2 亿澳元的回购已完成约 75%。股价收 1.82 澳元，持平。",
+      "calcs": [
+        {
+          "value": "约 31%",
+          "expr": "(1-429/619)*100"
+        }
+      ],
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/property/commercial/mirvac-says-home-sales-slumped-by-almost-a-third-in-three-months-20261022-p616b7"
+        },
+        {
+          "name": "The Motley Fool",
+          "url": "https://www.fool.com.au/2026/10/22/mirvac-group-reaffirms-earnings-guidance-and-reports-resilient-q1-performance/"
+        },
+        {
+          "name": "The Motley Fool（去年同期）",
+          "url": "https://www.fool.com.au/2025/10/22/mirvac-group-share-price-in-focus-as-residential-sales-surge-79-in-1q26-update/"
+        },
+        {
+          "name": "Grafa",
+          "url": "https://grafa.com/en/news/australia/mirvac-reaffirms-guidance-and-progresses-buyback"
+        },
+        {
+          "name": "Kalkine",
+          "url": "https://kalkine.com.au/news/real-estate/mirvac-group-asxmgr-first-quarter-update-97-occupancy-429-net-deposits-and-a-200m-buy-back-under-way"
+        }
+      ],
+      "verify": {
+        "checked": 12,
+        "found": [
+          "429",
+          "619",
+          "291",
+          "约 14 亿",
+          "13.2–13.4",
+          "13.2–13.4",
+          "9.9",
+          "2 亿",
+          "约 75%",
+          "1.82"
+        ],
+        "derived": [
+          "约 31%"
+        ],
+        "market": [],
+        "missing": [
+          "17%"
+        ],
+        "sources_ok": [
+          "AFR",
+          "The Motley Fool",
+          "The Motley Fool（去年同期）",
+          "Grafa"
+        ],
+        "sources_failed": [
+          "Kalkine"
+        ]
+      }
+    },
+    {
+      "title_zh": "债市动荡拖累 Barrenjoey 交易收入，Magellan 跌近一成",
+      "afr_headline": "Barrenjoey trading profit takes a hit from global bond market rout",
+      "afr_url": "https://www.afr.com/companies/financial-services/barrenjoey-trading-profits-take-a-hit-from-global-bond-market-rout-20261022-p61665",
+      "afr_section": "Companies / Financial services",
+      "what_zh": "7 月 1 日完成与投行 Barrenjoey 合并的 Magellan 发布 9 月季度更新：全球债市剧烈波动，金融市场（交易）业务收入明显低于 2026 财年上半年的水平；企业融资业务仍然强劲，公司说债市已基本平静下来。据 Market Index 报道，资产管理规模本季度降 8% 至 380 亿澳元，原因是债券收益率上升压低了上市基础设施资产的估值，加上资金流出。股价收 7.70 澳元，跌 9.5%。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/financial-services/barrenjoey-trading-profits-take-a-hit-from-global-bond-market-rout-20261022-p61665"
+        },
+        {
+          "name": "Market Index",
+          "url": "https://www.marketindex.com.au/news/asx-200-live-today-thursday-22nd-october"
+        },
+        {
+          "name": "Kalkine",
+          "url": "https://kalkine.com.au/news/general-news/whats-behind-the-magellan-financial-group-asxmfg-share-price-fall"
+        }
+      ],
+      "verify": {
+        "checked": 4,
+        "found": [],
+        "derived": [],
+        "market": [
+          "7.70",
+          "9.5%"
+        ],
+        "missing": [
+          "8%",
+          "380 亿"
+        ],
+        "sources_ok": [
+          "AFR"
+        ],
+        "sources_failed": [
+          "Market Index",
+          "Kalkine"
+        ]
+      }
+    },
+    {
+      "title_zh": "NextDC 反弹 7.5%，投资者不满延误披露太慢",
+      "afr_headline": "NextDC draws investor ire over slow disclosure of power delays",
+      "afr_url": "https://www.afr.com/companies/infrastructure/nextdc-draws-investor-ire-over-slow-disclosure-of-power-delays-20261022-p617pi",
+      "afr_section": "Companies / Infrastructure",
+      "what_zh": "数据中心公司 NextDC 前一天暴跌约 42% 后，今天收 5.75 澳元，涨 7.5%。供电公司 Jemena 早在 9 月就暂停了墨尔本 M3 数据中心的部分线路升级，并告知 NextDC 预计 2027 年 2 月前不会复工；NextDC 因此从 2027 财年展望里去掉了 1.4 亿澳元已签约收入。AFR 报道部分投资者不满公司这么晚才披露。券商看法分歧：RBC 维持跑赢大盘评级、目标价 22 澳元，认为延误不在公司控制之内；花旗则认为最终影响可能更大。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/infrastructure/nextdc-draws-investor-ire-over-slow-disclosure-of-power-delays-20261022-p617pi"
+        },
+        {
+          "name": "The Motley Fool",
+          "url": "https://www.fool.com.au/2026/10/22/nextdc-shares-rebound-7-from-an-8-year-low-heres-what-brokers-tip-next/"
+        },
+        {
+          "name": "Business News Australia",
+          "url": "https://www.businessnewsaustralia.com/articles/nextdc-shares-regain-some-ground-after-m3-power-delay-wipes-140m-from-profit-forecast.html"
+        },
+        {
+          "name": "IBTimes",
+          "url": "https://www.ibtimes.com.au/nextdc-shares-rebound-after-record-plunge-1877168"
+        }
+      ],
+      "verify": {
+        "checked": 5,
+        "found": [
+          "约 42%",
+          "5.75",
+          "7.5%",
+          "1.4 亿",
+          "22"
+        ],
+        "derived": [],
+        "market": [],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "The Motley Fool",
+          "Business News Australia",
+          "IBTimes"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "TDM 大宗减持 Guzman y Gomez，套现 8950 万澳元",
+      "afr_headline": "TDM cashes out $89.5m at Guzman y Gomez in block trade",
+      "afr_url": "https://www.afr.com/street-talk/tdm-cashes-out-89-5m-at-guzman-y-gomez-in-block-trade-20261021-p617bq",
+      "afr_section": "Street Talk",
+      "what_zh": "据 AFR Street Talk 和其他媒体报道，私募投资者 TDM Growth Partners 10 月 21 日通过 Jarden 以大宗交易卖出约 350 万股墨西哥快餐连锁 Guzman y Gomez，每股 25.55 澳元，比前一天收盘价低 4.3%，套现约 8950 万澳元。卖出后 TDM 仍持有约 14%，并表示继续看好公司。约一周前董事长 Guy Russo 刚卖出约 3500 万澳元股票。这是该公司 2024 年 6 月上市以来最大的一笔大宗交易。股价今天收 25.50 澳元，跌 3.8%。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/street-talk/tdm-cashes-out-89-5m-at-guzman-y-gomez-in-block-trade-20261021-p617bq"
+        },
+        {
+          "name": "Grafa",
+          "url": "https://grafa.com/en/news/australia/guzman-y-gomez-backer-unloads-a-89-5m-in-shares"
+        },
+        {
+          "name": "Kalkine（持股变动公告）",
+          "url": "https://kalkinemedia.com/au/news/announcements/tdm-growth-partners-lowers-guzman-y-gomez-stake-to-14-after-selling-37-million-shares"
+        },
+        {
+          "name": "Market Index",
+          "url": "https://www.marketindex.com.au/news/asx-200-live-today-wednesday-21st-october"
+        }
+      ],
+      "verify": {
+        "checked": 8,
+        "found": [
+          "约 350 万",
+          "25.55",
+          "4.3%",
+          "约 8950 万",
+          "约 14%",
+          "约 3500 万",
+          "25.50"
+        ],
+        "derived": [],
+        "market": [
+          "3.8%"
+        ],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "Grafa",
+          "Kalkine（持股变动公告）"
+        ],
+        "sources_failed": [
+          "Market Index"
+        ]
+      }
+    }
+  ],
+  "verify": {
+    "at": "2026-10-22T07:09:43+00:00",
+    "checked": 59,
+    "missing": 3
+  }
+}
