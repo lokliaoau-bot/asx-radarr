@@ -1,8 +1,108 @@
 {
  "schema": "afr-inbox-v1",
  "date": "2026-10-22",
- "collected_at": "2026-10-22T10:17:30+00:00",
+ "collected_at": "2026-10-22T12:13:41+00:00",
  "headlines": [
+  {
+   "title": "Australia ranks behind 90 nations for foreign investment hurdles",
+   "url": "https://www.afr.com/policy/economy/australia-ranks-behind-90-nations-for-foreign-investment-hurdles-20261022-p6172e",
+   "section": "policy",
+   "date": "2026-10-22",
+   "published": "2026-10-22T11:30:00+00:00",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Australia",
+     "Organisation",
+     "Economic Co-operation and Development",
+     "Albanese",
+     "Australian",
+     "OECD"
+    ]
+   }
+  },
+  {
+   "title": "Chalmers warns of slower growth as traders bet on rate rise next month",
+   "url": "https://www.afr.com/policy/economy/chalmers-warns-of-slower-growth-as-traders-bet-on-rate-rise-next-month-20261022-p61768",
+   "section": "policy",
+   "date": "2026-10-22",
+   "published": "2026-10-22T11:30:00+00:00",
+   "codes": [
+    "BOQ"
+   ],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Treasurer Jim Chalmers",
+     "Albanese",
+     "Reserve Bank of Australia",
+     "Chalmers",
+     "RBA"
+    ]
+   }
+  },
+  {
+   "title": "How Australia’s biggest green project became a $25b nightmare",
+   "url": "https://www.afr.com/policy/energy-and-climate/how-australia-s-biggest-green-project-became-a-25b-nightmare-20261022-p616yu",
+   "section": "policy",
+   "date": "2026-10-22",
+   "published": "2026-10-22T11:00:00+00:00",
+   "codes": [],
+   "hints": {
+    "amounts": [
+     "$2 billion"
+    ],
+    "names": [
+     "Snowy",
+     "Christian Pearson When",
+     "Malcolm Turnbull",
+     "Australia",
+     "NSW Snowy Mountains",
+     "Paul Broad",
+     "Australian Financial ReviewThe Daily",
+     "Habit of Successful People"
+    ]
+   }
+  },
+  {
+   "title": "Snowy Hydro 2.0 shows Australia dreams big, but fails to build",
+   "url": "https://www.afr.com/policy/economy/snowy-hydro-2-0-shows-australia-dreams-big-but-fails-to-build-20261022-p617bo",
+   "section": "policy",
+   "date": "2026-10-22",
+   "published": "2026-10-22T11:00:00+00:00",
+   "codes": [],
+   "hints": {
+    "amounts": [
+     "$25 billion"
+    ],
+    "names": [
+     "Snowy Hydro",
+     "Australia",
+     "Years",
+     "Australian Financial Review"
+    ]
+   }
+  },
+  {
+   "title": "Snowy 2.0 price tag soars to $25b, 10 times initial estimate",
+   "url": "https://www.afr.com/policy/energy-and-climate/snowy-2-0-price-tag-soars-to-25b-10-times-initial-estimate-20261022-p617qx",
+   "section": "policy",
+   "date": "2026-10-22",
+   "published": "2026-10-22T11:00:00+00:00",
+   "codes": [],
+   "hints": {
+    "amounts": [
+     "$25 billion",
+     "$2 billion"
+    ],
+    "names": [
+     "Snowy",
+     "Webuild",
+     "Turnbull"
+    ]
+   }
+  },
   {
    "title": "Division clouds WA pitch for mega-uni to counter east coast dominance",
    "url": "https://www.afr.com/policy/health-and-education/division-clouds-wa-pitch-for-mega-uni-to-counter-east-coast-dominance-20261022-p6155o",
@@ -215,112 +315,6 @@
    }
   },
   {
-   "title": "If you can’t beat ’em, join ’em: Property fund swings into lending",
-   "url": "https://www.afr.com/property/commercial/if-you-can-t-beat-em-join-em-property-fund-swings-into-lending-20261022-p617qn",
-   "section": "property",
-   "date": "2026-10-22",
-   "published": "2026-10-22T05:45:06+00:00",
-   "codes": [],
-   "hints": {
-    "amounts": [
-     "$300 million"
-    ],
-    "names": [
-     "Garda Diversified Property Fund",
-     "Brisbane",
-     "Garda"
-    ]
-   }
-  },
-  {
-   "title": "Barrenjoey trading profit takes a hit from global bond market rout",
-   "url": "https://www.afr.com/companies/financial-services/barrenjoey-trading-profits-take-a-hit-from-global-bond-market-rout-20261022-p61665",
-   "section": "companies",
-   "date": "2026-10-22",
-   "published": "2026-10-22T05:33:25+00:00",
-   "codes": [
-    "MFG"
-   ],
-   "hints": {
-    "amounts": [
-     "9 per cent",
-     "$7.77"
-    ],
-    "names": [
-     "Barrenjoey",
-     "Magellan Financial and Barrenjoey Capital Partners"
-    ]
-   }
-  },
-  {
-   "title": "ASX falls; Nick Scali’s 15pc plunge triggers retail shudders",
-   "url": "https://www.afr.com/markets/equity-markets/asx-steady-nasdaq-surges-meta-to-report-20261022-p617mq",
-   "section": "markets",
-   "date": "2026-10-22",
-   "published": "2026-10-22T05:27:59+00:00",
-   "codes": [
-    "NCK",
-    "BOQ"
-   ],
-   "hints": {
-    "amounts": [
-     "0.4 per cent"
-    ],
-    "names": [
-     "China",
-     "Australian",
-     "Nick Scali",
-     "S&P",
-     "Index",
-     "Wall Street",
-     "Brent",
-     "Reserve Bank of Australia"
-    ]
-   }
-  },
-  {
-   "title": "NextDC bargain hunters tread a fine line",
-   "url": "https://www.afr.com/markets/equity-markets/nextdc-bargain-hunters-tread-a-fine-line-20261022-p617r6",
-   "section": "markets",
-   "date": "2026-10-22",
-   "published": "2026-10-22T05:25:36+00:00",
-   "codes": [
-    "NXT"
-   ],
-   "hints": {
-    "amounts": [
-     "40 per cent",
-     "7 per cent"
-    ],
-    "names": [
-     "NextDC",
-     "Melbourne"
-    ]
-   }
-  },
-  {
-   "title": "NAB’s local workers given the ‘AI chop’, says Labor senator",
-   "url": "https://www.afr.com/companies/financial-services/nab-s-local-workers-given-the-ai-chop-says-labor-senator-20261022-p617l1",
-   "section": "companies",
-   "date": "2026-10-22",
-   "published": "2026-10-22T05:09:34+00:00",
-   "codes": [
-    "NAB"
-   ],
-   "hints": {
-    "amounts": [
-     "2500 jobs"
-    ],
-    "names": [
-     "Labor Party",
-     "National Australia Bank",
-     "Senator Tony Sheldon",
-     "NAB",
-     "Andrew Irvine"
-    ]
-   }
-  },
-  {
    "title": "Traders weigh cash rate above 5pc after RBA’s warning shot",
    "url": "https://www.afr.com/markets/debt-markets/traders-weigh-cash-rate-above-5pc-after-rba-s-warning-shot-20261022-p617p5",
    "section": "markets",
@@ -342,6 +336,39 @@
    }
   },
   {
+   "title": "2GB listeners ‘eyes leaking’ as everyman BRS gives show of his life",
+   "url": "https://www.afr.com/companies/media-and-marketing/2gb-listeners-eyes-leaking-as-everyman-brs-gives-show-of-his-life-20261022-p617qw",
+   "section": "companies",
+   "date": "2026-10-22",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Ben Roberts-Smith",
+     "Then"
+    ]
+   }
+  },
+  {
+   "title": "The lightning-fast winners of JPMorgan’s famed 5km challenge",
+   "url": "https://www.afr.com/companies/financial-services/the-lightning-fast-winners-of-jpmorgan-s-famed-5km-challenge-20261022-p61666",
+   "section": "companies",
+   "date": "2026-10-22",
+   "codes": [
+    "BOQ"
+   ],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Over",
+     "Interest",
+     "Reserve Bank of Australia",
+     "Sydney",
+     "JPMorgan Corporate Challenge"
+    ]
+   }
+  },
+  {
    "title": "The sums wealthy parents give kids for house deposits",
    "url": "https://www.afr.com/wealth/personal-finance/bank-of-mum-and-dad-gifts-revealed-how-do-you-compare-20261022-p60z3m",
    "section": "wealth",
@@ -356,26 +383,6 @@
      "John Bold",
      "Australian Financial ReviewThe Daily",
      "Habit of Successful People"
-    ]
-   }
-  },
-  {
-   "title": "‘The Nvidia of biological computing’ is this year’s Gamechanger",
-   "url": "https://www.afr.com/technology/the-nvidia-of-biological-computing-is-this-year-s-gamechanger-20261022-p614iw",
-   "section": "technology",
-   "date": "2026-10-22",
-   "codes": [],
-   "hints": {
-    "amounts": [],
-    "names": [
-     "Cortical Labs CEO Brett Kagan",
-     "Danielle Michell",
-     "Michael Butler",
-     "Cortical Labs Australian Biological Datacentre",
-     "Melbourne",
-     "Eamon Gallagher Imagine",
-     "Australian",
-     "Harnessing"
     ]
    }
   },
@@ -571,6 +578,27 @@
    }
   },
   {
+   "title": "NAB’s local workers given the ‘AI chop’, says Labor senator",
+   "url": "https://www.afr.com/companies/financial-services/nab-s-local-workers-given-the-ai-chop-says-labor-senator-20261022-p617l1",
+   "section": "companies",
+   "date": "2026-10-22",
+   "codes": [
+    "NAB"
+   ],
+   "hints": {
+    "amounts": [
+     "2500 jobs"
+    ],
+    "names": [
+     "Labor Party",
+     "National Australia Bank",
+     "Senator Tony Sheldon",
+     "NAB",
+     "Andrew Irvine"
+    ]
+   }
+  },
+  {
    "title": "Fortescue warns of Pilbara cuts if China deadlock continues",
    "url": "https://www.afr.com/companies/mining/fortescue-flags-trouble-ahead-if-china-talks-remain-unresolved-20261022-p61789",
    "section": "companies",
@@ -649,6 +677,25 @@
      "Facebook and Instagram",
      "Firmus",
      "Kuala Lumpur"
+    ]
+   }
+  },
+  {
+   "title": "This fundie says AGL Energy is set to go on a tear. Here’s why",
+   "url": "https://www.afr.com/markets/equity-markets/this-fundie-says-agl-energy-is-set-to-go-on-a-tear-here-s-why-20261022-p6176o",
+   "section": "markets",
+   "date": "2026-10-22",
+   "codes": [
+    "AGL"
+   ],
+   "hints": {
+    "amounts": [
+     "$6.7 billion"
+    ],
+    "names": [
+     "Andrew Chambers",
+     "ClearBridge Investments",
+     "Where"
     ]
    }
   },
@@ -732,13 +779,6 @@
    }
   },
   {
-   "title": "PEP says wary public investors stand in the way of more ASX floats",
-   "url": "https://www.afr.com/companies/financial-services/pep-says-wary-public-investors-stand-in-the-way-of-more-asx-floats-20261020-p61770",
-   "section": "companies",
-   "date": "2026-10-20",
-   "codes": []
-  },
-  {
    "title": "Investor anxiety turns data centre gold rush into fire sale",
    "url": "https://www.afr.com/technology/investor-anxiety-turns-data-centre-gold-rush-into-fire-sale-20261021-p616yc",
    "section": "technology",
@@ -776,6 +816,25 @@
      "Field of Dreams",
      "Kevin Costner",
      "Western Sydney International Airport"
+    ]
+   }
+  },
+  {
+   "title": "NextDC bargain hunters tread a fine line",
+   "url": "https://www.afr.com/markets/equity-markets/nextdc-bargain-hunters-tread-a-fine-line-20261022-p617r6",
+   "section": "markets",
+   "date": "2026-10-22",
+   "codes": [
+    "NXT"
+   ],
+   "hints": {
+    "amounts": [
+     "40 per cent",
+     "7 per cent"
+    ],
+    "names": [
+     "NextDC",
+     "Melbourne"
     ]
    }
   },
@@ -851,21 +910,19 @@
    }
   },
   {
-   "title": "NDIS blowouts lead $145b surge in unexpected spending",
-   "url": "https://www.afr.com/policy/economy/ndis-blowouts-lead-145b-surge-in-unexpected-spending-20261021-p617e2",
-   "section": "policy",
-   "date": "2026-10-21",
+   "title": "If you can’t beat ’em, join ’em: Property fund swings into lending",
+   "url": "https://www.afr.com/property/commercial/if-you-can-t-beat-em-join-em-property-fund-swings-into-lending-20261022-p617qn",
+   "section": "property",
+   "date": "2026-10-22",
    "codes": [],
    "hints": {
     "amounts": [
-     "$145 billion"
+     "$300 million"
     ],
     "names": [
-     "Albanese",
-     "National Disability Insurance Scheme",
-     "HSBC",
-     "Paul Bloxham",
-     "Treasurer Jim Chalmers"
+     "Garda Diversified Property Fund",
+     "Brisbane",
+     "Garda"
     ]
    }
   },
@@ -1380,6 +1437,25 @@
    "codes": []
   },
   {
+   "title": "Barrenjoey trading profit takes a hit from global bond market rout",
+   "url": "https://www.afr.com/companies/financial-services/barrenjoey-trading-profits-take-a-hit-from-global-bond-market-rout-20261022-p61665",
+   "section": "companies",
+   "date": "2026-10-22",
+   "codes": [
+    "MFG"
+   ],
+   "hints": {
+    "amounts": [
+     "9 per cent",
+     "$7.77"
+    ],
+    "names": [
+     "Barrenjoey",
+     "Magellan Financial and Barrenjoey Capital Partners"
+    ]
+   }
+  },
+  {
    "title": "Big four’s climate fee bonanza",
    "url": "https://www.afr.com/companies/professional-services/big-four-s-climate-fee-bonanza-20261021-p617f6",
    "section": "companies",
@@ -1407,39 +1483,6 @@
    "codes": [
     "NST"
    ]
-  },
-  {
-   "title": "The lightning-fast winners of JPMorgan’s famed 5km challenge",
-   "url": "https://www.afr.com/companies/financial-services/the-lightning-fast-winners-of-jpmorgan-s-famed-5km-challenge-20261022-p61666",
-   "section": "companies",
-   "date": "2026-10-22",
-   "codes": [
-    "BOQ"
-   ],
-   "hints": {
-    "amounts": [],
-    "names": [
-     "Over",
-     "Interest",
-     "Reserve Bank of Australia",
-     "Sydney",
-     "JPMorgan Corporate Challenge"
-    ]
-   }
-  },
-  {
-   "title": "2GB listeners ‘eyes leaking’ as everyman BRS gives show of his life",
-   "url": "https://www.afr.com/companies/media-and-marketing/2gb-listeners-eyes-leaking-as-everyman-brs-gives-show-of-his-life-20261022-p617qw",
-   "section": "companies",
-   "date": "2026-10-22",
-   "codes": [],
-   "hints": {
-    "amounts": [],
-    "names": [
-     "Ben Roberts-Smith",
-     "Then"
-    ]
-   }
   },
   {
    "title": "ATO claim could change everything for whistleblowers",
@@ -1606,6 +1649,13 @@
      "Fund"
     ]
    }
+  },
+  {
+   "title": "PEP says wary public investors stand in the way of more ASX floats",
+   "url": "https://www.afr.com/companies/financial-services/pep-says-wary-public-investors-stand-in-the-way-of-more-asx-floats-20261020-p61770",
+   "section": "companies",
+   "date": "2026-10-20",
+   "codes": []
   },
   {
    "title": "AI or the economy? Either way, NAB job cuts a canary in the coalmine",
@@ -1976,21 +2026,27 @@
    ]
   },
   {
-   "title": "This fundie says AGL Energy is set to go on a tear. Here’s why",
-   "url": "https://www.afr.com/markets/equity-markets/this-fundie-says-agl-energy-is-set-to-go-on-a-tear-here-s-why-20261022-p6176o",
+   "title": "ASX falls; Nick Scali’s 15pc plunge triggers retail shudders",
+   "url": "https://www.afr.com/markets/equity-markets/asx-steady-nasdaq-surges-meta-to-report-20261022-p617mq",
    "section": "markets",
    "date": "2026-10-22",
    "codes": [
-    "AGL"
+    "NCK",
+    "BOQ"
    ],
    "hints": {
     "amounts": [
-     "$6.7 billion"
+     "0.4 per cent"
     ],
     "names": [
-     "Andrew Chambers",
-     "ClearBridge Investments",
-     "Where"
+     "China",
+     "Australian",
+     "Nick Scali",
+     "S&P",
+     "Index",
+     "Wall Street",
+     "Brent",
+     "Reserve Bank of Australia"
     ]
    }
   },
@@ -2248,6 +2304,25 @@
    }
   },
   {
+   "title": "NDIS blowouts lead $145b surge in unexpected spending",
+   "url": "https://www.afr.com/policy/economy/ndis-blowouts-lead-145b-surge-in-unexpected-spending-20261021-p617e2",
+   "section": "policy",
+   "date": "2026-10-21",
+   "codes": [],
+   "hints": {
+    "amounts": [
+     "$145 billion"
+    ],
+    "names": [
+     "Albanese",
+     "National Disability Insurance Scheme",
+     "HSBC",
+     "Paul Bloxham",
+     "Treasurer Jim Chalmers"
+    ]
+   }
+  },
+  {
    "title": "Rate rise bets jump after RBA warns of ‘materially worse’ inflation",
    "url": "https://www.afr.com/policy/economy/hard-choices-await-rba-as-inflation-and-employment-worsen-20261021-p617d5",
    "section": "policy",
@@ -2439,6 +2514,26 @@
      "Hardware",
      "Review BOSS",
      "Innovative Companies"
+    ]
+   }
+  },
+  {
+   "title": "‘The Nvidia of biological computing’ is this year’s Gamechanger",
+   "url": "https://www.afr.com/technology/the-nvidia-of-biological-computing-is-this-year-s-gamechanger-20261022-p614iw",
+   "section": "technology",
+   "date": "2026-10-22",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Cortical Labs CEO Brett Kagan",
+     "Danielle Michell",
+     "Michael Butler",
+     "Cortical Labs Australian Biological Datacentre",
+     "Melbourne",
+     "Eamon Gallagher Imagine",
+     "Australian",
+     "Harnessing"
     ]
    }
   },
