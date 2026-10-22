@@ -34,10 +34,12 @@ jobs:
         run: |
           set -e
           # 先关掉已经补上的那几天的提醒
-          gh issue list --state open --search "in:title AFR 要闻 没有生成" --json number,title \
-            --jq '.[] | "\(.number) \(.title)"' | while read -r NUM _ _ D _; do
+          # 不用 GitHub 的搜索（中文分词不可靠），列出全部打开的 issue 再按标题精确筛
+          gh issue list --state open --limit 100 --json number,title \
+            --jq '.[] | select(.title | test("^AFR 要闻 [0-9-]+ 没有生成$")) | "\(.number) \(.title)"' \
+            | while read -r NUM _ _ D _; do
             if [ -f "news/briefs/$D.json" ]; then
-              gh issue close "$NUM" --comment "news/briefs/$D.json 已经生成，自动关闭。"
+              gh issue close "$NUM" --comment "news/briefs/$D.json 已经生成，自动关闭。" || true
             fi
           done
 
@@ -55,7 +57,8 @@ jobs:
           - 常见原因：云端任务没跑或额度用完；Claude GitHub App 被取消授权（云端推不上来）；简报没过校验被退回
 
           页面不会空白：会显示最近一期简报，并列出 AFR 最新标题。补上之后这个 issue 会自动关闭。"
-          NUM=$(gh issue list --state open --search "in:title \"$TITLE\"" --json number --jq '.[0].number')
+          NUM=$(gh issue list --state open --limit 100 --json number,title \
+            --jq ".[] | select(.title == \"$TITLE\") | .number" | head -1)
           if [ -n "$NUM" ]; then
             gh issue comment "$NUM" --body "$BODY"
           else

@@ -758,6 +758,57 @@ def test_round2_efficiency():
         check("子代理 %s 用骨架起草" % name, "news template" in md)
 
 
+def test_round3_bugs():
+    print("\n[N15] 第三阶段第三轮：AFR 很慢或宕机时不拖垮收件、算式安全、老简报不会因新规则消失")
+    import datetime as dt
+    import urllib.error
+    asked = []
+
+    def afr_down(u):
+        asked.append(u)
+        if u == NW.BING_RSS:
+            return BING
+        raise urllib.error.URLError("timed out")
+    got = NW.headlines(get=afr_down, sections=NW.SECTION_PAGES, fallback=True)
+    afr_asked = [u for u in asked if u.startswith(NW.AFR)]
+    check("AFR 连续 3 页取不到：剩下二十多个栏目页不再一页页等超时", len(afr_asked) == 3, str(len(afr_asked)))
+    check("AFR 宕了也照样去 Bing 拿 AFR 标题", NW.BING_RSS in asked and len(got) == 1)
+
+    old = NW.LEAD_BUDGET
+    read = []
+    try:
+        NW.LEAD_BUDGET = -1
+        pages = {NW.AFR_RSS: RSS, NW.AFR + "/": HOME, NW.ASX_LIST: ASX_CSV, NW.BING_RSS: ""}
+
+        def get(u):
+            if u in pages:
+                return pages[u]
+            read.append(u)
+            return ARTICLE
+        NW.collect(dt.date(2026, 10, 20), get=get, prices={}, codes=["NAB"], log=lambda m: None,
+                   sections=(), sleep=lambda s: None)
+    finally:
+        NW.LEAD_BUDGET = old
+    check("读文章的时间预算用完就停（GitHub 一次最多跑 15 分钟）", read == [], str(read))
+
+    from asxquant import newscheck as K
+    import time
+    t0 = time.time()
+    p = K.check_calcs({"calcs": [{"value": "36%", "expr": "9**9**9**9"}]})
+    check("算式里的乘方（9**9**9 会卡死校验）直接拒绝", p and time.time() - t0 < 1, str(p))
+    check("超长数字也拒绝", K.check_calcs({"calcs": [{"value": "1%", "expr": "1" * 20 + "/1"}]}))
+
+    bad = []
+    for name in sorted(os.listdir("news/briefs")):
+        if name.endswith(".json"):
+            b = json.load(io.open(os.path.join("news/briefs", name), encoding="utf-8"))
+            if NW.validate(b):
+                bad.append(name)
+    check("仓库里每一期简报都还能通过现在的校验（改规则不会让往期悄悄从页面上消失）", bad == [], str(bad))
+    dog = io.open(".github/workflows/news-watchdog.yml", encoding="utf-8").read()
+    check("看门狗按标题精确匹配 issue（不靠 GitHub 的中文搜索）", "--search" not in dog and "select(.title" in dog)
+
+
 def test_workflows():
     print("\n[N8] GitHub 上的三道保险：抓标题、收简报、看门狗")
     col = io.open(".github/workflows/news-collect.yml", encoding="utf-8").read()
@@ -802,7 +853,7 @@ def main():
     print("=" * 68)
     for fn in (test_validate, test_headlines, test_moves, test_build_site, test_stages, test_inbox,
                test_more_news, test_round2, test_number_check, test_scorecard, test_round1_reliability,
-               test_round2_efficiency,
+               test_round2_efficiency, test_round3_bugs,
                test_workflows, test_page_wiring):
         try:
             fn()

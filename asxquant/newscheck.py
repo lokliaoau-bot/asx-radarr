@@ -104,6 +104,8 @@ def eval_expr(expr):
     """只认数字和 + - * / ( )；别的字符一律不算（不执行任意代码）。"""
     if not isinstance(expr, str) or not _EXPR.match(expr) or len(expr) > 200:
         raise ValueError("算式只能有数字和 + - * / ( )")
+    if "**" in expr or re.search(r"\d{16,}", expr):
+        raise ValueError("算式里不许用乘方，数字也不能太长")      # 9**9**9 这种会把校验卡死
     return float(eval(compile(expr, "<calc>", "eval"), {"__builtins__": {}}, {}))
 
 

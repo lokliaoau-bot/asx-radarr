@@ -82,6 +82,7 @@ SECTION_LABELS = {"street-talk": "Street Talk", "chanticleer": "Chanticleer", "r
 ASX_LIST = "https://www.asx.com.au/asx/research/ASXListedCompanies.csv"
 LEAD_LIMIT = 180    # 收件时最多读多少篇文章的公开开头（只提取线索，不存原文）；10-22 读满了 100 篇，调高
 LEAD_WORKERS = 4    # 同时读几篇（每篇之间仍有停顿，对 AFR 很温和）
+LEAD_BUDGET = 240   # 读文章最多花几秒：AFR 很慢时也不会拖垮整个收件（请求方只等 15 分钟）
 LEAD_PRIORITY = {s: i for i, s in enumerate(("street-talk", "companies", "markets", "chanticleer", "rear-window",
                                               "policy", "technology", "property", "wealth"))}
 INBOX_KEEP_DAYS = 30
@@ -193,11 +194,18 @@ def headlines(market_only=True, get=_get, log=lambda m: None, sections=(), fallb
     pages = [(AFR_RSS, parse_rss), (AFR + "/", parse_home)] + [(AFR + p, parse_home) for p in sections]
     if fallback:
         pages.append((BING_RSS, parse_bing))
+    streak = 0
     for url, parse in pages:
+        if streak >= 3 and url.startswith(AFR):
+            continue                    # AFR 连续 3 页失败：多半整个挡住或宕了，别一页页等超时（Bing 照样试）
         try:
             got = parse(get(url))
+            streak = 0
         except Exception as e:
-            log("AFR %s 取不到: %s" % (url, e))
+            streak += url.startswith(AFR)
+            log("%s 取不到: %s" % (url, e))
+            if streak == 3:
+                log("AFR 连续 3 页取不到，剩下的 AFR 栏目页跳过")
             continue
         for h in got:
             if h["url"] in seen:
@@ -641,6 +649,8 @@ def collect(day=None, get=_get, prices=None, codes=None, log=print, sections=SEC
     sleep = sleep or time.sleep
     day = day or sydney_today()
     lo = day - dt.timedelta(days=3)
+    if get is _get:
+        get = lambda u: _get(u, timeout=10)     # noqa: E731  收件时单次请求最多等 10 秒
     get = _retrying(get, sleep, log=log)
     heads = [h for h in headlines(get=get, log=log, sections=sections, fallback=True)
              if not h.get("date") or lo <= dt.date.fromisoformat(h["date"]) <= day]
@@ -663,7 +673,11 @@ def collect(day=None, get=_get, prices=None, codes=None, log=print, sections=SEC
                   key=lambda h: LEAD_PRIORITY.get(h.get("section"), len(LEAD_PRIORITY)))
     from concurrent.futures import ThreadPoolExecutor
 
+    deadline = time.time() + LEAD_BUDGET
+
     def read_one(h):
+        if time.time() > deadline:                  # 时间预算用完：剩下的不读了（GitHub 一次最多跑 15 分钟）
+            return h, None
         try:
             return h, lead_hints(article_lead(h["url"], get=get)["paragraphs"], index, bare)
         except Exception as e:                      # 还没上线的文章是 404，正常
