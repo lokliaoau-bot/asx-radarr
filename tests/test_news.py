@@ -703,6 +703,61 @@ def test_round1_reliability():
         check("子代理 %s 推送后确认上线、认得退出码 5" % name, "news confirm" in md and "3、4 或 5" in md)
 
 
+def test_round2_efficiency():
+    print("\n[N14] 第三阶段第二轮：读更多文章、精简收件箱、简报骨架、来源网站名单")
+    import datetime as dt
+    check("文章篇数上限调高、分几路同时读", NW.LEAD_LIMIT >= 150 and NW.LEAD_WORKERS >= 2)
+    t = NW.template("headlines", dt.date(2026, 10, 22),
+                    {"index": {"close": 8793.2002, "pct": -0.43}},
+                    now=dt.datetime(2026, 10, 22, 7, 9, tzinfo=dt.timezone.utc))
+    check("骨架：日期、阶段、模型、强度、悉尼时间、大盘数字都填好",
+          t["date"] == "2026-10-22" and t["stage"] == "headlines" and t["effort"] == "medium"
+          and t["generated_at"].startswith("2026-10-22T18:09") and t["market"]["index_close"] == 8793.2
+          and t["market"]["index_pct"] == -0.43)
+    check("骨架原样提交会被校验挡下（尖括号没换）", NW.validate(t))
+    a = NW.template("analysis", dt.date(2026, 10, 22), {})
+    check("分析版骨架多了影响和分析两个字段", "impact" in a["items"][0] and "why_zh" in a["items"][0]
+          and a["effort"] == "high")
+
+    inbox = {"date": "2026-10-22", "collected_at": "x", "index": {"close": 1, "pct": 0.1}, "moves": {},
+             "top_movers": [],
+             "headlines": [{"title": "Today story long enough", "url": "u1", "section": "companies", "date": "2026-10-22"},
+                           {"title": "Yesterday story long enough", "url": "u2", "section": "street-talk", "date": "2026-10-21"},
+                           {"title": "Older story long enough here", "url": "u3", "section": "markets", "date": "2026-10-19"}]}
+    buf = io.StringIO()
+    NW.print_inbox(inbox, out=buf, stats={"fool.com.au": {"ok": 9, "fail": 0}, "marketindex.com.au": {"ok": 0, "fail": 4}})
+    txt = buf.getvalue()
+    check("收件箱默认只列今天和前一个交易日，说明还有几条没列",
+          "u1" in txt and "u2" in txt and "u3" not in txt and "还有 1 条" in txt)
+    buf = io.StringIO()
+    NW.print_inbox(inbox, out=buf, everything=True)
+    check("--all 列全部", "u3" in buf.getvalue())
+    check("列出程序能打开 / 打不开的来源网站",
+          "程序能打开：fool.com.au 9/9" in txt and "打不开（数字会显示没法核对）：marketindex.com.au 0/4" in txt)
+    buf = io.StringIO()
+    NW.print_inbox(dict(inbox, date="2026-10-26",
+                        headlines=[dict(h, date="2026-10-24") for h in inbox["headlines"][:1]]), out=buf)
+    check("周一把周末的标题也列出来", "u1" in buf.getvalue())
+
+    tmp = tempfile.mkdtemp()
+    try:
+        sp = os.path.join(tmp, "stats.json")
+        b = {"date": "2026-10-22", "items": [{
+            "sources": [{"name": "AFR", "url": "https://www.afr.com/x"}, {"name": "MI", "url": "https://www.marketindex.com.au/y"}],
+            "verify": {"sources_failed": ["MI"]}}]}
+        NW.update_source_stats(b, sp)
+        st = NW.update_source_stats(b, sp)
+        check("来源网站统计：每次核对累加能打开 / 打不开的次数",
+              st["afr.com"] == {"ok": 2, "fail": 0, "last": "2026-10-22"} and st["marketindex.com.au"]["fail"] == 2, str(st))
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+    intake = io.open(".github/workflows/news-intake.yml", encoding="utf-8").read()
+    check("收件时把来源统计一起提交", "news/source_stats.json" in intake)
+    for name in ("afr-headlines", "afr-analysis"):
+        md = io.open(".claude/agents/%s.md" % name, encoding="utf-8").read()
+        check("子代理 %s 用骨架起草" % name, "news template" in md)
+
+
 def test_workflows():
     print("\n[N8] GitHub 上的三道保险：抓标题、收简报、看门狗")
     col = io.open(".github/workflows/news-collect.yml", encoding="utf-8").read()
@@ -747,6 +802,7 @@ def main():
     print("=" * 68)
     for fn in (test_validate, test_headlines, test_moves, test_build_site, test_stages, test_inbox,
                test_more_news, test_round2, test_number_check, test_scorecard, test_round1_reliability,
+               test_round2_efficiency,
                test_workflows, test_page_wiring):
         try:
             fn()

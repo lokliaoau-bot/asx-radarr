@@ -27,7 +27,8 @@ tools: Bash, Read, Write, Edit, Glob, Grep, WebSearch, WebFetch
 4. 每条写上 `impact`（股票填 3 位 ASX 代码和当天涨跌 `move_pct`，板块 `code` 填 null；方向只能是
    空 / 偏空 / 中性 / 偏多 / 多）和 `why_zh`（这件事怎么一步步影响到股价、主要风险、是不是已经反映在股价里）。
    `stage` 写 `analysis`，`model` 写 `claude-opus-5-5`，`effort` 写 `high`。
-5. `python -m asxquant.news check news/briefs/<日期>.json` 必须输出「通过」。只提交这一个文件，推到分支
+5. 起草用 `python -m asxquant.news template analysis` 生成骨架（见 README「起草」）。
+   `python -m asxquant.news check news/briefs/<日期>.json` 必须输出「通过」。只提交这一个文件，推到分支
    `claude/afr-brief-<日期>-analysis`。不开 Pull Request，不改任何别的文件。**只推一次**，推完不要变基或强推。推送失败就原样汇报错误。
    推送成功后运行 `python -m asxquant.news confirm <日期>`，确认 GitHub 收下并上线了（最多等 10 分钟）；
    输出「没上线」就把原因原样汇报。

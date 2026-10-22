@@ -1,0 +1,157 @@
+{
+ "abc.net.au": {
+  "ok": 3,
+  "fail": 0,
+  "last": "2026-10-21"
+ },
+ "afr.com": {
+  "ok": 28,
+  "fail": 0,
+  "last": "2026-10-22"
+ },
+ "au.investing.com": {
+  "ok": 0,
+  "fail": 1,
+  "last": "2026-10-21"
+ },
+ "businessnewsaustralia.com": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-22"
+ },
+ "capitalbrief.com": {
+  "ok": 4,
+  "fail": 0,
+  "last": "2026-10-22"
+ },
+ "discoveryalert.com": {
+  "ok": 0,
+  "fail": 1,
+  "last": "2026-10-22"
+ },
+ "fool.com.au": {
+  "ok": 7,
+  "fail": 0,
+  "last": "2026-10-22"
+ },
+ "freedom969.com": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-22"
+ },
+ "grafa.com": {
+  "ok": 4,
+  "fail": 0,
+  "last": "2026-10-22"
+ },
+ "ia.acs.org.au": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-21"
+ },
+ "ibtimes.com.au": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-22"
+ },
+ "indailysa.com.au": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-21"
+ },
+ "investing.com": {
+  "ok": 0,
+  "fail": 2,
+  "last": "2026-10-21"
+ },
+ "kalkine.com.au": {
+  "ok": 0,
+  "fail": 3,
+  "last": "2026-10-22"
+ },
+ "kalkinemedia.com": {
+  "ok": 2,
+  "fail": 0,
+  "last": "2026-10-22"
+ },
+ "mafinancial.com": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-21"
+ },
+ "marketindex.com.au": {
+  "ok": 0,
+  "fail": 6,
+  "last": "2026-10-22"
+ },
+ "marketmatters.com.au": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-22"
+ },
+ "mining.com.au": {
+  "ok": 0,
+  "fail": 1,
+  "last": "2026-10-21"
+ },
+ "miningweekly.com": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-21"
+ },
+ "moneymanagement.com.au": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-21"
+ },
+ "northernminer.com": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-21"
+ },
+ "oberonreview.com.au": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-21"
+ },
+ "oedigital.com": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-21"
+ },
+ "prnewswire.com": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-21"
+ },
+ "proactiveinvestors.com": {
+  "ok": 2,
+  "fail": 0,
+  "last": "2026-10-22"
+ },
+ "raskmedia.com.au": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-22"
+ },
+ "rigzone.com": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-21"
+ },
+ "thenewdaily.com.au": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-21"
+ },
+ "tradingview.com": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-22"
+ },
+ "uk.investing.com": {
+  "ok": 0,
+  "fail": 2,
+  "last": "2026-10-21"
+ }
+}

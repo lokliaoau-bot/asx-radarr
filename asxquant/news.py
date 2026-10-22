@@ -22,6 +22,7 @@
   python -m asxquant.news request                         # 云端 Claude 用：请 GitHub 现抓一份，等它提交后拉下来
   python -m asxquant.news inbox [日期]                    # 云端 Claude 用：看收件箱里的 AFR 标题和涨跌
   python -m asxquant.news confirm <日期>                  # 云端 Claude 用：推送后确认简报真的并进了 main
+  python -m asxquant.news template headlines|analysis     # 云端 Claude 用：打印填好固定字段的简报骨架
   python -m asxquant.news due                             # 看门狗用：现在应该已有简报的那个交易日
   python -m asxquant.news verify <文件…>                  # news-intake.yml 用：打开来源网页逐个核对数字
   python -m asxquant.news score                           # news-collect.yml 用：判断成绩单 → news/scorecard.json
@@ -59,6 +60,7 @@ AFR_RSS = AFR + "/rss/feed.xml"
 # 备用标题来源（2026-10-22 加）：AFR 万一挡住 GitHub 的机器，Bing 新闻 RSS 仍能给出 AFR 的标题和真实链接
 BING_RSS = "https://www.bing.com/news/search?q=site%3aafr.com&format=rss&count=50"
 STATUS = "news/inbox/_status.json"          # 抓取 / 收件流程的最近一次结果，云端 Claude 靠它快速知道失败原因
+SOURCE_STATS = "news/source_stats.json"     # 各来源网站「程序能不能打开」的累计记录（数字核对时更新）
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/126.0 Safari/537.36")
 # 和股市有关的栏目（链接路径第一段）。政治、国际、生活、文化不选。
@@ -78,7 +80,8 @@ SECTION_LABELS = {"street-talk": "Street Talk", "chanticleer": "Chanticleer", "r
                   "companies": "公司", "markets": "市场", "policy": "政策", "technology": "科技",
                   "property": "地产", "wealth": "理财"}
 ASX_LIST = "https://www.asx.com.au/asx/research/ASXListedCompanies.csv"
-LEAD_LIMIT = 100    # 收件时最多读多少篇文章的公开开头（只提取线索，不存原文）
+LEAD_LIMIT = 180    # 收件时最多读多少篇文章的公开开头（只提取线索，不存原文）；10-22 读满了 100 篇，调高
+LEAD_WORKERS = 4    # 同时读几篇（每篇之间仍有停顿，对 AFR 很温和）
 LEAD_PRIORITY = {s: i for i, s in enumerate(("street-talk", "companies", "markets", "chanticleer", "rear-window",
                                               "policy", "technology", "property", "wealth"))}
 INBOX_KEEP_DAYS = 30
@@ -658,20 +661,24 @@ def collect(day=None, get=_get, prices=None, codes=None, log=print, sections=SEC
     # 读的篇数上限挤掉。
     todo = sorted((h for h in heads if (h.get("date") or "") >= recent),
                   key=lambda h: LEAD_PRIORITY.get(h.get("section"), len(LEAD_PRIORITY)))
-    read = fails = 0
-    for h in todo:
-        if read >= LEAD_LIMIT or fails >= 8:
-            break
+    from concurrent.futures import ThreadPoolExecutor
+
+    def read_one(h):
         try:
-            hints = lead_hints(article_lead(h["url"], get=get)["paragraphs"], index, bare)
-            fails = 0
+            return h, lead_hints(article_lead(h["url"], get=get)["paragraphs"], index, bare)
         except Exception as e:                      # 还没上线的文章是 404，正常
-            fails += 1
             log("读不到 %s: %s" % (h["url"], e))
-            continue
+            return h, None
         finally:
-            read += 1
             sleep(0.3)                              # 别把 AFR 刷太快
+    todo = todo[:LEAD_LIMIT]
+    with ThreadPoolExecutor(max_workers=LEAD_WORKERS) as pool:
+        results = list(pool.map(read_one, todo))
+    if todo and sum(r is None for _, r in results) > len(todo) * 0.8:
+        log("读文章几乎全部失败（%d/%d），AFR 可能在挡 GitHub" % (sum(r is None for _, r in results), len(todo)))
+    for h, hints in results:
+        if hints is None:
+            continue
         h["hints"] = {"amounts": hints["amounts"], "names": hints["names"]}
         h["codes"] = list(dict.fromkeys(h["codes"] + hints["codes"]))[:6]
     mentioned = {c for h in heads for c in h.get("codes", [])}
@@ -846,6 +853,62 @@ def is_trading_day(d):
         return d.weekday() < 5
 
 
+def template(stage, day=None, inbox=None, now=None):
+    """给云端 Claude 的简报骨架：固定字段和大盘数字都填好了，尖括号里的要换成真内容（不换的话校验会挡下）。"""
+    from zoneinfo import ZoneInfo
+    day = day or sydney_today()
+    now = (now or dt.datetime.now(dt.timezone.utc)).astimezone(ZoneInfo("Australia/Sydney"))
+    ix = (inbox or {}).get("index") or {}
+    item = {"title_zh": "<中文标题，一句话说清是什么事，≤40 字>",
+            "afr_headline": "<AFR 原标题，照抄收件箱>",
+            "afr_url": "<AFR 链接，照抄收件箱>",
+            "afr_section": "<栏目，例如 Companies / Mining>",
+            "what_zh": "<发生了什么：事实 + 关键数字 + 当天股价反应，100–250 字>",
+            "calcs": [{"value": "<正文里自己算出来的数字，例如 约 36%>", "expr": "<算式，例如 (1-255/397.5)*100>"}],
+            "sources": [{"name": "AFR", "url": "<同 afr_url>"}, {"name": "<来源名>", "url": "<https 链接>"}]}
+    if stage == "analysis":
+        item["impact"] = [{"name": "<公司名>", "code": "<3 位 ASX 代码>", "direction": "<空/偏空/中性/偏多/多>",
+                           "move_pct": None},
+                          {"name": "<板块名>", "code": None, "direction": "<空/偏空/中性/偏多/多>"}]
+        item["why_zh"] = "<为什么这样判断：怎么一步步影响到股价、主要风险，60–150 字>"
+    return {"schema": SCHEMA, "date": day.isoformat(), "stage": stage, "model": "claude-opus-5-5",
+            "effort": "high" if stage == "analysis" else "medium",
+            "generated_at": now.replace(microsecond=0).isoformat(), "generated_by": "Claude (claude-opus-5-5)",
+            "market": {"text_zh": "<一句话今日大盘：ASX 200 收 %s 点，%s，谁拖累谁拉动>" % (
+                round(ix["close"], 1) if ix.get("close") else "?",
+                ("涨 %.2f%%" % ix["pct"] if ix.get("pct", 0) >= 0 else "跌 %.2f%%" % -ix["pct"]) if ix else "?"),
+                "index_close": round(ix["close"], 1) if ix.get("close") else None,
+                "index_pct": ix.get("pct")},
+            "items": [item]}
+
+
+def update_source_stats(brief, path=None):
+    """数字核对之后记下每个来源网站这次能不能打开，累计成「程序能打开的网站」名单。"""
+    import urllib.parse
+    path = path or os.path.join(ROOT, SOURCE_STATS)
+    stats = {}
+    if os.path.exists(path):
+        try:
+            with io.open(path, encoding="utf-8") as f:
+                stats = json.load(f)
+        except Exception:
+            stats = {}
+    for it in brief.get("items") or []:
+        v = it.get("verify") or {}
+        bad = set(v.get("sources_failed") or [])
+        for s_ in it.get("sources") or []:
+            host = urllib.parse.urlparse(s_.get("url") or "").netloc.lower().replace("www.", "")
+            if not host:
+                continue
+            row = stats.setdefault(host, {"ok": 0, "fail": 0})
+            row["fail" if s_.get("name") in bad else "ok"] += 1
+            row["last"] = brief.get("date")
+    with io.open(path, "w", encoding="utf-8", newline="\n") as f:
+        json.dump(dict(sorted(stats.items())), f, ensure_ascii=False, indent=1)
+        f.write("\n")
+    return stats
+
+
 def merge_inbox(old, new):
     """同一天抓多次时合并：标题取并集（AFR 首页会轮换，早上抓到的链接晚上可能就不在了——10-21 的简报
     因此有一条链接被校验挡下）；同一篇两次都有就用新的，新的没读到线索就沿用旧的；行情用新的。"""
@@ -873,7 +936,9 @@ def prune_inbox(today, inbox_dir=INBOX, keep_days=INBOX_KEEP_DAYS):
     return gone
 
 
-def print_inbox(inbox, out=None):
+def print_inbox(inbox, out=None, everything=False, stats=None):
+    """默认只列今天和前一个交易日的标题（周一含周末）——10-22 全列出来有 49KB，云端读起来又慢又贵；
+    everything=True 列全部。stats：各来源网站程序能不能打开（数字核对用），帮 Claude 挑能核对的来源。"""
     out = out or sys.stdout
     ix = inbox.get("index") or {}
     print("日期 %s，抓取于 %s" % (inbox["date"], inbox.get("collected_at")), file=out)
@@ -894,6 +959,12 @@ def print_inbox(inbox, out=None):
         return ("  [可能涉及 " + "，".join(out_) + "]") if out_ else ""
 
     heads = inbox.get("headlines") or []
+    hidden = 0
+    if not everything:
+        day = dt.date.fromisoformat(inbox["date"])
+        lo = (day - dt.timedelta(days=3 if day.weekday() == 0 else 1)).isoformat()
+        keep = [h for h in heads if not h.get("date") or h["date"] >= lo]
+        hidden, heads = len(heads) - len(keep), keep
     groups = [("Street Talk（交易内幕：收购、出售、融资、IPO）", [h for h in heads if h.get("section") == "street-talk"]),
               ("其他 AFR 标题", [h for h in heads if h.get("section") != "street-talk"])]
     print("\nAFR 标题（只能从这里选，链接原样照抄；「线索」只是搜别的来源用的关键词，不能直接当事实写）：", file=out)
@@ -906,7 +977,17 @@ def print_inbox(inbox, out=None):
             if hints.get("amounts") or hints.get("names"):
                 print("    线索：%s%s" % ("数字 " + "、".join(hints["amounts"]) + "；" if hints.get("amounts") else "",
                                        "名字 " + "、".join(hints.get("names") or [])), file=out)
+    if hidden:
+        print("\n（还有 %d 条更早的标题没列出；要看全部用 inbox --all）" % hidden, file=out)
     print("\n其余股票的涨跌在 JSON 的 moves 里（股票池外的，发布时会自动补）。", file=out)
+    if stats:
+        rows = sorted(stats.items(), key=lambda kv: (-(kv[1]["ok"] / max(1, kv[1]["ok"] + kv[1]["fail"])),
+                                                      -(kv[1]["ok"] + kv[1]["fail"])))
+        good = ["%s %d/%d" % (d, v["ok"], v["ok"] + v["fail"]) for d, v in rows if v["ok"] >= v["fail"]][:15]
+        bad = ["%s %d/%d" % (d, v["ok"], v["ok"] + v["fail"]) for d, v in rows if v["ok"] < v["fail"]][:15]
+        print("\n来源网站（发布前要打开它核对数字；能打开的优先引用）：", file=out)
+        print("  程序能打开：" + ("，".join(good) or "暂无记录"), file=out)
+        print("  打不开（数字会显示没法核对）：" + ("，".join(bad) or "暂无记录"), file=out)
 
 
 # ---------------------------------------------------------------- 发布
@@ -1074,12 +1155,22 @@ def main(argv=None):
             print("失败：%s" % e, file=sys.stderr)
             return e.code
     if cmd == "inbox":
+        everything = "--all" in a
+        a = [x for x in a if x != "--all"]
         day = dt.date.fromisoformat(a[0]) if a else sydney_today()
         inbox = load_inbox(day)
         if not inbox:
             print("没有 news/inbox/%s.json，先运行 python -m asxquant.news request" % day, file=sys.stderr)
             return 1
-        print_inbox(inbox)
+        stats = None
+        if os.path.exists(os.path.join(ROOT, SOURCE_STATS)):
+            with io.open(os.path.join(ROOT, SOURCE_STATS), encoding="utf-8") as f:
+                stats = json.load(f)
+        print_inbox(inbox, everything=everything, stats=stats)
+        return 0
+    if cmd == "template" and a and a[0] in STAGES:
+        day = sydney_today()
+        print(json.dumps(template(a[0], day, load_inbox(day)), ensure_ascii=False, indent=2))
         return 0
     if cmd == "verify" and a:
         # news-intake.yml 用：打开来源网页逐个核对数字，结果写回简报（verify 字段）。网页打不开不算错。
@@ -1094,6 +1185,10 @@ def main(argv=None):
             with io.open(path, "w", encoding="utf-8", newline="\n") as f:
                 json.dump(b, f, ensure_ascii=False, indent=2)
                 f.write("\n")
+            try:
+                update_source_stats(b)
+            except Exception as e:
+                print("! 来源统计没更新：%s" % e, file=sys.stderr)
             for it in b["items"]:
                 v = it["verify"]
                 print("%s：%d 个数字，来源找到 %d，行情对上 %d，自己算的 %d，没找到 %s（打不开的来源：%s）"

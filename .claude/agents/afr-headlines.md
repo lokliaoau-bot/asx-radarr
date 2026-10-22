@@ -23,7 +23,8 @@ tools: Bash, Read, Write, Edit, Glob, Grep, WebSearch, WebFetch
    **Street Talk 组至少看一遍**，涉及 ASX 上市公司的交易挑最重要的 1–2 条，按 README 的办法拼出内容。
 5. 只写标题、发生了什么和来源，**不要写 `impact` 和 `why_zh`**。`stage` 写 `headlines`，
    `model` 写 `claude-opus-5-5`，`effort` 写 `medium`。
-6. `python -m asxquant.news check news/briefs/<日期>.json` 必须输出「通过」。只提交这一个文件，推到分支
+6. 起草用 `python -m asxquant.news template headlines` 生成骨架（见 README「起草」）。
+   `python -m asxquant.news check news/briefs/<日期>.json` 必须输出「通过」。只提交这一个文件，推到分支
    `claude/afr-brief-<日期>`。不开 Pull Request，不改任何别的文件。**只推一次**，推完不要变基或强推。推送失败就原样汇报错误。
    推送成功后运行 `python -m asxquant.news confirm <日期>`，确认 GitHub 收下并上线了（最多等 10 分钟）；
    输出「没上线」就把原因原样汇报。

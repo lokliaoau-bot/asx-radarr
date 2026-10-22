@@ -81,6 +81,7 @@ jobs:
           python -m asxquant.news verify $FILES || echo "数字核对没跑完，照常发布（页面不显示核对结果）"
           python -m asxquant.news status intake ok "并入 $(echo $FILES | tr '\n' ' ')" "$DAY"
           git add $FILES news/inbox/_status.json
+          [ -f news/source_stats.json ] && git add news/source_stats.json
           if git diff --staged --quiet; then
             echo "和 main 上的完全一样，不用提交"
           else
