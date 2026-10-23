@@ -1,8 +1,108 @@
 {
  "schema": "afr-inbox-v1",
  "date": "2026-10-23",
- "collected_at": "2026-10-23T07:06:11+00:00",
+ "collected_at": "2026-10-23T11:55:01+00:00",
  "headlines": [
+  {
+   "title": "Where Australia’s migrants come from, explained in 12 charts",
+   "url": "https://www.afr.com/policy/economy/where-australia-s-migrants-come-from-explained-in-12-charts-20261023-p615aq",
+   "section": "policy",
+   "date": "2026-10-23",
+   "published": "2026-10-23T09:00:00+00:00",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Australians",
+     "Western",
+     "United States",
+     "United Kingdom",
+     "Immigration",
+     "Australia",
+     "Indigenous",
+     "Noel Pearson"
+    ]
+   }
+  },
+  {
+   "title": "‘Announcement fever’ blamed for Snowy 2.0 cost debacle",
+   "url": "https://www.afr.com/companies/energy/announcement-fever-blamed-for-snowy-2-0-cost-debacle-20261023-p6180p",
+   "section": "companies",
+   "date": "2026-10-23",
+   "published": "2026-10-23T09:00:00+00:00",
+   "codes": [],
+   "hints": {
+    "amounts": [
+     "$25 billion"
+    ],
+    "names": [
+     "Top",
+     "Snowy",
+     "Turnbull"
+    ]
+   }
+  },
+  {
+   "title": "Debt bomb threatens booming AI trade, $155b data centre roll-out",
+   "url": "https://www.afr.com/companies/infrastructure/debt-bomb-threatens-booming-ai-trade-155b-data-centre-roll-out-20261023-p61810",
+   "section": "companies",
+   "date": "2026-10-23",
+   "published": "2026-10-23T09:00:00+00:00",
+   "codes": [
+    "NXT"
+   ],
+   "hints": {
+    "amounts": [
+     "$155 billion"
+    ],
+    "names": [
+     "NextDC",
+     "Australia",
+     "Borrowing",
+     "CDC Data Centres",
+     "Future Fund"
+    ]
+   }
+  },
+  {
+   "title": "France’s unrest shows Labor the cost of the handout state",
+   "url": "https://www.afr.com/policy/economy/france-s-unrest-shows-labor-the-cost-of-the-handout-state-20261023-p617bp",
+   "section": "policy",
+   "date": "2026-10-23",
+   "published": "2026-10-23T07:29:32+00:00",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "France",
+     "Labor",
+     "Weaning",
+     "Canberra",
+     "Ever",
+     "Bastille",
+     "Hotel",
+     "Ville"
+    ]
+   }
+  },
+  {
+   "title": "Sam Wood’s legal team attempt to keep new bail application secret",
+   "url": "https://www.afr.com/companies/media-and-marketing/sam-wood-s-legal-team-attempt-to-keep-new-bail-application-secret-20261023-p6186k",
+   "section": "companies",
+   "date": "2026-10-23",
+   "published": "2026-10-23T07:25:21+00:00",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Lawyers",
+     "Sam Wood",
+     "Wood",
+     "Queensland",
+     "Noosa"
+    ]
+   }
+  },
   {
    "title": "NextDC’s electric shock, NAB cuts 2500 jobs and Musk’s $5trn move",
    "url": "https://www.afr.com/policy/economy/nextdc-s-electric-shock-nab-cuts-2500-jobs-and-musk-s-5trn-move-20261023-p6184s",
@@ -140,53 +240,10 @@
    }
   },
   {
-   "title": "Rio Tinto pledges $2.7b to revive ageing Queensland bauxite mines",
-   "url": "https://www.afr.com/companies/mining/rio-tinto-pledges-2-7b-to-revive-ageing-queensland-bauxite-mines-20261023-p6184a",
-   "section": "companies",
-   "date": "2026-10-23",
-   "published": "2026-10-23T04:23:30+00:00",
-   "codes": [
-    "RIO"
-   ],
-   "hints": {
-    "amounts": [
-     "$2.7 billion"
-    ],
-    "names": [
-     "Rio Tinto",
-     "Queensland",
-     "Cape York Peninsula",
-     "Kangwinan",
-     "Weipa"
-    ]
-   }
-  },
-  {
-   "title": "NAB asks thousands to reapply for jobs as search for 2500 cuts begins",
-   "url": "https://www.afr.com/companies/financial-services/nab-asks-thousands-to-reapply-for-jobs-as-search-for-2500-cuts-begins-20261023-p617qg",
-   "section": "companies",
-   "date": "2026-10-23",
-   "published": "2026-10-23T04:18:56+00:00",
-   "codes": [
-    "NAB"
-   ],
-   "hints": {
-    "amounts": [],
-    "names": [
-     "National Australia Bank",
-     "Hunger Games-style",
-     "Employees",
-     "NAB",
-     "Andrew Irvine"
-    ]
-   }
-  },
-  {
    "title": "Why $100k at 25 is more powerful than an inheritance at 55",
    "url": "https://www.afr.com/wealth/personal-finance/the-life-changing-power-of-a-100k-gift-at-25-20261023-p613g1",
    "section": "wealth",
    "date": "2026-10-23",
-   "published": "2026-10-23T03:43:56+00:00",
    "codes": [],
    "hints": {
     "amounts": [
@@ -201,105 +258,21 @@
    }
   },
   {
-   "title": "Chalmers lifts bank bond caps, doubles deceased estate withdrawals",
-   "url": "https://www.afr.com/policy/economy/chalmers-lifts-bank-bond-caps-in-780m-productivity-push-20261023-p6181a",
-   "section": "policy",
-   "date": "2026-10-23",
-   "published": "2026-10-23T02:53:54+00:00",
-   "codes": [],
-   "hints": {
-    "amounts": [
-     "$780 million"
-    ],
-    "names": [
-     "Treasurer Jim Chalmers",
-     "Citi",
-     "Australian Economic Forum",
-     "Chalmers"
-    ]
-   }
-  },
-  {
-   "title": "ASX finishes flat; Zip crashes 30pc",
-   "url": "https://www.afr.com/markets/equity-markets/asx-to-fall-wall-street-slides-oil-hits-five-month-high-20261023-p617ye",
-   "section": "markets",
-   "date": "2026-10-23",
-   "published": "2026-10-23T02:41:28+00:00",
-   "codes": [
-    "ZIP"
-   ],
-   "hints": {
-    "amounts": [
-     "2.9 per cent",
-     "1.2 per cent",
-     "7 per cent",
-     "$1.2 trillion"
-    ],
-    "names": [
-     "Japan",
-     "BoJ",
-     "Australian",
-     "Wall Street",
-     "S&P",
-     "Index",
-     "Nasdaq",
-     "Meta"
-    ]
-   }
-  },
-  {
-   "title": "Morgans’ glaring Firmus IPO conflict of interest can’t be ignored",
-   "url": "https://www.afr.com/companies/financial-services/morgans-glaring-firmus-ipo-conflict-of-interest-can-t-be-ignored-20261023-p617qy",
+   "title": "NAB asks thousands to reapply for jobs as search for 2500 cuts begins",
+   "url": "https://www.afr.com/companies/financial-services/nab-asks-thousands-to-reapply-for-jobs-as-search-for-2500-cuts-begins-20261023-p617qg",
    "section": "companies",
    "date": "2026-10-23",
-   "codes": [],
-   "hints": {
-    "amounts": [
-     "$300 million",
-     "$44 billion"
-    ],
-    "names": [
-     "Morgans",
-     "Firmus IPO",
-     "Alarm",
-     "Firmus Technologies",
-     "Investors",
-     "Conflicts"
-    ]
-   }
-  },
-  {
-   "title": "NAB’s local workers given the ‘AI chop’, says Labor senator",
-   "url": "https://www.afr.com/companies/financial-services/nab-s-local-workers-given-the-ai-chop-says-labor-senator-20261022-p617l1",
-   "section": "companies",
-   "date": "2026-10-22",
    "codes": [
     "NAB"
    ],
    "hints": {
-    "amounts": [
-     "2500 jobs"
-    ],
-    "names": [
-     "Labor Party",
-     "National Australia Bank",
-     "Senator Tony Sheldon",
-     "NAB",
-     "Andrew Irvine"
-    ]
-   }
-  },
-  {
-   "title": "Apollo’s MaxCap cuts staff amid private credit slump",
-   "url": "https://www.afr.com/companies/financial-services/apollo-s-maxcap-cuts-staff-amid-private-credit-slump-20261023-p6180j",
-   "section": "companies",
-   "date": "2026-10-23",
-   "codes": [],
-   "hints": {
     "amounts": [],
     "names": [
-     "MaxCap",
-     "Apollo Global Management"
+     "National Australia Bank",
+     "Hunger Games-style",
+     "Employees",
+     "NAB",
+     "Andrew Irvine"
     ]
    }
   },
@@ -580,6 +553,41 @@
    }
   },
   {
+   "title": "Rio Tinto pledges $2.7b to revive ageing Queensland bauxite mines",
+   "url": "https://www.afr.com/companies/mining/rio-tinto-pledges-2-7b-to-revive-ageing-queensland-bauxite-mines-20261023-p6184a",
+   "section": "companies",
+   "date": "2026-10-23",
+   "codes": [
+    "RIO"
+   ],
+   "hints": {
+    "amounts": [
+     "$2.7 billion"
+    ],
+    "names": [
+     "Rio Tinto",
+     "Queensland",
+     "Cape York Peninsula",
+     "Kangwinan",
+     "Weipa"
+    ]
+   }
+  },
+  {
+   "title": "Apollo’s MaxCap cuts staff amid private credit slump",
+   "url": "https://www.afr.com/companies/financial-services/apollo-s-maxcap-cuts-staff-amid-private-credit-slump-20261023-p6180j",
+   "section": "companies",
+   "date": "2026-10-23",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "MaxCap",
+     "Apollo Global Management"
+    ]
+   }
+  },
+  {
    "title": "NextDC draws investor ire over slow disclosure of power delays",
    "url": "https://www.afr.com/companies/infrastructure/nextdc-draws-investor-ire-over-slow-disclosure-of-power-delays-20261022-p617pi",
    "section": "companies",
@@ -620,35 +628,23 @@
    }
   },
   {
-   "title": "Barrenjoey trading profit takes a hit from global bond market rout",
-   "url": "https://www.afr.com/companies/financial-services/barrenjoey-trading-profits-take-a-hit-from-global-bond-market-rout-20261022-p61665",
+   "title": "NAB’s local workers given the ‘AI chop’, says Labor senator",
+   "url": "https://www.afr.com/companies/financial-services/nab-s-local-workers-given-the-ai-chop-says-labor-senator-20261022-p617l1",
    "section": "companies",
    "date": "2026-10-22",
    "codes": [
-    "MFG"
+    "NAB"
    ],
    "hints": {
     "amounts": [
-     "9 per cent",
-     "$7.77"
+     "2500 jobs"
     ],
     "names": [
-     "Barrenjoey",
-     "Magellan Financial and Barrenjoey Capital Partners"
-    ]
-   }
-  },
-  {
-   "title": "Ban on KPMG doing government work extended until February 2027",
-   "url": "https://www.afr.com/companies/professional-services/kpmg-ban-on-government-work-extended-until-february-2027-20261022-p617sg",
-   "section": "companies",
-   "date": "2026-10-22",
-   "codes": [],
-   "hints": {
-    "amounts": [],
-    "names": [
-     "KPMG",
-     "Department of Finance"
+     "Labor Party",
+     "National Australia Bank",
+     "Senator Tony Sheldon",
+     "NAB",
+     "Andrew Irvine"
     ]
    }
   },
@@ -729,6 +725,27 @@
    ]
   },
   {
+   "title": "Morgans’ glaring Firmus IPO conflict of interest can’t be ignored",
+   "url": "https://www.afr.com/companies/financial-services/morgans-glaring-firmus-ipo-conflict-of-interest-can-t-be-ignored-20261023-p617qy",
+   "section": "companies",
+   "date": "2026-10-23",
+   "codes": [],
+   "hints": {
+    "amounts": [
+     "$300 million",
+     "$44 billion"
+    ],
+    "names": [
+     "Morgans",
+     "Firmus IPO",
+     "Alarm",
+     "Firmus Technologies",
+     "Investors",
+     "Conflicts"
+    ]
+   }
+  },
+  {
    "title": "Snowy Hydro 2.0 shows Australia dreams big, but fails to build",
    "url": "https://www.afr.com/policy/economy/snowy-hydro-2-0-shows-australia-dreams-big-but-fails-to-build-20261022-p617bo",
    "section": "policy",
@@ -747,22 +764,20 @@
    }
   },
   {
-   "title": "Lack of fast rail will limit take-off of Sydney’s new airport",
-   "url": "https://www.afr.com/companies/transport/no-fast-rail-will-limit-take-off-of-sydney-s-new-airport-20261023-p617a8",
-   "section": "companies",
+   "title": "Chalmers lifts bank bond caps, doubles deceased estate withdrawals",
+   "url": "https://www.afr.com/policy/economy/chalmers-lifts-bank-bond-caps-in-780m-productivity-push-20261023-p6181a",
+   "section": "policy",
    "date": "2026-10-23",
    "codes": [],
    "hints": {
-    "amounts": [],
+    "amounts": [
+     "$780 million"
+    ],
     "names": [
-     "Lack",
-     "Sydney",
-     "Build",
-     "Sydney CBD",
-     "Western Sydney Nancy-Bird Walton International",
-     "Airport",
-     "WSI",
-     "Senate"
+     "Treasurer Jim Chalmers",
+     "Citi",
+     "Australian Economic Forum",
+     "Chalmers"
     ]
    }
   },
@@ -800,43 +815,6 @@
      "Rottnest Island",
      "Sydney",
      "Western Sydney Aerotropolis"
-    ]
-   }
-  },
-  {
-   "title": "Chalmers warns of slower growth as traders bet on rate rise next month",
-   "url": "https://www.afr.com/policy/economy/chalmers-warns-of-slower-growth-as-traders-bet-on-rate-rise-next-month-20261022-p61768",
-   "section": "policy",
-   "date": "2026-10-22",
-   "codes": [
-    "BOQ"
-   ],
-   "hints": {
-    "amounts": [],
-    "names": [
-     "Treasurer Jim Chalmers",
-     "Albanese",
-     "Reserve Bank of Australia",
-     "Chalmers",
-     "RBA"
-    ]
-   }
-  },
-  {
-   "title": "Australia ranks behind 90 nations for foreign investment hurdles",
-   "url": "https://www.afr.com/policy/economy/australia-ranks-behind-90-nations-for-foreign-investment-hurdles-20261022-p6172e",
-   "section": "policy",
-   "date": "2026-10-22",
-   "codes": [],
-   "hints": {
-    "amounts": [],
-    "names": [
-     "Australia",
-     "Organisation",
-     "Economic Co-operation and Development",
-     "Albanese",
-     "Australian",
-     "OECD"
     ]
    }
   },
@@ -1288,6 +1266,26 @@
    }
   },
   {
+   "title": "Lack of fast rail will limit take-off of Sydney’s new airport",
+   "url": "https://www.afr.com/companies/transport/no-fast-rail-will-limit-take-off-of-sydney-s-new-airport-20261023-p617a8",
+   "section": "companies",
+   "date": "2026-10-23",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Lack",
+     "Sydney",
+     "Build",
+     "Sydney CBD",
+     "Western Sydney Nancy-Bird Walton International",
+     "Airport",
+     "WSI",
+     "Senate"
+    ]
+   }
+  },
+  {
    "title": "China’s pressure on Fortescue will soon become self-harm",
    "url": "https://www.afr.com/companies/mining/china-s-pressure-on-fortescue-will-soon-become-self-harm-20261022-p617rh",
    "section": "companies",
@@ -1301,6 +1299,20 @@
      "Chinese",
      "Fortescue",
      "Andrew Forrest"
+    ]
+   }
+  },
+  {
+   "title": "Ban on KPMG doing government work extended until February 2027",
+   "url": "https://www.afr.com/companies/professional-services/kpmg-ban-on-government-work-extended-until-february-2027-20261022-p617sg",
+   "section": "companies",
+   "date": "2026-10-22",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "KPMG",
+     "Department of Finance"
     ]
    }
   },
@@ -1322,6 +1334,25 @@
      "Alaskan",
      "Barossa",
      "Timor Sea"
+    ]
+   }
+  },
+  {
+   "title": "Barrenjoey trading profit takes a hit from global bond market rout",
+   "url": "https://www.afr.com/companies/financial-services/barrenjoey-trading-profits-take-a-hit-from-global-bond-market-rout-20261022-p61665",
+   "section": "companies",
+   "date": "2026-10-22",
+   "codes": [
+    "MFG"
+   ],
+   "hints": {
+    "amounts": [
+     "9 per cent",
+     "$7.77"
+    ],
+    "names": [
+     "Barrenjoey",
+     "Magellan Financial and Barrenjoey Capital Partners"
     ]
    }
   },
@@ -1683,6 +1714,33 @@
    ]
   },
   {
+   "title": "ASX finishes flat; Zip crashes 30pc",
+   "url": "https://www.afr.com/markets/equity-markets/asx-to-fall-wall-street-slides-oil-hits-five-month-high-20261023-p617ye",
+   "section": "markets",
+   "date": "2026-10-23",
+   "codes": [
+    "ZIP"
+   ],
+   "hints": {
+    "amounts": [
+     "2.9 per cent",
+     "1.2 per cent",
+     "7 per cent",
+     "$1.2 trillion"
+    ],
+    "names": [
+     "Japan",
+     "BoJ",
+     "Australian",
+     "Wall Street",
+     "S&P",
+     "Index",
+     "Nasdaq",
+     "Meta"
+    ]
+   }
+  },
+  {
    "title": "Chalmers lifts bank bond caps; Queensland minister quits frontbench over threats; ‘Fear and confusion’ seize markets",
    "url": "https://www.afr.com/markets/equity-markets/chalmers-lifts-bank-bond-caps-queensland-minister-quits-frontbench-over-threats-fear-and-confusion-seize-markets-20261023-p6182s",
    "section": "markets",
@@ -1841,6 +1899,43 @@
    "codes": [
     "NAB"
    ]
+  },
+  {
+   "title": "Chalmers warns of slower growth as traders bet on rate rise next month",
+   "url": "https://www.afr.com/policy/economy/chalmers-warns-of-slower-growth-as-traders-bet-on-rate-rise-next-month-20261022-p61768",
+   "section": "policy",
+   "date": "2026-10-22",
+   "codes": [
+    "BOQ"
+   ],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Treasurer Jim Chalmers",
+     "Albanese",
+     "Reserve Bank of Australia",
+     "Chalmers",
+     "RBA"
+    ]
+   }
+  },
+  {
+   "title": "Australia ranks behind 90 nations for foreign investment hurdles",
+   "url": "https://www.afr.com/policy/economy/australia-ranks-behind-90-nations-for-foreign-investment-hurdles-20261022-p6172e",
+   "section": "policy",
+   "date": "2026-10-22",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Australia",
+     "Organisation",
+     "Economic Co-operation and Development",
+     "Albanese",
+     "Australian",
+     "OECD"
+    ]
+   }
   },
   {
    "title": "Why five-year-high unemployment won’t stop another RBA rate rise",
@@ -2686,6 +2781,11 @@
    "close": 2.67,
    "halted": false
   },
+  "HPR": {
+   "pct": 0.0,
+   "close": 0.1,
+   "halted": true
+  },
   "HSN": {
    "pct": 1.12,
    "close": 3.61,
@@ -2705,6 +2805,11 @@
    "pct": 0.34,
    "close": 8.92,
    "halted": false
+  },
+  "ICU": {
+   "pct": 0.0,
+   "close": 0.001,
+   "halted": true
   },
   "IDX": {
    "pct": -0.48,
@@ -2777,8 +2882,8 @@
    "halted": false
   },
   "LML": {
-   "pct": -8.33,
-   "close": 0.011,
+   "pct": -4.17,
+   "close": 0.0115,
    "halted": false
   },
   "LNW": {
