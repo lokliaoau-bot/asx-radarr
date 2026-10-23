@@ -1,0 +1,323 @@
+{
+  "schema": "afr-brief-v1",
+  "date": "2026-10-23",
+  "stage": "headlines",
+  "model": "claude-opus-5-5",
+  "effort": "medium",
+  "generated_at": "2026-10-23T18:09:05+11:00",
+  "generated_by": "Claude (claude-opus-5-5)",
+  "market": {
+    "text_zh": "ASX 200 收 8795.2 点，涨 0.02%，基本持平。银行股走强（CBA 涨 4.35%、NAB 涨 3.25%、西太平洋银行涨 3.11%），矿业股普遍下跌（力拓跌 2.68%，锂矿 PLS 跌 8.07%，金矿 RMS 跌 6.23%）；Zip 收跌 29.47%。",
+    "index_close": 8795.2,
+    "index_pct": 0.02
+  },
+  "items": [
+    {
+      "title_zh": "美国遭欺诈团伙批量开户骗贷，Zip 股价收跌近三成",
+      "afr_headline": "Zip targeted by US fraudsters, raising questions over risk controls",
+      "afr_url": "https://www.afr.com/companies/financial-services/zip-targeted-by-us-fraudsters-raising-questions-over-risk-controls-20261023-p61822",
+      "afr_section": "Companies / Financial services",
+      "what_zh": "先买后付（BNPL）公司 Zip 发布 2027 财年第一季度业务更新，披露美国业务遭遇外部欺诈：有组织的团伙用真实的身份信息批量开新账户，消费后不还款。这件事拖累了 7、8 月的交易额（TTV）和新客户增长，带来 720 万美元（约 1010 万澳元）的现金运营费用；坏账率升到交易额的 1.97%，一年前是 1.65%。公司已报警并向保险公司索赔，并称 9 月美国交易额按美元算同比增长 41%，已恢复增长。股价盘中一度跌约 50%，收 1.46 澳元，跌 29.47%。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/financial-services/zip-targeted-by-us-fraudsters-raising-questions-over-risk-controls-20261023-p61822"
+        },
+        {
+          "name": "Rask Media",
+          "url": "https://www.raskmedia.com.au/2026/10/23/zip-asxzip-share-price-sinks-29-on-weak-fy27-first-quarter-fraud-event/"
+        },
+        {
+          "name": "IBTimes Australia",
+          "url": "https://www.ibtimes.com.au/zip-shares-plunge-after-us-fraud-attack-1877248"
+        },
+        {
+          "name": "Michael West Media",
+          "url": "https://michaelwest.com.au/buy-now-pay-later-companys-shares-plunge-on-us-fraud/"
+        },
+        {
+          "name": "Reuters（TradingView）",
+          "url": "https://www.tradingview.com/news/reuters.com,2026:newsml_L4N4682GK:0-australia-s-zip-tumbles-50-after-fraud-incident-dents-first-quarter-customer-growth/"
+        }
+      ],
+      "verify": {
+        "checked": 8,
+        "found": [
+          "720 万",
+          "约 1010 万",
+          "1.97%",
+          "约 50%",
+          "1.46",
+          "29.47%"
+        ],
+        "derived": [],
+        "market": [],
+        "missing": [
+          "1.65%",
+          "41%"
+        ],
+        "sources_ok": [
+          "AFR",
+          "Rask Media",
+          "IBTimes Australia",
+          "Reuters（TradingView）"
+        ],
+        "sources_failed": [
+          "Michael West Media"
+        ]
+      }
+    },
+    {
+      "title_zh": "力拓批准 19 亿美元开发昆州 Kangwinan 铝土矿",
+      "afr_headline": "Rio Tinto pledges $2.7b to revive ageing Queensland bauxite mines",
+      "afr_url": "https://www.afr.com/companies/mining/rio-tinto-pledges-2-7b-to-revive-ageing-queensland-bauxite-mines-20261023-p6184a",
+      "afr_section": "Companies / Mining",
+      "what_zh": "力拓（Rio Tinto）宣布投资 19 亿美元（AFR 按澳元算为 27 亿）开发昆士兰州约克角半岛西部的 Kangwinan 铝土矿（铝土矿是炼铝的原料），其中 1.5 亿美元的早期工程已在 2025 年先行批准。新矿设计年产能 2000 万吨，目标 2029 年首次出矿，主要用来接替韦帕（Weipa）地区逐渐老化的 Andoom 矿，所以韦帕的净增产能约为每年 600 万吨。今天矿业股普遍下跌，力拓收 146.27 澳元，跌 2.68%。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/mining/rio-tinto-pledges-2-7b-to-revive-ageing-queensland-bauxite-mines-20261023-p6184a"
+        },
+        {
+          "name": "力拓公告（Investegate）",
+          "url": "https://investegate.co.uk/announcement/rns/rio-tinto--rio/investing-1-9b-in-kangwinan-bauxite-project/9837645"
+        },
+        {
+          "name": "Australian Mining",
+          "url": "https://www.australianmining.com.au/strong-vote-of-confidence-rio-tinto-backs-queenslands-bauxite-future/"
+        },
+        {
+          "name": "上海有色网（SMM）",
+          "url": "https://news.metal.com/newscontent/104174610-rio-tinto-invests-19b-in-kangwinan-bauxite-project-aiming-for-20m-mtyear-capacity-by-2032"
+        }
+      ],
+      "verify": {
+        "checked": 7,
+        "found": [
+          "19 亿",
+          "27 亿",
+          "1.5 亿",
+          "2000 万",
+          "600 万"
+        ],
+        "derived": [],
+        "market": [
+          "146.27",
+          "2.68%"
+        ],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "力拓公告（Investegate）",
+          "Australian Mining",
+          "上海有色网（SMM）"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "NAB 启动 2500 人裁员，数千员工要重新申请岗位",
+      "afr_headline": "NAB asks thousands to reapply for jobs as search for 2500 cuts begins",
+      "afr_url": "https://www.afr.com/companies/financial-services/nab-asks-thousands-to-reapply-for-jobs-as-search-for-2500-cuts-begins-20261023-p617qg",
+      "afr_section": "Companies / Financial services",
+      "what_zh": "国民银行（NAB）本周一宣布，未来一年裁减最多 2500 个岗位，约占员工总数的 6%：最多 1500 个在今年底前裁掉，其余在 2027 年 9 月前完成，主要砍总部职能部门，CEO Andrew Irvine 说面向客户的岗位基本不受影响。银行预计 2027 财年为此计提约 3 亿澳元税前重组费用。据 AFR 报道，裁员程序已经开始，数千名员工被要求重新申请自己的岗位。NAB 将在 11 月 5 日公布 2026 财年业绩。今天银行股普遍走强，NAB 收 41.31 澳元，涨 3.25%。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/financial-services/nab-asks-thousands-to-reapply-for-jobs-as-search-for-2500-cuts-begins-20261023-p617qg"
+        },
+        {
+          "name": "The New Daily",
+          "url": "https://www.thenewdaily.com.au/themoneyedition/finance-news/2026/10/20/nab-to-slash-2500-jobs-thousands-of-roles-to-go-by-christmas"
+        },
+        {
+          "name": "Australian Broker News",
+          "url": "https://www.brokernews.com.au/news/breaking-news/nab-to-cut-2500-jobs-290176.aspx"
+        },
+        {
+          "name": "FinTech Futures",
+          "url": "https://www.fintechfutures.com/job-cuts-new-hires/nab-plans-to-cut-2500-jobs-in-fy27"
+        }
+      ],
+      "verify": {
+        "checked": 6,
+        "found": [
+          "2500",
+          "6%",
+          "1500",
+          "约 3 亿"
+        ],
+        "derived": [],
+        "market": [
+          "41.31",
+          "3.25%"
+        ],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "The New Daily",
+          "Australian Broker News"
+        ],
+        "sources_failed": [
+          "FinTech Futures"
+        ]
+      }
+    },
+    {
+      "title_zh": "北极星新 CEO：愿和 Gold Fields 谈，价格上没设红线",
+      "afr_headline": "Northern Star CEO open to Gold Fields talks but ‘no red line’ on price",
+      "afr_url": "https://www.afr.com/companies/mining/northern-star-ceo-open-to-gold-fields-talks-but-no-red-line-on-price-20261022-p617tv",
+      "afr_section": "Companies / Mining",
+      "what_zh": "据 AFR 报道，金矿商北极星资源（Northern Star）新任 CEO Suresh Vadnagra 表示愿意和南非金矿商 Gold Fields 接触，但没有给出价格上的「红线」。背景：9 月底北极星董事会一致拒绝了 Gold Fields 主动提出的收购提议（没有约束力）——每股换 0.3125 股 Gold Fields 股票加 7.25 澳元现金，当时作价约 387 亿澳元，董事会认为严重低估公司；Gold Fields 方面表示仍希望和董事会沟通。Vadnagra 10 月初上任，此前在业绩电话会上没有评论收购，并提到可能出售部分资产。今天金矿股普遍下跌，北极星收 24.16 澳元，跌 2.54%。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/mining/northern-star-ceo-open-to-gold-fields-talks-but-no-red-line-on-price-20261022-p617tv"
+        },
+        {
+          "name": "The Motley Fool",
+          "url": "https://www.fool.com.au/2026/09/28/northern-star-resources-rejects-38-7bn-gold-fields-takeover-offer/"
+        },
+        {
+          "name": "The Northern Miner",
+          "url": "https://www.northernminer.com/news/northern-star-rejects-uninvited-a38-7b-gold-fields-bid/1003895187/"
+        },
+        {
+          "name": "Engineering News",
+          "url": "https://engineeringnews.co.za/article/incoming-northern-star-ceo-flags-possibility-of-asset-sales-2026-10-21"
+        },
+        {
+          "name": "Engineering News（Gold Fields）",
+          "url": "https://www.engineeringnews.co.za/article/gold-fields-aims-to-woo-northern-star-investors-after-miners-rebuff-2026-09-30"
+        }
+      ],
+      "verify": {
+        "checked": 5,
+        "found": [
+          "0.3125",
+          "7.25",
+          "约 387 亿"
+        ],
+        "derived": [],
+        "market": [
+          "24.16",
+          "2.54%"
+        ],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "The Motley Fool",
+          "The Northern Miner",
+          "Engineering News",
+          "Engineering News（Gold Fields）"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "澳储行副行长发出警告，市场押注 11 月再加息",
+      "afr_headline": "Traders weigh cash rate above 5pc after RBA’s warning shot",
+      "afr_url": "https://www.afr.com/markets/debt-markets/traders-weigh-cash-rate-above-5pc-after-rba-s-warning-shot-20261022-p617p5",
+      "afr_section": "Markets / Debt markets",
+      "what_zh": "澳储行（RBA，澳洲央行）副行长 Andrew Hauser 本周表示，通胀前景比 8 月预测时更差，同时承认就业和楼市数据在放缓。现金利率（央行定的基准利率）目前是 4.60%，9 月 29 日刚加息 25 个基点（0.25 个百分点），是今年第四次加息。讲话后，市场押注 11 月 3 日再加息的概率从约 24% 升到约 56%，再加一次就是 4.85%；AFR 报道交易员已在考虑利率升破 5% 的可能。下一个关键数据是 10 月 28 日公布的第三季度通胀（CPI）。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/markets/debt-markets/traders-weigh-cash-rate-above-5pc-after-rba-s-warning-shot-20261022-p617p5"
+        },
+        {
+          "name": "investingLive",
+          "url": "https://investinglive.com/central-banks/rba-s-hauser-says-inflation-outlook-worse-than-forecast-ahead-of-3-november-decision/"
+        },
+        {
+          "name": "Pound Sterling Live",
+          "url": "https://www.poundsterlinglive.com/aud/23780-australian-dollar-supported-hauser-november-rba-hike"
+        },
+        {
+          "name": "XTB",
+          "url": "https://www.xtb.com/en/market-analysis/rba-turns-increasingly-hawkish-as-markets-reprice-november-rate-hike-expectations"
+        },
+        {
+          "name": "Australian Broker News",
+          "url": "https://www.brokernews.com.au/news/breaking-news/rba-deputy-governor-says-inflation-materially-worse-than-expected-290185.aspx"
+        }
+      ],
+      "verify": {
+        "checked": 7,
+        "found": [
+          "4.60%",
+          "25",
+          "0.25 个百分点",
+          "约 24%",
+          "约 56%",
+          "4.85%",
+          "5%"
+        ],
+        "derived": [],
+        "market": [],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "investingLive",
+          "Pound Sterling Live",
+          "XTB",
+          "Australian Broker News"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "MA Financial 加入竞购 10 亿澳元 Lincoln Place",
+      "afr_headline": "MA Financial joins fray for $1b Lincoln Place, Stockland bankers up",
+      "afr_url": "https://www.afr.com/street-talk/ma-financial-joins-fray-for-1b-lincoln-place-stockland-bankers-up-20261022-p617pt",
+      "afr_section": "Street Talk",
+      "what_zh": "据 AFR Street Talk 报道，金融集团 MA Financial 加入了对土地租赁社区（住户买房、租地）运营商 Lincoln Place 的竞购，标题还提到地产商 Stockland 已备好投行顾问；这两点其他媒体暂未证实。此前公开报道显示，美国私募 Cerberus 委托高盛出售 Lincoln Place，规模约 10 亿澳元以上；10 月初已进入出价阶段，Stockland、新加坡主权基金 GIC、The Living Company 和 Invesco 等报道中已出价。Lincoln Place 在新州、维州、昆州和首都领地有 26 个社区、约 6100 个潜在宅地。今天 MA Financial 收 4.47 澳元，涨 0.90%；Stockland 收 4.25 澳元，涨 1.43%。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/street-talk/ma-financial-joins-fray-for-1b-lincoln-place-stockland-bankers-up-20261022-p617pt"
+        },
+        {
+          "name": "The Weekly Source（10 月 6 日）",
+          "url": "https://www.theweeklysource.com.au/land-lease-operators-and-private-equity-circle-lincoln-place/"
+        },
+        {
+          "name": "The Weekly Source（8 月 21 日）",
+          "url": "https://www.theweeklysource.com.au/land-lease-operator-lincoln-place-gears-up-for-asx-listing-or-1b-sale/"
+        },
+        {
+          "name": "The Weekly Source（9 月 2 日）",
+          "url": "https://www.theweeklysource.com.au/future-of-land-lease-operator-lincoln-place-in-play/"
+        }
+      ],
+      "verify": {
+        "checked": 7,
+        "found": [
+          "约 10 亿",
+          "26",
+          "约 6100"
+        ],
+        "derived": [],
+        "market": [
+          "4.47",
+          "0.90%",
+          "4.25",
+          "1.43%"
+        ],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "The Weekly Source（10 月 6 日）",
+          "The Weekly Source（8 月 21 日）",
+          "The Weekly Source（9 月 2 日）"
+        ],
+        "sources_failed": []
+      }
+    }
+  ],
+  "verify": {
+    "at": "2026-10-23T07:10:52+00:00",
+    "checked": 40,
+    "missing": 2
+  }
+}
