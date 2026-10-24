@@ -1,0 +1,873 @@
+{
+ "schema": "afr-inbox-v1",
+ "date": "2026-10-25",
+ "collected_at": "2026-10-24T22:42:45+00:00",
+ "headlines": [
+  {
+   "title": "Former ANZ boss Shayne Elliott lists Toorak home with $11.9m hopes",
+   "url": "https://www.afr.com/property/residential/former-anz-boss-shayne-elliott-lists-toorak-home-with-11-9m-hopes-20261025-p6185l",
+   "section": "property",
+   "date": "2026-10-25",
+   "published": "2026-10-24T22:26:49+00:00",
+   "codes": [
+    "ANZ",
+    "SUN"
+   ],
+   "hints": {
+    "amounts": [
+     "$10.9 million",
+     "$11.9",
+     "$4.9 billion"
+    ],
+    "names": [
+     "Toorak",
+     "ANZ",
+     "Shayne Elliott",
+     "Nagla Khattab",
+     "Elliott",
+     "Suncorp Bank"
+    ]
+   }
+  },
+  {
+   "title": "Latimore lines up Indonesian billionaire family for Whyalla steel bid",
+   "url": "https://www.afr.com/companies/manufacturing/latimore-lines-up-indonesian-billionaire-family-for-whyalla-steel-bid-20261025-p6183n",
+   "section": "companies",
+   "date": "2026-10-25",
+   "published": "2026-10-24T22:00:00+00:00",
+   "codes": [],
+   "hints": {
+    "amounts": [
+     "600 jobs"
+    ],
+    "names": [
+     "Coal",
+     "Matt Latimore",
+     "Indonesia",
+     "Widjaja",
+     "Whyalla",
+     "Latimore",
+     "Resources",
+     "KordaMentha"
+    ]
+   }
+  },
+  {
+   "title": "Oil hits $US117 for first time since April; Wall Street slips",
+   "url": "https://www.afr.com/markets/equity-markets/oil-hits-us117-for-first-time-since-april-wall-street-slips-20261024-p6188n",
+   "section": "markets",
+   "date": "2026-10-24",
+   "published": "2026-10-23T18:23:42+00:00",
+   "codes": [],
+   "hints": {
+    "amounts": [
+     "0.4 per cent",
+     "1.1 per cent"
+    ],
+    "names": [
+     "Stocks",
+     "Wall Street",
+     "S&P",
+     "Dow Jones Industrial Average",
+     "AEDT"
+    ]
+   }
+  },
+  {
+   "title": "Two rich kids, the harbourside mansion and an epic private credit fail",
+   "url": "https://www.afr.com/markets/private-markets/two-rich-kids-the-harbourside-mansion-and-an-epic-private-credit-fail-20261024-p614ox",
+   "section": "markets",
+   "date": "2026-10-24",
+   "published": "2026-10-23T18:00:00+00:00",
+   "codes": [
+    "VIG"
+   ],
+   "hints": {
+    "amounts": [
+     "$43.8 million"
+    ],
+    "names": [
+     "Former",
+     "Victor Huang",
+     "Michaela Pollock It",
+     "Chinese",
+     "Sydney",
+     "Darling Harbour",
+     "Instead",
+     "Initium Capital"
+    ]
+   }
+  },
+  {
+   "title": "Double squeeze: Business hit by cash flow crunch and ATO debt push",
+   "url": "https://www.afr.com/policy/economy/double-squeeze-business-hit-by-cash-flow-crunch-and-ato-debt-push-20261024-p6180g",
+   "section": "policy",
+   "date": "2026-10-24",
+   "published": "2026-10-23T18:00:00+00:00",
+   "codes": [],
+   "hints": {
+    "amounts": [
+     "21 per cent",
+     "$54 billion"
+    ],
+    "names": [
+     "Australian Taxation Office",
+     "High",
+     "Morgan Stanley"
+    ]
+   }
+  },
+  {
+   "title": "Where Australia’s migrants come from, explained in 12 charts",
+   "url": "https://www.afr.com/policy/economy/where-australia-s-migrants-come-from-explained-in-12-charts-20261023-p615aq",
+   "section": "policy",
+   "date": "2026-10-23",
+   "published": "2026-10-23T09:00:00+00:00",
+   "codes": []
+  },
+  {
+   "title": "Why $100k at 25 is more powerful than an inheritance at 55",
+   "url": "https://www.afr.com/wealth/personal-finance/the-life-changing-power-of-a-100k-gift-at-25-20261023-p613g1",
+   "section": "wealth",
+   "date": "2026-10-23",
+   "codes": []
+  },
+  {
+   "title": "Regal unveils succession plan to staff ahead of Phil King’s exit",
+   "url": "https://www.afr.com/street-talk/regal-unveils-succession-plan-to-clients-ahead-of-phil-king-s-exit-20261022-p617ru",
+   "section": "street-talk",
+   "date": "2026-10-22",
+   "codes": [
+    "RPL",
+    "KRR"
+   ]
+  },
+  {
+   "title": "Founder mounts rescue for biz backed by Goldman Sachs, Westpac CEOs",
+   "url": "https://www.afr.com/street-talk/aussie-tech-exec-looks-for-rescue-consortium-to-buy-embattled-weare8-20261022-p6172d",
+   "section": "street-talk",
+   "date": "2026-10-22",
+   "codes": [
+    "WBC"
+   ]
+  },
+  {
+   "title": "MA Financial joins fray for $1b Lincoln Place, Stockland bankers up",
+   "url": "https://www.afr.com/street-talk/ma-financial-joins-fray-for-1b-lincoln-place-stockland-bankers-up-20261022-p617pt",
+   "section": "street-talk",
+   "date": "2026-10-22",
+   "codes": [
+    "MAF",
+    "LML",
+    "SGP"
+   ]
+  },
+  {
+   "title": "‘Fear and confusion’ just seized global markets. Here’s why",
+   "url": "https://www.afr.com/chanticleer/fear-and-confusion-just-seized-global-markets-here-s-why-20261023-p6180o",
+   "section": "chanticleer",
+   "date": "2026-10-23",
+   "codes": []
+  },
+  {
+   "title": "Something vital is breaking in housing. This 71pc plunge proves it",
+   "url": "https://www.afr.com/chanticleer/something-vital-is-breaking-in-housing-this-71pc-plunge-proves-it-20261022-p617tk",
+   "section": "chanticleer",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "Zuckerberg just delivered Firmus its first good news in two weeks",
+   "url": "https://www.afr.com/chanticleer/zuckerberg-just-delivered-firmus-its-first-good-news-in-two-weeks-20261022-p617ny",
+   "section": "chanticleer",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "The month when Craig Scroggie lost the plot",
+   "url": "https://www.afr.com/rear-window/the-month-when-craig-scroggie-lost-the-plot-20261022-p617pr",
+   "section": "rear-window",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "The lightning-fast winners of JPMorgan’s famed 5km challenge",
+   "url": "https://www.afr.com/rear-window/the-lightning-fast-winners-of-jpmorgan-s-famed-5km-challenge-20261022-p61666",
+   "section": "rear-window",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "Guzman y Gomez is filling short-sellers’ burrito bowls",
+   "url": "https://www.afr.com/rear-window/guzman-y-gomez-is-filling-short-sellers-burrito-bowls-20261022-p6176n",
+   "section": "rear-window",
+   "date": "2026-10-22",
+   "codes": [
+    "GYG"
+   ]
+  },
+  {
+   "title": "From airport queue to sudden diagnosis: Jennifer Hewett on facing brain cancer",
+   "url": "https://www.afr.com/policy/health-and-education/life-death-and-an-aperol-spritz-my-fight-with-brain-cancer-20261023-p6156e",
+   "section": "policy",
+   "date": "2026-10-23",
+   "codes": []
+  },
+  {
+   "title": "The one question UniMelb’s new vice chancellor is reluctant to answer",
+   "url": "https://www.afr.com/policy/health-and-education/the-one-question-melbourne-uni-s-new-vice-chancellor-won-t-answer-20261023-p6136b",
+   "section": "policy",
+   "date": "2026-10-23",
+   "codes": []
+  },
+  {
+   "title": "The sums wealthy parents are giving kids for house deposits",
+   "url": "https://www.afr.com/wealth/personal-finance/bank-of-mum-and-dad-gifts-revealed-how-do-you-compare-20261022-p60z3m",
+   "section": "wealth",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "What new super advice fee rules mean for SMSFs",
+   "url": "https://www.afr.com/wealth/personal-finance/what-new-super-advice-fee-rules-mean-for-smsfs-20261023-p616m5",
+   "section": "wealth",
+   "date": "2026-10-23",
+   "codes": []
+  },
+  {
+   "title": "The superannuation rule you should know about if you are over 60",
+   "url": "https://www.afr.com/wealth/personal-finance/how-leaving-a-part-time-job-can-unlock-your-entire-superannuation-fund-20261022-p614pd",
+   "section": "wealth",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "Listen to The Fin podcast now",
+   "url": "https://www.afr.com/companies/professional-services/the-ai-reckoning-arrives-for-australia-s-legal-industry-20261022-p616ux",
+   "section": "companies",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "NAB asks thousands to reapply for jobs as search for 2500 cuts begins",
+   "url": "https://www.afr.com/companies/financial-services/nab-asks-thousands-to-reapply-for-jobs-as-search-for-2500-cuts-begins-20261023-p617qg",
+   "section": "companies",
+   "date": "2026-10-23",
+   "codes": [
+    "NAB"
+   ]
+  },
+  {
+   "title": "It’s property versus shares in horse racing’s heavyweight battle",
+   "url": "https://www.afr.com/companies/sport/it-s-property-versus-shares-in-horse-racing-s-heavyweight-battle-20261023-p616q9",
+   "section": "companies",
+   "date": "2026-10-23",
+   "codes": []
+  },
+  {
+   "title": "Rio Tinto pledges $2.7b to revive ageing Queensland bauxite mines",
+   "url": "https://www.afr.com/companies/mining/rio-tinto-pledges-2-7b-to-revive-ageing-queensland-bauxite-mines-20261023-p6184a",
+   "section": "companies",
+   "date": "2026-10-23",
+   "codes": [
+    "RIO"
+   ]
+  },
+  {
+   "title": "Zip targeted by US fraudsters, raising questions over risk controls",
+   "url": "https://www.afr.com/companies/financial-services/zip-targeted-by-us-fraudsters-raising-questions-over-risk-controls-20261023-p61822",
+   "section": "companies",
+   "date": "2026-10-23",
+   "codes": [
+    "ZIP"
+   ]
+  },
+  {
+   "title": "Apollo’s MaxCap cuts staff amid private credit slump",
+   "url": "https://www.afr.com/companies/financial-services/apollo-s-maxcap-cuts-staff-amid-private-credit-slump-20261023-p6180j",
+   "section": "companies",
+   "date": "2026-10-23",
+   "codes": []
+  },
+  {
+   "title": "Gerry Harvey, NRL legend back plan to cement PNG’s economic growth",
+   "url": "https://www.afr.com/companies/infrastructure/gerry-harvey-nrl-legend-back-plan-to-cement-png-s-economic-growth-20261023-p60tbb",
+   "section": "companies",
+   "date": "2026-10-23",
+   "codes": [
+    "HVN"
+   ]
+  },
+  {
+   "title": "Investors hunt safe ground after ‘hurricane’ tears through AI trade",
+   "url": "https://www.afr.com/markets/equity-markets/investors-hunt-safe-ground-after-hurricane-tears-through-ai-trade-20261023-p61802",
+   "section": "markets",
+   "date": "2026-10-23",
+   "codes": []
+  },
+  {
+   "title": "Traders weigh cash rate above 5pc after RBA’s warning shot",
+   "url": "https://www.afr.com/markets/debt-markets/traders-weigh-cash-rate-above-5pc-after-rba-s-warning-shot-20261022-p617p5",
+   "section": "markets",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "This fundie says AGL Energy is set to go on a tear. Here’s why",
+   "url": "https://www.afr.com/markets/equity-markets/this-fundie-says-agl-energy-is-set-to-go-on-a-tear-here-s-why-20261022-p6176o",
+   "section": "markets",
+   "date": "2026-10-22",
+   "codes": [
+    "AGL"
+   ]
+  },
+  {
+   "title": "Northern Star CEO open to Gold Fields talks but ‘no red line’ on price",
+   "url": "https://www.afr.com/companies/mining/northern-star-ceo-open-to-gold-fields-talks-but-no-red-line-on-price-20261022-p617tv",
+   "section": "companies",
+   "date": "2026-10-22",
+   "codes": [
+    "NST"
+   ]
+  },
+  {
+   "title": "Morgans’ glaring Firmus IPO conflict of interest can’t be ignored",
+   "url": "https://www.afr.com/companies/financial-services/morgans-glaring-firmus-ipo-conflict-of-interest-can-t-be-ignored-20261023-p617qy",
+   "section": "companies",
+   "date": "2026-10-23",
+   "codes": []
+  },
+  {
+   "title": "France’s unrest shows Labor the cost of the handout state",
+   "url": "https://www.afr.com/policy/economy/france-s-unrest-shows-labor-the-cost-of-the-handout-state-20261023-p617bp",
+   "section": "policy",
+   "date": "2026-10-23",
+   "codes": []
+  },
+  {
+   "title": "‘Announcement fever’ blamed for Snowy 2.0 cost debacle",
+   "url": "https://www.afr.com/companies/energy/announcement-fever-blamed-for-snowy-2-0-cost-debacle-20261023-p6180p",
+   "section": "companies",
+   "date": "2026-10-23",
+   "codes": []
+  },
+  {
+   "title": "Chalmers lifts bank bond caps, doubles deceased estate withdrawals",
+   "url": "https://www.afr.com/policy/economy/chalmers-lifts-bank-bond-caps-in-780m-productivity-push-20261023-p6181a",
+   "section": "policy",
+   "date": "2026-10-23",
+   "codes": []
+  },
+  {
+   "title": "Dubai in Geelong? Tim Gurner’s $1.75b plan for Victoria’s second city",
+   "url": "https://www.afr.com/property/commercial/dubai-in-geelong-tim-gurner-s-1-75b-plan-for-victoria-s-second-city-20261023-p61801",
+   "section": "property",
+   "date": "2026-10-23",
+   "codes": []
+  },
+  {
+   "title": "Software billionaire splashes $36.5m on twin Manly waterfronts",
+   "url": "https://www.afr.com/companies/retail/software-billionaire-splashes-36-5m-on-twin-manly-waterfronts-20261023-p617om",
+   "section": "companies",
+   "date": "2026-10-23",
+   "codes": []
+  },
+  {
+   "title": "Dentist and battery guru behind $33m Mosman showstopper",
+   "url": "https://www.afr.com/property/residential/dentist-and-battery-guru-behind-33m-mosman-showstopper-20261023-p615v3",
+   "section": "property",
+   "date": "2026-10-23",
+   "codes": []
+  },
+  {
+   "title": "Mirvac says home sales slumped by almost a third in three months",
+   "url": "https://www.afr.com/property/commercial/mirvac-says-home-sales-slumped-by-almost-a-third-in-three-months-20261022-p616b7",
+   "section": "property",
+   "date": "2026-10-22",
+   "codes": [
+    "MGR"
+   ]
+  },
+  {
+   "title": "If you can’t beat ’em, join ’em: Property fund swings into lending",
+   "url": "https://www.afr.com/property/commercial/if-you-can-t-beat-em-join-em-property-fund-swings-into-lending-20261022-p617qn",
+   "section": "property",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "Canva reveals new AI image tool as it races to beat Google, OpenAI",
+   "url": "https://www.afr.com/technology/canva-reveals-new-ai-image-tool-as-it-races-to-beat-google-openai-20261023-p617xj",
+   "section": "technology",
+   "date": "2026-10-23",
+   "codes": []
+  },
+  {
+   "title": "‘Start of a tsunami’: Global web shutdowns signal dystopian AI future",
+   "url": "https://www.afr.com/technology/start-of-a-tsunami-global-web-shutdowns-signal-dystopian-ai-future-20261022-p617qz",
+   "section": "technology",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "The Asian AI wave on the Kimberley’s horizon",
+   "url": "https://www.afr.com/technology/the-asian-ai-wave-on-the-kimberley-s-horizon-20261022-p617vo",
+   "section": "technology",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "UBS’s Chris Nicholson goes global in major promotion",
+   "url": "https://www.afr.com/street-talk/ubs-s-chris-nicholson-goes-global-in-major-promotion-20261022-p617px",
+   "section": "street-talk",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "It’s Lonsec v Evidentia as owner GDG axes senior staff",
+   "url": "https://www.afr.com/street-talk/it-s-lonsec-vs-evidentia-as-owner-gdg-rains-layoffs-20261022-p617oz",
+   "section": "street-talk",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "Debt bomb threatens booming AI trade, $155b data centre roll-out",
+   "url": "https://www.afr.com/companies/infrastructure/debt-bomb-threatens-booming-ai-trade-155b-data-centre-roll-out-20261023-p61810",
+   "section": "companies",
+   "date": "2026-10-23",
+   "codes": []
+  },
+  {
+   "title": "Sam Wood’s legal team attempt to keep new bail application secret",
+   "url": "https://www.afr.com/companies/media-and-marketing/sam-wood-s-legal-team-attempt-to-keep-new-bail-application-secret-20261023-p6186k",
+   "section": "companies",
+   "date": "2026-10-23",
+   "codes": []
+  },
+  {
+   "title": "How Western Sydney Airport plans to win over corporate travellers",
+   "url": "https://www.afr.com/companies/transport/how-western-sydney-airport-plans-to-win-over-corporate-travellers-20261023-p61838",
+   "section": "companies",
+   "date": "2026-10-23",
+   "codes": []
+  },
+  {
+   "title": "Easing the pain of shorter super payment cycles",
+   "url": "https://www.afr.com/companies/financial-services/easing-the-pain-of-shorter-super-payment-cycles-20261023-p617qs",
+   "section": "companies",
+   "date": "2026-10-23",
+   "codes": []
+  },
+  {
+   "title": "Michael Kirby’s shock praise for disgraced judge in law culture war",
+   "url": "https://www.afr.com/companies/professional-services/michael-kirby-s-shock-praise-for-disgraced-judge-in-law-culture-war-20261023-p61813",
+   "section": "companies",
+   "date": "2026-10-23",
+   "codes": [
+    "MHJ"
+   ]
+  },
+  {
+   "title": "Lack of fast rail will limit take-off of Sydney’s new airport",
+   "url": "https://www.afr.com/companies/transport/no-fast-rail-will-limit-take-off-of-sydney-s-new-airport-20261023-p617a8",
+   "section": "companies",
+   "date": "2026-10-23",
+   "codes": []
+  },
+  {
+   "title": "China’s pressure on Fortescue will soon become self-harm",
+   "url": "https://www.afr.com/companies/mining/china-s-pressure-on-fortescue-will-soon-become-self-harm-20261022-p617rh",
+   "section": "companies",
+   "date": "2026-10-22",
+   "codes": [
+    "FMG"
+   ]
+  },
+  {
+   "title": "Vietnamese billionaire Madame Thao sizes up Qantas and Virgin",
+   "url": "https://www.afr.com/companies/transport/no-holds-barred-vietjet-founder-madame-thao-sizes-up-qantas-and-virgin-20261023-p612yw",
+   "section": "companies",
+   "date": "2026-10-23",
+   "codes": [
+    "QAN",
+    "VGN"
+   ]
+  },
+  {
+   "title": "Ban on KPMG doing government work extended until February 2027",
+   "url": "https://www.afr.com/companies/professional-services/kpmg-ban-on-government-work-extended-until-february-2027-20261022-p617sg",
+   "section": "companies",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "NextDC draws investor ire over slow disclosure of power delays",
+   "url": "https://www.afr.com/companies/infrastructure/nextdc-draws-investor-ire-over-slow-disclosure-of-power-delays-20261022-p617pi",
+   "section": "companies",
+   "date": "2026-10-22",
+   "codes": [
+    "NXT"
+   ]
+  },
+  {
+   "title": "The airport was going to transform Sydney’s west. Here’s where that is at",
+   "url": "https://www.afr.com/companies/infrastructure/the-airport-was-going-to-transform-sydney-s-west-here-s-where-that-is-at-20261022-p617d6",
+   "section": "companies",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "Pressure on Santos this quarter after Alaska oil hits snags",
+   "url": "https://www.afr.com/companies/energy/santos-delivers-record-quarter-despite-alaska-snags-20261022-p617oh",
+   "section": "companies",
+   "date": "2026-10-22",
+   "codes": [
+    "STO"
+   ]
+  },
+  {
+   "title": "Barrenjoey trading profit takes a hit from global bond market rout",
+   "url": "https://www.afr.com/companies/financial-services/barrenjoey-trading-profits-take-a-hit-from-global-bond-market-rout-20261022-p61665",
+   "section": "companies",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "NAB’s local workers given the ‘AI chop’, says Labor senator",
+   "url": "https://www.afr.com/companies/financial-services/nab-s-local-workers-given-the-ai-chop-says-labor-senator-20261022-p617l1",
+   "section": "companies",
+   "date": "2026-10-22",
+   "codes": [
+    "NAB"
+   ]
+  },
+  {
+   "title": "Payday super lights a fire under regtech",
+   "url": "https://www.afr.com/companies/financial-services/payday-super-lights-a-fire-under-regtech-20261022-p6110i",
+   "section": "companies",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "Fortescue warns of Pilbara cuts if China deadlock continues",
+   "url": "https://www.afr.com/companies/mining/fortescue-flags-trouble-ahead-if-china-talks-remain-unresolved-20261022-p61789",
+   "section": "companies",
+   "date": "2026-10-22",
+   "codes": [
+    "FMG"
+   ]
+  },
+  {
+   "title": "Weight-loss drugs, beauty craze fuelling Wesfarmers Health growth",
+   "url": "https://www.afr.com/companies/healthcare-and-fitness/weight-loss-drugs-beauty-craze-fuelling-wesfarmers-health-growth-20261022-p61537",
+   "section": "companies",
+   "date": "2026-10-22",
+   "codes": [
+    "WES"
+   ]
+  },
+  {
+   "title": "Nick Scali falls victim to housing downturn as furniture sales slump",
+   "url": "https://www.afr.com/companies/retail/nick-scali-flags-profit-drop-after-taking-hit-from-housing-downturn-20261022-p617oi",
+   "section": "companies",
+   "date": "2026-10-22",
+   "codes": [
+    "NCK"
+   ]
+  },
+  {
+   "title": "Big-box retailers turn to AI for back office and compliance tasks",
+   "url": "https://www.afr.com/companies/retail/big-box-retailers-turn-to-ai-for-back-office-and-compliance-tasks-20261022-p60yhw",
+   "section": "companies",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "IFM buys British ports in $19b mega deal",
+   "url": "https://www.afr.com/companies/transport/ifm-buys-british-ports-in-19b-mega-deal-20261022-p617mn",
+   "section": "companies",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "ATO claim could change everything for whistleblowers",
+   "url": "https://www.afr.com/companies/professional-services/ato-claim-could-change-everything-for-whistleblowers-20261022-p617mf",
+   "section": "companies",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "Top UK law firm apologises over Middle East comments in leaked email",
+   "url": "https://www.afr.com/companies/professional-services/top-uk-law-firm-apologises-over-middle-east-comments-in-leaked-email-20261022-p617ow",
+   "section": "companies",
+   "date": "2026-10-22",
+   "codes": [
+    "MDI"
+   ]
+  },
+  {
+   "title": "To stay self-reliant, this law firm built its own AI",
+   "url": "https://www.afr.com/companies/professional-services/to-stay-self-reliant-this-law-firm-built-its-own-ai-20261022-p6139g",
+   "section": "companies",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "ASX finishes flat; Zip crashes 30pc",
+   "url": "https://www.afr.com/markets/equity-markets/asx-to-fall-wall-street-slides-oil-hits-five-month-high-20261023-p617ye",
+   "section": "markets",
+   "date": "2026-10-23",
+   "codes": [
+    "ZIP"
+   ]
+  },
+  {
+   "title": "Chalmers lifts bank bond caps; Queensland minister quits frontbench over threats; ‘Fear and confusion’ seize markets",
+   "url": "https://www.afr.com/markets/equity-markets/chalmers-lifts-bank-bond-caps-queensland-minister-quits-frontbench-over-threats-fear-and-confusion-seize-markets-20261023-p6182s",
+   "section": "markets",
+   "date": "2026-10-23",
+   "codes": []
+  },
+  {
+   "title": "ASX falls; Nick Scali’s 15pc plunge triggers retail shudders",
+   "url": "https://www.afr.com/markets/equity-markets/asx-steady-nasdaq-surges-meta-to-report-20261022-p617mq",
+   "section": "markets",
+   "date": "2026-10-22",
+   "codes": [
+    "NCK"
+   ]
+  },
+  {
+   "title": "NextDC bargain hunters tread a fine line",
+   "url": "https://www.afr.com/markets/equity-markets/nextdc-bargain-hunters-tread-a-fine-line-20261022-p617r6",
+   "section": "markets",
+   "date": "2026-10-22",
+   "codes": [
+    "NXT"
+   ]
+  },
+  {
+   "title": "PM rejects report of ‘dirt sheet’ on Haines; Zuckerberg gives Firmus good news; How much rich parents give kids for home deposits",
+   "url": "https://www.afr.com/markets/equity-markets/pm-rejects-report-of-dirt-sheet-on-haines-zuckerberg-gives-firmus-good-news-how-much-rich-parents-give-kids-for-home-deposits-20261022-p617rj",
+   "section": "markets",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "NextDC’s electric shock, NAB cuts 2500 jobs and Musk’s $5trn move",
+   "url": "https://www.afr.com/policy/economy/nextdc-s-electric-shock-nab-cuts-2500-jobs-and-musk-s-5trn-move-20261023-p6184s",
+   "section": "policy",
+   "date": "2026-10-23",
+   "codes": [
+    "NXT",
+    "NAB"
+   ]
+  },
+  {
+   "title": "Chalmers warns of slower growth as traders bet on rate rise next month",
+   "url": "https://www.afr.com/policy/economy/chalmers-warns-of-slower-growth-as-traders-bet-on-rate-rise-next-month-20261022-p61768",
+   "section": "policy",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "Australia ranks behind 90 nations for foreign investment hurdles",
+   "url": "https://www.afr.com/policy/economy/australia-ranks-behind-90-nations-for-foreign-investment-hurdles-20261022-p6172e",
+   "section": "policy",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "Snowy Hydro 2.0 shows Australia dreams big, but fails to build",
+   "url": "https://www.afr.com/policy/economy/snowy-hydro-2-0-shows-australia-dreams-big-but-fails-to-build-20261022-p617bo",
+   "section": "policy",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "Why five-year-high unemployment won’t stop another RBA rate rise",
+   "url": "https://www.afr.com/policy/economy/why-five-year-high-unemployment-won-t-stop-another-rba-rate-hike-20261022-p617pk",
+   "section": "policy",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "Albanese-Chalmers have sent economy in opposite direction of Hawke-Keating",
+   "url": "https://www.afr.com/policy/economy/albanese-chalmers-have-sent-economy-in-opposite-direction-of-hawke-keating-20261022-p6179u",
+   "section": "policy",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "Three global forces could disrupt Australia’s trajectory to 2050",
+   "url": "https://www.afr.com/policy/economy/three-global-forces-could-disrupt-australia-s-trajectory-to-2050-20261022-p6179r",
+   "section": "policy",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "The race to turn information into action",
+   "url": "https://www.afr.com/policy/economy/the-race-to-turn-information-into-action-20261022-p613kg",
+   "section": "policy",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "Meet the Most Innovative Companies of 2026",
+   "url": "https://www.afr.com/policy/economy/meet-the-most-innovative-companies-of-2026-20261022-p611hp",
+   "section": "policy",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "How to measure innovation in business in 2026",
+   "url": "https://www.afr.com/policy/economy/how-to-measure-innovation-in-business-in-2026-20261022-p61144",
+   "section": "policy",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "DayOne IPO dramas create unwanted headache for Firmus’ big plans",
+   "url": "https://www.afr.com/technology/dayone-ipo-dramas-create-unwanted-headache-for-firmus-big-plans-20261022-p617v2",
+   "section": "technology",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "Building better companies through AI",
+   "url": "https://www.afr.com/technology/building-better-companies-through-ai-20261022-p617ix",
+   "section": "technology",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "Firmus risks losing OpenAI if it fails to raise billions fast",
+   "url": "https://www.afr.com/technology/firmus-risks-losing-openai-if-it-fails-to-raise-billions-fast-20261022-p617jh",
+   "section": "technology",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "‘Serious competitor:’ Does Canva’s new AI model match global giants?",
+   "url": "https://www.afr.com/technology/serious-competitor-does-canva-s-new-ai-model-match-global-giants-20261023-p61823",
+   "section": "technology",
+   "date": "2026-10-23",
+   "codes": []
+  },
+  {
+   "title": "Labor is driving Australia to a dangerous intersection on Chinese EVs",
+   "url": "https://www.afr.com/technology/labor-is-driving-australia-to-a-dangerous-intersection-on-chinese-evs-20261022-p613s6",
+   "section": "technology",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "Medical staff were already using AI, so this start-up made it safe",
+   "url": "https://www.afr.com/technology/medical-staff-were-already-using-ai-so-this-start-up-made-it-safe-20261022-p615yq",
+   "section": "technology",
+   "date": "2026-10-22",
+   "codes": [
+    "MVP"
+   ]
+  },
+  {
+   "title": "The nano-manufacturing start-up building machines for the AI boom",
+   "url": "https://www.afr.com/technology/the-nano-manufacturing-start-up-building-machines-for-the-ai-boom-20261022-p614jg",
+   "section": "technology",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "‘The Nvidia of biological computing’ is this year’s Gamechanger",
+   "url": "https://www.afr.com/technology/the-nvidia-of-biological-computing-is-this-year-s-gamechanger-20261022-p614iw",
+   "section": "technology",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "As banks let bots in, this start-up sorts assistants from fraudsters",
+   "url": "https://www.afr.com/technology/as-banks-let-bots-in-this-start-up-sorts-assistants-from-fraudsters-20261022-p613vl",
+   "section": "technology",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "AI hasn’t changed the recipe for real innovation",
+   "url": "https://www.afr.com/technology/ai-hasn-t-changed-the-recipe-for-real-innovation-20261022-p61153",
+   "section": "technology",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "‘Zapping the cancer’: Aussie’s start-up backed by Peter Thiel, OpenAI",
+   "url": "https://www.afr.com/technology/peter-thiel-openai-fund-back-queenslander-s-brain-tech-start-up-20261022-p616nb",
+   "section": "technology",
+   "date": "2026-10-22",
+   "codes": [
+    "ABB",
+    "PWR"
+   ]
+  },
+  {
+   "title": "Firmus slips out of Nvidia spotlight as Huang focuses on robots, cars",
+   "url": "https://www.afr.com/technology/firmus-clings-to-nvidia-s-patronage-as-huang-focuses-on-robots-cars-20261022-p617l0",
+   "section": "technology",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "Social media lawsuit wave hits Australia with landmark Meta class action",
+   "url": "https://www.afr.com/technology/social-media-lawsuit-wave-hits-australia-with-landmark-meta-class-action-20261022-p617kn",
+   "section": "technology",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "Airtree’s AI legal stake surges as valuation hits $12.5b",
+   "url": "https://www.afr.com/technology/airtree-s-ai-legal-stake-surges-as-valuation-hits-12-5b-20261022-p617jd",
+   "section": "technology",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "Merricks scores $46m legal win over Southern Highlands property baron",
+   "url": "https://www.afr.com/property/commercial/merricks-scores-46m-legal-win-over-southern-highlands-property-baron-20261022-p617fb",
+   "section": "property",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "Family behind failed Bathla empire lose lucrative site to Stockland",
+   "url": "https://www.afr.com/property/commercial/family-behind-failed-bathla-empire-lose-lucrative-site-to-stockland-20261022-p617gd",
+   "section": "property",
+   "date": "2026-10-22",
+   "codes": [
+    "SGP"
+   ]
+  },
+  {
+   "title": "Pub baron Mathieson lays out $800m plan to build hub outside Brisbane",
+   "url": "https://www.afr.com/property/commercial/pub-baron-mathieson-lays-out-800m-plan-to-build-hub-outside-brisbane-20261022-p61781",
+   "section": "property",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "Billionaire Perich clan to open its first hotel in Sydney’s south-west",
+   "url": "https://www.afr.com/property/commercial/billionaire-perich-clan-to-open-its-first-hotel-in-sydney-s-south-west-20261022-p616lv",
+   "section": "property",
+   "date": "2026-10-22",
+   "codes": []
+  },
+  {
+   "title": "Fire mapping and training makes buildings safer",
+   "url": "https://www.afr.com/property/commercial/fire-mapping-and-training-makes-buildings-safer-20261022-p614jk",
+   "section": "property",
+   "date": "2026-10-22",
+   "codes": []
+  }
+ ],
+ "index": null,
+ "moves": {},
+ "top_movers": []
+}
