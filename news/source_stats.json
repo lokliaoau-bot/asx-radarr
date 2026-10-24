@@ -5,24 +5,34 @@
   "last": "2026-10-21"
  },
  "afr.com": {
-  "ok": 34,
+  "ok": 42,
   "fail": 0,
-  "last": "2026-10-23"
+  "last": "2026-10-25"
  },
  "au.investing.com": {
   "ok": 0,
   "fail": 1,
   "last": "2026-10-21"
  },
+ "ausbanking.org.au": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-25"
+ },
  "australianmining.com.au": {
   "ok": 1,
   "fail": 0,
   "last": "2026-10-23"
  },
- "brokernews.com.au": {
-  "ok": 2,
+ "bnnbloomberg.ca": {
+  "ok": 1,
   "fail": 0,
-  "last": "2026-10-23"
+  "last": "2026-10-25"
+ },
+ "brokernews.com.au": {
+  "ok": 3,
+  "fail": 0,
+  "last": "2026-10-25"
  },
  "businessnewsaustralia.com": {
   "ok": 1,
@@ -30,29 +40,39 @@
   "last": "2026-10-22"
  },
  "capitalbrief.com": {
-  "ok": 4,
+  "ok": 7,
   "fail": 0,
-  "last": "2026-10-22"
+  "last": "2026-10-25"
  },
  "discoveryalert.com": {
   "ok": 0,
   "fail": 1,
   "last": "2026-10-22"
  },
- "engineeringnews.co.za": {
-  "ok": 2,
+ "en.sedaily.com": {
+  "ok": 1,
   "fail": 0,
-  "last": "2026-10-23"
+  "last": "2026-10-25"
+ },
+ "engineeringnews.co.za": {
+  "ok": 4,
+  "fail": 0,
+  "last": "2026-10-25"
  },
  "fintechfutures.com": {
   "ok": 0,
   "fail": 1,
   "last": "2026-10-23"
  },
- "fool.com.au": {
-  "ok": 8,
+ "fnarena.com": {
+  "ok": 1,
   "fail": 0,
-  "last": "2026-10-23"
+  "last": "2026-10-25"
+ },
+ "fool.com.au": {
+  "ok": 10,
+  "fail": 0,
+  "last": "2026-10-25"
  },
  "freedom969.com": {
   "ok": 1,
@@ -64,15 +84,20 @@
   "fail": 0,
   "last": "2026-10-22"
  },
+ "gvwire.com": {
+  "ok": 0,
+  "fail": 1,
+  "last": "2026-10-25"
+ },
  "ia.acs.org.au": {
   "ok": 1,
   "fail": 0,
   "last": "2026-10-21"
  },
  "ibtimes.com.au": {
-  "ok": 2,
+  "ok": 3,
   "fail": 0,
-  "last": "2026-10-23"
+  "last": "2026-10-25"
  },
  "indailysa.com.au": {
   "ok": 1,
@@ -90,9 +115,9 @@
   "last": "2026-10-21"
  },
  "investinglive.com": {
-  "ok": 1,
+  "ok": 2,
   "fail": 0,
-  "last": "2026-10-23"
+  "last": "2026-10-25"
  },
  "kalkine.com.au": {
   "ok": 0,
@@ -100,9 +125,9 @@
   "last": "2026-10-22"
  },
  "kalkinemedia.com": {
-  "ok": 2,
+  "ok": 3,
   "fail": 0,
-  "last": "2026-10-22"
+  "last": "2026-10-25"
  },
  "mafinancial.com": {
   "ok": 1,
@@ -115,14 +140,19 @@
   "last": "2026-10-22"
  },
  "marketmatters.com.au": {
-  "ok": 1,
+  "ok": 2,
   "fail": 0,
-  "last": "2026-10-22"
+  "last": "2026-10-25"
  },
  "michaelwest.com.au": {
   "ok": 0,
   "fail": 1,
   "last": "2026-10-23"
+ },
+ "mingtiandi.com": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-25"
  },
  "mining.com.au": {
   "ok": 0,
@@ -133,6 +163,11 @@
   "ok": 1,
   "fail": 0,
   "last": "2026-10-21"
+ },
+ "miragenews.com": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-25"
  },
  "moneymanagement.com.au": {
   "ok": 1,
@@ -145,9 +180,9 @@
   "last": "2026-10-23"
  },
  "northernminer.com": {
-  "ok": 2,
+  "ok": 3,
   "fail": 0,
-  "last": "2026-10-23"
+  "last": "2026-10-25"
  },
  "oberonreview.com.au": {
   "ok": 1,
@@ -160,9 +195,9 @@
   "last": "2026-10-21"
  },
  "poundsterlinglive.com": {
-  "ok": 1,
+  "ok": 2,
   "fail": 0,
-  "last": "2026-10-23"
+  "last": "2026-10-25"
  },
  "prnewswire.com": {
   "ok": 1,
@@ -174,39 +209,69 @@
   "fail": 0,
   "last": "2026-10-22"
  },
- "raskmedia.com.au": {
-  "ok": 2,
+ "proactiveinvestors.com.au": {
+  "ok": 0,
+  "fail": 1,
+  "last": "2026-10-25"
+ },
+ "profit.pakistantoday.com.pk": {
+  "ok": 1,
   "fail": 0,
-  "last": "2026-10-23"
+  "last": "2026-10-25"
+ },
+ "raskmedia.com.au": {
+  "ok": 4,
+  "fail": 0,
+  "last": "2026-10-25"
  },
  "rigzone.com": {
   "ok": 1,
   "fail": 0,
   "last": "2026-10-21"
  },
+ "sharecafe.com.au": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-25"
+ },
+ "stockhead.com.au": {
+  "ok": 3,
+  "fail": 0,
+  "last": "2026-10-25"
+ },
  "thenewdaily.com.au": {
   "ok": 2,
   "fail": 0,
   "last": "2026-10-23"
  },
- "theweeklysource.com.au": {
-  "ok": 3,
+ "thenightly.com.au": {
+  "ok": 1,
   "fail": 0,
-  "last": "2026-10-23"
+  "last": "2026-10-25"
+ },
+ "theweeklysource.com.au": {
+  "ok": 5,
+  "fail": 0,
+  "last": "2026-10-25"
  },
  "tradingview.com": {
-  "ok": 2,
+  "ok": 3,
   "fail": 0,
-  "last": "2026-10-23"
+  "last": "2026-10-25"
  },
  "uk.investing.com": {
   "ok": 0,
   "fail": 2,
   "last": "2026-10-21"
  },
+ "washingtontimes.com": {
+  "ok": 0,
+  "fail": 1,
+  "last": "2026-10-25"
+ },
  "xtb.com": {
-  "ok": 1,
+  "ok": 2,
   "fail": 0,
-  "last": "2026-10-23"
+  "last": "2026-10-25"
  }
 }

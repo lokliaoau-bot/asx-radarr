@@ -1,0 +1,595 @@
+{
+  "schema": "afr-brief-v1",
+  "date": "2026-10-25",
+  "stage": "analysis",
+  "model": "claude-opus-5-5",
+  "effort": "high",
+  "generated_at": "2026-10-25T09:50:58+11:00",
+  "generated_by": "Claude (claude-opus-5-5)",
+  "market": {
+    "text_zh": "今天是 10 月 25 日（周日），ASX 休市。上一个交易日 10 月 23 日（周五）ASX 200 收 8795.2 点，涨 0.02%，基本持平：银行股大涨（CBA 涨 4.35%、NAB 涨 3.25%），矿业股大跌（必和必拓跌 3.64%），Zip 跌 29.47%。",
+    "index_close": null,
+    "index_pct": null
+  },
+  "items": [
+    {
+      "title_zh": "布伦特油价逼近 117 美元，美股周五收跌",
+      "afr_headline": "Oil hits $US117 for first time since April; Wall Street slips",
+      "afr_url": "https://www.afr.com/markets/equity-markets/oil-hits-us117-for-first-time-since-april-wall-street-slips-20261024-p6188n",
+      "afr_section": "Markets / Equity markets",
+      "what_zh": "美国周五（悉尼时间周六凌晨收盘），布伦特原油（国际油价基准）涨 3.1%，收 116.72 美元一桶；10 月初它还不到 97 美元。AFR 报道油价升到 117 美元，是 4 月以来第一次。美联社把油价上涨归因于美国和伊朗的战争大幅减少了全球石油供应；Capital Brief 报道，伊朗威胁如果美国和以色列恢复轰炸，就打击海湾地区的民用设施。美股随之走低：道琼斯指数跌 652.82 点（1.2%），收 52,215.16 点；标普 500 跌 0.5%，收 7,623.68 点，能源股是少数上涨的板块。ASX 周五交易时油价在 112 美元上下，之后这一段涨幅要到周一才会反映到澳股。",
+      "impact": [
+        {
+          "name": "Woodside",
+          "code": "WDS",
+          "direction": "偏多",
+          "move_pct": null
+        },
+        {
+          "name": "Santos",
+          "code": "STO",
+          "direction": "偏多",
+          "move_pct": null
+        },
+        {
+          "name": "澳洲航空",
+          "code": "QAN",
+          "direction": "偏空",
+          "move_pct": null
+        }
+      ],
+      "why_zh": "油价更高，Woodside、Santos 卖油气的收入就更多，周五晚的涨幅周一才轮到 ASX 消化。澳洲航空燃油成本上升，提前锁价（套期保值）只能挡一部分。风险：油价是被战争消息推上去的，停火或谈判有进展就可能很快回落；而且周五油价已在 112 美元以上时，Woodside 只涨 0.27%、Santos 还跌了 1.52%，股价并不完全跟着油价走。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/markets/equity-markets/oil-hits-us117-for-first-time-since-april-wall-street-slips-20261024-p6188n"
+        },
+        {
+          "name": "美联社（Washington Times 转载）",
+          "url": "https://www.washingtontimes.com/news/2026/oct/23/wall-street-loses-ground-friday-pressure-rising-oil-prices/"
+        },
+        {
+          "name": "美联社（BNN Bloomberg 转载）",
+          "url": "https://www.bnnbloomberg.ca/markets/2026/10/23/wall-street-mostly-loses-ground-under-pressure-from-rising-oil-prices/"
+        },
+        {
+          "name": "Capital Brief",
+          "url": "https://www.capitalbrief.com/newsletter/wall-street-slids-as-oil-hits-five-month-high-on-iran-threats-92d29826-1480-42cd-b223-d7c5482ec319/"
+        },
+        {
+          "name": "Stockhead",
+          "url": "https://stockhead.com.au/news/closing-bell-banks-pull-off-the-heist-as-miners-are-buried/"
+        }
+      ],
+      "verify": {
+        "checked": 11,
+        "found": [
+          "3.1%",
+          "116.72",
+          "97",
+          "117",
+          "652.82",
+          "1.2%",
+          "52,215.16",
+          "500",
+          "0.5%",
+          "7,623.68",
+          "112"
+        ],
+        "derived": [],
+        "market": [],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "美联社（BNN Bloomberg 转载）",
+          "Capital Brief",
+          "Stockhead"
+        ],
+        "sources_failed": [
+          "美联社（Washington Times 转载）"
+        ]
+      }
+    },
+    {
+      "title_zh": "AI 股遭遇抛售潮，资金转向防御性资产",
+      "afr_headline": "Investors hunt safe ground after ‘hurricane’ tears through AI trade",
+      "afr_url": "https://www.afr.com/markets/equity-markets/investors-hunt-safe-ground-after-hurricane-tears-through-ai-trade-20261023-p61802",
+      "afr_section": "Markets / Equity markets",
+      "what_zh": "美股周四（10 月 22 日）科技股大跌：纳斯达克指数跌 2.6%，收 26,008.86 点，是 6 月以来最大单日跌幅；费城半导体指数跌 6.7%。导火索是 Meta：业绩好于预期，但披露为 AI 业务签下合计 8250 亿美元的租约等不可取消的承诺，股价跌约 7%。AFR 用「飓风」形容这轮 AI 交易的抛售；据 Sharecafe，澳洲的基金经理在转向国防、保险等防御性股票，或者多留现金。本月澳洲的 AI 概念股已经受过重创：NextDC 因扩建延误股价跌了 40%，AI 算力公司 Firmus 撤回了上市计划。",
+      "impact": [
+        {
+          "name": "澳股科技板块",
+          "code": null,
+          "direction": "偏空"
+        },
+        {
+          "name": "NextDC",
+          "code": "NXT",
+          "direction": "中性",
+          "move_pct": null
+        },
+        {
+          "name": "Goodman Group",
+          "code": "GMG",
+          "direction": "中性",
+          "move_pct": null
+        }
+      ],
+      "why_zh": "抛售通过两条路传到澳股：全球基金一起减持科技和数据中心股；市场怀疑 AI 投资能不能及时赚回钱、融资会不会断。Meta 继续加大投入，对数据中心房东其实是需求，所以 Goodman 判中性；NextDC 已跌了四成，利空大多已反映。风险在反方向：美股科技股一旦反弹，这类股票往往弹得最快。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/markets/equity-markets/investors-hunt-safe-ground-after-hurricane-tears-through-ai-trade-20261023-p61802"
+        },
+        {
+          "name": "Sharecafe",
+          "url": "https://www.sharecafe.com.au/2026/10/23/ai-sell-off-grips-global-markets-asx-impacted/"
+        },
+        {
+          "name": "Seoul Economic Daily",
+          "url": "https://en.sedaily.com/international/2026/10/23/nasdaq-tumbles-26-percent-on-metas-825-billion-ai-spending"
+        },
+        {
+          "name": "Profit（Pakistan Today）",
+          "url": "https://profit.pakistantoday.com.pk/2026/10/23/nasdaq-plunges-26percent-sandp-500-falls-121percent-as-ai-spending-concerns-trigger-tech-selloff"
+        },
+        {
+          "name": "GV Wire",
+          "url": "https://gvwire.com/2026/10/22/wall-street-sinks-as-nasdaq-falls-over-2-on-ai-cost-worries/"
+        }
+      ],
+      "verify": {
+        "checked": 6,
+        "found": [
+          "2.6%",
+          "26,008.86",
+          "6.7%",
+          "8250 亿",
+          "约 7%",
+          "40%"
+        ],
+        "derived": [],
+        "market": [],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "Sharecafe",
+          "Seoul Economic Daily",
+          "Profit（Pakistan Today）"
+        ],
+        "sources_failed": [
+          "GV Wire"
+        ]
+      }
+    },
+    {
+      "title_zh": "周三公布三季度通胀，决定 11 月 3 日会不会加息",
+      "afr_headline": "Traders weigh cash rate above 5pc after RBA’s warning shot",
+      "afr_url": "https://www.afr.com/markets/debt-markets/traders-weigh-cash-rate-above-5pc-after-rba-s-warning-shot-20261022-p617p5",
+      "afr_section": "Markets / Debt markets",
+      "what_zh": "澳储行（RBA，澳洲央行）副行长 Andrew Hauser 上周表示，通胀前景比 8 月预测时更差。现金利率（央行定的基准利率）目前是 4.60%，9 月 29 日刚加息 25 个基点（0.25 个百分点），是今年第四次。讲话后，市场押注 11 月 3 日再加息的概率从约 24% 升到约 56%，再加一次就是 4.85%；AFR 报道交易员已在考虑利率升破 5% 的可能。关键数据是 10 月 28 日（周三）公布的第三季度通胀（CPI）：据 Capital Brief，彭博汇总的预期是截尾均值通胀（去掉涨跌最极端的项目后算的核心通胀）季比 1.0%、年比 3.6%。",
+      "impact": [
+        {
+          "name": "房地产信托（REITs）",
+          "code": null,
+          "direction": "偏空"
+        },
+        {
+          "name": "银行板块",
+          "code": null,
+          "direction": "中性"
+        }
+      ],
+      "why_zh": "截尾均值高于 1%，11 月加息基本坐实，房地产信托的融资成本和估值会再受压；低于预期，加息押注回落，这类股票会松一口气。市场已把一半以上的加息可能算进价格，所以只给偏空。银行两头都有：加息让存贷利差变宽，但借款人还款压力更大，所以中性。油价越涨，通胀越难降，是另一个推手。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/markets/debt-markets/traders-weigh-cash-rate-above-5pc-after-rba-s-warning-shot-20261022-p617p5"
+        },
+        {
+          "name": "Capital Brief",
+          "url": "https://www.capitalbrief.com/article/make-or-break-for-rate-hike-markets-brace-for-inflation-scorecard-fd5a0e5b-382c-4816-9fe4-8d8f63e3f04d/"
+        },
+        {
+          "name": "investingLive",
+          "url": "https://investinglive.com/central-banks/rba-s-hauser-says-inflation-outlook-worse-than-forecast-ahead-of-3-november-decision/"
+        },
+        {
+          "name": "Pound Sterling Live",
+          "url": "https://www.poundsterlinglive.com/aud/23780-australian-dollar-supported-hauser-november-rba-hike"
+        },
+        {
+          "name": "XTB",
+          "url": "https://www.xtb.com/en/market-analysis/rba-turns-increasingly-hawkish-as-markets-reprice-november-rate-hike-expectations"
+        },
+        {
+          "name": "Australian Broker News",
+          "url": "https://www.brokernews.com.au/news/breaking-news/rba-deputy-governor-says-inflation-materially-worse-than-expected-290185.aspx"
+        }
+      ],
+      "verify": {
+        "checked": 9,
+        "found": [
+          "4.60%",
+          "25",
+          "0.25 个百分点",
+          "约 24%",
+          "约 56%",
+          "4.85%",
+          "5%",
+          "1.0%",
+          "3.6%"
+        ],
+        "derived": [],
+        "market": [],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "Capital Brief",
+          "investingLive",
+          "Pound Sterling Live",
+          "XTB",
+          "Australian Broker News"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "Zip 遭美国欺诈团伙骗贷，周五股价收跌近三成",
+      "afr_headline": "Zip targeted by US fraudsters, raising questions over risk controls",
+      "afr_url": "https://www.afr.com/companies/financial-services/zip-targeted-by-us-fraudsters-raising-questions-over-risk-controls-20261023-p61822",
+      "afr_section": "Companies / Financial services",
+      "what_zh": "先买后付（BNPL）公司 Zip 10 月 23 日发布 2027 财年第一季度业务更新，披露美国业务遭遇外部欺诈：有组织的团伙用真实的身份信息批量开新账户，消费后不还款。这拖累了 7、8 月的交易额（TTV）和新客户增长，带来 720 万美元（约 1010 万澳元）的现金运营费用；坏账率升到交易额的 1.97%，一年前是 1.65%。公司称 9 月美国交易额同比增长 41%，已恢复增长。股价盘中一度跌约 50%，最低 1.025 澳元，收 1.46 澳元，跌 29.47%，收盘比盘中最低反弹了约 42%。",
+      "calcs": [
+        {
+          "value": "约 42%",
+          "expr": "(1.46/1.025-1)*100"
+        }
+      ],
+      "impact": [
+        {
+          "name": "Zip",
+          "code": "ZIP",
+          "direction": "中性",
+          "move_pct": null
+        }
+      ],
+      "why_zh": "一天跌近三成，已经把欺诈损失和坏账上升的担心大量算进股价；9 月美国交易额恢复增长，是反弹的理由。但风险还在：坏账率已接近公司 1.5%–2% 目标区间的上沿，下季度要是再出欺诈或坏账没降，股价还会再挨打。盘中一度腰斩、收盘又拉回不少，说明多空分歧很大，所以判中性。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/financial-services/zip-targeted-by-us-fraudsters-raising-questions-over-risk-controls-20261023-p61822"
+        },
+        {
+          "name": "Rask Media",
+          "url": "https://www.raskmedia.com.au/2026/10/23/zip-asxzip-share-price-sinks-29-on-weak-fy27-first-quarter-fraud-event/"
+        },
+        {
+          "name": "IBTimes Australia",
+          "url": "https://www.ibtimes.com.au/zip-shares-plunge-after-us-fraud-attack-1877248"
+        },
+        {
+          "name": "The Motley Fool",
+          "url": "https://www.fool.com.au/2026/10/23/zip-shares-are-down-30-today-is-it-time-to-be-greedy/"
+        },
+        {
+          "name": "Reuters（TradingView）",
+          "url": "https://www.tradingview.com/news/reuters.com,2026:newsml_L4N4682GK:0-australia-s-zip-tumbles-50-after-fraud-incident-dents-first-quarter-customer-growth/"
+        }
+      ],
+      "verify": {
+        "checked": 10,
+        "found": [
+          "720 万",
+          "约 1010 万",
+          "1.97%",
+          "1.65%",
+          "41%",
+          "约 50%",
+          "1.025",
+          "1.46",
+          "29.47%"
+        ],
+        "derived": [
+          "约 42%"
+        ],
+        "market": [],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "Rask Media",
+          "IBTimes Australia",
+          "The Motley Fool",
+          "Reuters（TradingView）"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "与中方采购平台僵持，Fortescue 季度少卖近 400 万吨矿",
+      "afr_headline": "Fortescue warns of Pilbara cuts if China deadlock continues",
+      "afr_url": "https://www.afr.com/companies/mining/fortescue-flags-trouble-ahead-if-china-talks-remain-unresolved-20261022-p61789",
+      "afr_section": "Companies / Mining",
+      "what_zh": "Fortescue 9 月季度发运铁矿石 46.8Mt（百万吨），同比少 6%，但实际卖出只有 42.9Mt，差了 3.9Mt。原因是它和中国国有铁矿石采购平台中国矿产资源集团（CMRG）的年度长协还没谈拢，CMRG 被报道让国内钢厂暂停采购它的一种低品位矿。管理层说谈判再拖下去，本季度可能还有约 5Mt 卖不出去；CEO Dino Otranto 表示如果到年底仍未解决，产量可能要调整。2027 财年发运指引 197–207Mt 暂时不变。柴油涨价把单位生产成本推到每吨 21.98 美元。股价 10 月 22 日收 14.57 澳元，跌 4.5%，周五继续下跌，两天累计跌约 6.5%。",
+      "calcs": [
+        {
+          "value": "3.9Mt",
+          "expr": "46.8-42.9"
+        },
+        {
+          "value": "约 6.5%",
+          "expr": "(14.27/15.26-1)*100"
+        }
+      ],
+      "impact": [
+        {
+          "name": "Fortescue",
+          "code": "FMG",
+          "direction": "偏空",
+          "move_pct": null
+        }
+      ],
+      "why_zh": "卖不出去的矿只能堆着，收入和现金流往后推；拖到年底还谈不拢就可能减产，全年发运指引有下调风险。两天已跌约 6.5%，一部分利空已反映，所以是偏空而不是空。最大的反转风险是突然达成协议：必和必拓此前已和 CMRG 谈妥，说明这类僵局能解开，一旦宣布，股价可能很快弹回。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/mining/fortescue-flags-trouble-ahead-if-china-talks-remain-unresolved-20261022-p61789"
+        },
+        {
+          "name": "Market Matters",
+          "url": "https://marketmatters.com.au/why-fortescue-asx-fmg-is-down-5/"
+        },
+        {
+          "name": "Rask Media",
+          "url": "https://www.raskmedia.com.au/2026/10/22/fortescue-asxfmg-share-price-sinks-4-on-fy27-first-quarter-and-china-negotiations/"
+        },
+        {
+          "name": "Proactive Investors",
+          "url": "https://www.proactiveinvestors.com.au/a/d9777cea/fortescue-warns-china-iron-ore-dispute-could-force-production-cuts"
+        },
+        {
+          "name": "The Nightly",
+          "url": "https://thenightly.com.au/business/mining/fortescue-warns-of-pilbara-iron-ore-production-slowdown-as-talks-with-china-mineral-resources-group-drag-on-c-23056649"
+        }
+      ],
+      "verify": {
+        "checked": 10,
+        "found": [
+          "46.8",
+          "42.9",
+          "197–207",
+          "197–207",
+          "21.98",
+          "14.57"
+        ],
+        "derived": [
+          "6%",
+          "3.9",
+          "约 6.5%"
+        ],
+        "market": [],
+        "missing": [
+          "4.5%"
+        ],
+        "sources_ok": [
+          "AFR",
+          "Market Matters",
+          "Rask Media",
+          "The Nightly"
+        ],
+        "sources_failed": [
+          "Proactive Investors"
+        ]
+      }
+    },
+    {
+      "title_zh": "北极星新 CEO：愿和 Gold Fields 谈，价格上没设红线",
+      "afr_headline": "Northern Star CEO open to Gold Fields talks but ‘no red line’ on price",
+      "afr_url": "https://www.afr.com/companies/mining/northern-star-ceo-open-to-gold-fields-talks-but-no-red-line-on-price-20261022-p617tv",
+      "afr_section": "Companies / Mining",
+      "what_zh": "据 AFR 报道，金矿商北极星资源（Northern Star）新任 CEO Suresh Vadnagra 表示愿意和南非金矿商 Gold Fields 接触，但没有给出价格上的「红线」。背景：9 月底北极星董事会一致拒绝了 Gold Fields 主动提出的收购提议（没有约束力）——每股换 0.3125 股 Gold Fields 股票加 7.25 澳元现金，当时作价约 387 亿澳元，董事会认为严重低估公司；Gold Fields 方面表示仍希望和董事会沟通。Vadnagra 10 月初上任，此前提到可能出售部分资产。10 月 23 日（周五）金矿股普遍大跌，据 Stockhead，金矿板块跌 5.56%，北极星也随之下跌。",
+      "impact": [
+        {
+          "name": "北极星资源",
+          "code": "NST",
+          "direction": "偏多",
+          "move_pct": null
+        }
+      ],
+      "why_zh": "董事会原先一口回绝，新 CEO 现在松口愿意谈，等于给更高报价开了门，股价多了一层「收购托底」的想象。但这只是表态：原提议没有约束力，而且大部分用 Gold Fields 股票支付，金价一跌、Gold Fields 股价一跌，报价价值也跟着缩水；能不能谈成、什么价都没定，所以只给偏多。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/mining/northern-star-ceo-open-to-gold-fields-talks-but-no-red-line-on-price-20261022-p617tv"
+        },
+        {
+          "name": "The Motley Fool",
+          "url": "https://www.fool.com.au/2026/09/28/northern-star-resources-rejects-38-7bn-gold-fields-takeover-offer/"
+        },
+        {
+          "name": "The Northern Miner",
+          "url": "https://www.northernminer.com/news/northern-star-rejects-uninvited-a38-7b-gold-fields-bid/1003895187/"
+        },
+        {
+          "name": "Engineering News",
+          "url": "https://engineeringnews.co.za/article/incoming-northern-star-ceo-flags-possibility-of-asset-sales-2026-10-21"
+        },
+        {
+          "name": "Engineering News（Gold Fields）",
+          "url": "https://www.engineeringnews.co.za/article/gold-fields-aims-to-woo-northern-star-investors-after-miners-rebuff-2026-09-30"
+        },
+        {
+          "name": "Stockhead",
+          "url": "https://stockhead.com.au/news/closing-bell-banks-pull-off-the-heist-as-miners-are-buried/"
+        }
+      ],
+      "verify": {
+        "checked": 4,
+        "found": [
+          "0.3125",
+          "7.25",
+          "约 387 亿",
+          "5.56%"
+        ],
+        "derived": [],
+        "market": [],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "The Motley Fool",
+          "The Northern Miner",
+          "Engineering News",
+          "Engineering News（Gold Fields）",
+          "Stockhead"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "MA Financial 加入竞购 10 亿澳元的 Lincoln Place",
+      "afr_headline": "MA Financial joins fray for $1b Lincoln Place, Stockland bankers up",
+      "afr_url": "https://www.afr.com/street-talk/ma-financial-joins-fray-for-1b-lincoln-place-stockland-bankers-up-20261022-p617pt",
+      "afr_section": "Street Talk",
+      "what_zh": "据 AFR Street Talk 报道，金融集团 MA Financial 加入了对土地租赁社区（住户买房、租地）运营商 Lincoln Place 的竞购，标题还提到地产商 Stockland 已备好投行顾问。FNArena 10 月 23 日的周报也写到，Stockland、Brookfield 和 MA Financial 进入第二轮竞价，Stockland 考虑在 12 月初前提交有约束力的报价。此前公开报道显示，美国私募 Cerberus 委托高盛出售 Lincoln Place，规模约 10 亿澳元；它在新州、维州、昆州和首都领地有 26 个社区。据 Mingtiandi 转述 The Australian，部分出价低于卖方 10 亿澳元的期望，有几家出价在约 6.5 亿澳元的账面价值附近。",
+      "impact": [
+        {
+          "name": "MA Financial",
+          "code": "MAF",
+          "direction": "中性",
+          "move_pct": null
+        },
+        {
+          "name": "Stockland",
+          "code": "SGP",
+          "direction": "中性",
+          "move_pct": null
+        }
+      ],
+      "why_zh": "竞价还在第二轮，都是没有约束力的报价，谁赢、什么价都没定，对两家股价影响都小。Stockland 若拿下，能一次得到成熟社区和开发储备，但十亿级收购有出价过高的风险；出价围着账面价值转，说明卖方很难卖高价，对买家是好事。MA Financial 的股价眼下更受它冻结房贷基金赎回一事左右。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/street-talk/ma-financial-joins-fray-for-1b-lincoln-place-stockland-bankers-up-20261022-p617pt"
+        },
+        {
+          "name": "FNArena",
+          "url": "https://fnarena.com/2026/10/23/next-week-at-a-glance-26-30-oct-2026/"
+        },
+        {
+          "name": "The Weekly Source（10 月 6 日）",
+          "url": "https://www.theweeklysource.com.au/land-lease-operators-and-private-equity-circle-lincoln-place/"
+        },
+        {
+          "name": "The Weekly Source（8 月 21 日）",
+          "url": "https://www.theweeklysource.com.au/land-lease-operator-lincoln-place-gears-up-for-asx-listing-or-1b-sale/"
+        },
+        {
+          "name": "Mingtiandi",
+          "url": "https://www.mingtiandi.com/real-estate/crelist/roundup-blackstone-bain-warburg-vie-for-6-3b-fuji-media-arm/"
+        }
+      ],
+      "verify": {
+        "checked": 4,
+        "found": [
+          "约 10 亿",
+          "26",
+          "10 亿",
+          "约 6.5 亿"
+        ],
+        "derived": [],
+        "market": [],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "FNArena",
+          "The Weekly Source（10 月 6 日）",
+          "The Weekly Source（8 月 21 日）",
+          "Mingtiandi"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "政府拟把银行担保债券上限从 8% 提到 12%",
+      "afr_headline": "Chalmers lifts bank bond caps, doubles deceased estate withdrawals",
+      "afr_url": "https://www.afr.com/policy/economy/chalmers-lifts-bank-bond-caps-in-780m-productivity-push-20261023-p6181a",
+      "afr_section": "Policy / Economy",
+      "what_zh": "联邦政府 10 月 23 日公布一揽子金融业减负措施，称每年可省下 7.8 亿澳元的合规成本。其中一项是发布法规草案，把银行可用来发行担保债券（covered bond，用房贷等资产作抵押的债券，融资成本较低）的资产上限从澳洲资产的 8% 提高到 12%；8% 的上限从 2011 年允许发行起一直没变。另一项是把逝者遗产相关支出（含丧葬费）可从账户提取的上限从 1.5 万澳元提高到 3 万澳元。澳洲银行业协会（ABA）表示欢迎，希望尽快定稿。同一天银行股大涨，据 Stockhead，银行板块涨 3.2%，但 Kalkine 认为这主要是资金从矿业股转进银行股。",
+      "impact": [
+        {
+          "name": "本迪戈银行",
+          "code": "BEN",
+          "direction": "偏多",
+          "move_pct": null
+        },
+        {
+          "name": "昆士兰银行",
+          "code": "BOQ",
+          "direction": "偏多",
+          "move_pct": null
+        },
+        {
+          "name": "四大银行",
+          "code": null,
+          "direction": "中性"
+        }
+      ],
+      "why_zh": "担保债券比普通债券便宜，上限放宽后，银行能用更多房贷作抵押去借长期的便宜钱。四大行本来不缺融资渠道，受益多的是本迪戈、昆士兰银行这类中型银行，能稍微缩小和四大行的成本差距。但这只是草案，还要咨询、定稿，省下的利息摊到利润上也不大，所以只是偏多。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/policy/economy/chalmers-lifts-bank-bond-caps-in-780m-productivity-push-20261023-p6181a"
+        },
+        {
+          "name": "Capital Brief",
+          "url": "https://www.capitalbrief.com/briefing/federal-government-plans-to-lift-bond-issuance-cap-73e0f57f-c0a3-426f-aa40-62555180b392/"
+        },
+        {
+          "name": "澳洲银行业协会",
+          "url": "https://www.ausbanking.org.au/banking-productivity-measures-to-help-boost-competition-and-benefit-customers/"
+        },
+        {
+          "name": "Mirage News（政府公告）",
+          "url": "https://www.miragenews.com/financial-sector-competition-and-productivity-1765359/"
+        },
+        {
+          "name": "Stockhead",
+          "url": "https://stockhead.com.au/news/closing-bell-banks-pull-off-the-heist-as-miners-are-buried/"
+        },
+        {
+          "name": "Kalkine Media",
+          "url": "https://kalkinemedia.com/au/news/evening-wrap/evening-wrap-asx-200-flat-as-miners-crash-commonwealth-bank-asxcba-and-telstra-asxtls-jump"
+        }
+      ],
+      "verify": {
+        "checked": 7,
+        "found": [
+          "7.8 亿",
+          "8%",
+          "12%",
+          "8%",
+          "1.5 万",
+          "3 万",
+          "3.2%"
+        ],
+        "derived": [],
+        "market": [],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "Capital Brief",
+          "澳洲银行业协会",
+          "Mirage News（政府公告）",
+          "Stockhead",
+          "Kalkine Media"
+        ],
+        "sources_failed": []
+      }
+    }
+  ],
+  "verify": {
+    "at": "2026-10-24T22:51:40+00:00",
+    "checked": 61,
+    "missing": 1
+  }
+}
