@@ -1,0 +1,312 @@
+{
+  "schema": "afr-brief-v1",
+  "date": "2026-10-26",
+  "stage": "headlines",
+  "model": "claude-opus-5-5",
+  "effort": "medium",
+  "generated_at": "2026-10-26T18:07:43+11:00",
+  "generated_by": "Claude (claude-opus-5-5)",
+  "market": {
+    "text_zh": "ASX 200 收 8809.9 点，涨 0.17%。早盘一度下跌，之后矿业股带头回升：必和必拓涨 1.04%，Fortescue 涨 2.17%，北方之星涨 2.77%；Tuas 跌 30.49%。ABC 报道，市场认为 RBA 下次会议加息的机会约 61%。",
+    "index_close": 8809.9,
+    "index_pct": 0.17
+  },
+  "items": [
+    {
+      "title_zh": "Tuas 遭新加坡监管机构威胁吊销频谱牌照，股价暴跌约三成",
+      "afr_headline": "ASX rises as miners rally; Tuas tumbles 30pc",
+      "afr_url": "https://www.afr.com/markets/equity-markets/asx-to-fall-on-oil-spike-key-central-bank-rate-decisions-this-week-20261026-p618ht",
+      "afr_section": "Markets / Equity markets",
+      "what_zh": "新加坡电信监管机构 IMDA 向 Tuas 旗下运营商 Simba 发出「说明理由」通知，要它解释为什么不该吊销其频谱牌照（无线电频段使用许可）并处以罚款。通知指 Simba 在 2022 和 2023 年于 133 个站点未经授权共享频谱，要求在 11 月 16 日前回复；IMDA 目前尚未作出最终决定。Tuas 盘中一度跌约 40%，收盘 1.265 澳元，全天跌 30.49%。同日 ASX 200 早盘下跌后收复失地，矿业股带头上涨。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/markets/equity-markets/asx-to-fall-on-oil-spike-key-central-bank-rate-decisions-this-week-20261026-p618ht"
+        },
+        {
+          "name": "Capital Brief",
+          "url": "https://www.capitalbrief.com/briefing/tuas-shares-plunge-as-it-faces-licence-cancellation-fines-from-singapore-regulator-10deb579-1df3-4def-8bb2-984f6e6ee5cd/"
+        },
+        {
+          "name": "ABC News",
+          "url": "https://www.abc.net.au/news/2026-10-26/asx-markets-business-live-news-october-26/107306820"
+        }
+      ],
+      "verify": {
+        "checked": 5,
+        "found": [
+          "133",
+          "约 40%",
+          "200"
+        ],
+        "derived": [],
+        "market": [
+          "1.265",
+          "30.49%"
+        ],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "Capital Brief",
+          "ABC News"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "NextDC 董事长将退休，CEO 放弃本财年奖金，董事减薪 10%",
+      "afr_headline": "NextDC CEO Scroggie’s bonus axed, chairman to step down in M3 fallout",
+      "afr_url": "https://www.afr.com/companies/infrastructure/nextdc-chairman-to-step-down-scroggie-to-lose-bonus-in-m3-fallout-20261026-p618im",
+      "afr_section": "Companies / Infrastructure",
+      "what_zh": "数据中心公司 NextDC 宣布董事会改组：任职多年的董事长 Douglas Flynn 将在继任者到位后卸任，公司已请猎头 Spencer Stuart 物色新董事。CEO Craig Scroggie 放弃 2027 财年的短期和长期激励，公司撤回了给他授予长期股权的股东会议案；非执行董事自愿减薪 10%，并放弃提高董事费用总额。起因是墨尔本 M3 数据中心的电网升级被推迟，公司此前下调了业绩指引，约 1.4 亿澳元合同收入要推后确认，股价 10 月 21 日一度暴跌约四成。今天 NextDC 收 5.54 澳元，跌 1.25%。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/infrastructure/nextdc-chairman-to-step-down-scroggie-to-lose-bonus-in-m3-fallout-20261026-p618im"
+        },
+        {
+          "name": "Capital Brief",
+          "url": "https://www.capitalbrief.com/briefing/nextdcs-craig-scroggie-to-forgo-fy27-incentives-following-m3-power-delay-7c3d48ca-e6bb-44bc-9aff-7e905c9f64b6/"
+        },
+        {
+          "name": "Business News Australia",
+          "url": "https://www.businessnewsaustralia.com/articles/nextdcs-chief-craig-scroggie-forgoes-incentives-and-directors-cut-fees--in-wake-of-share-rout.html"
+        },
+        {
+          "name": "The New Daily",
+          "url": "https://www.thenewdaily.com.au/themoneyedition/companies-that-matter/2026/10/21/australian-data-centre-giant-nextdc-loses-40-of-share-value-as-expansion-stalls"
+        }
+      ],
+      "verify": {
+        "checked": 4,
+        "found": [
+          "10%",
+          "约 1.4 亿",
+          "5.54"
+        ],
+        "derived": [],
+        "market": [
+          "1.25%"
+        ],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "Capital Brief",
+          "Business News Australia",
+          "The New Daily"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "Ingenia 获 AVID 新收购提议，出价高过 Warburg",
+      "afr_headline": "Avid Property partners with Brookfield for mooted Ingenia take-private",
+      "afr_url": "https://www.afr.com/street-talk/new-suitor-adds-to-ingenia-board-s-warburg-versus-peet-dilemma-20261026-p618iy",
+      "afr_section": "Street Talk",
+      "what_zh": "度假村和养老社区运营商 Ingenia 公告，收到 AVID Property Group 的非约束性收购提议：每份证券现金 5.35 澳元，年底前还可能另派最多 5 澳分分红；AVID 称背后有一家全球主权财富基金和一家国际金融投资方支持。条件包括尽职调查、董事会一致推荐，以及 Ingenia 终止 8 月与 Peet 签的收购协议。此前私募 Warburg Pincus 的报价是 5.25 澳元并称是「最好也是最后」的报价。Ingenia 给了 AVID 最长六周的「软」排他期。AFR Street Talk 报道 AVID 是和 Brookfield 合作出价，这一点其他媒体暂未证实。今天 Ingenia 收 5.00 澳元，涨 5.04%；Peet 跌 3.05%。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/street-talk/new-suitor-adds-to-ingenia-board-s-warburg-versus-peet-dilemma-20261026-p618iy"
+        },
+        {
+          "name": "Capital Brief",
+          "url": "https://www.capitalbrief.com/briefing/avid-property-group-enters-race-to-buy-ingenia-communities-a4ca603f-8ed5-4516-ae0f-1d19793a5ee6/"
+        },
+        {
+          "name": "TradingView",
+          "url": "https://www.tradingview.com/news/seekingalpha:e5524a244094b:0-ingenia-shares-jump-as-avid-enters-1-6b-takeover-battle/"
+        },
+        {
+          "name": "The Weekly Source",
+          "url": "https://www.theweeklysource.com.au/avid-property-group-new-bidder-for-ingenia-communities-group/"
+        }
+      ],
+      "verify": {
+        "checked": 5,
+        "found": [
+          "5.35",
+          "5.25",
+          "5.00"
+        ],
+        "derived": [],
+        "market": [
+          "5.04%",
+          "3.05%"
+        ],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "Capital Brief",
+          "TradingView",
+          "The Weekly Source"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "Apollo、GIC 竞购力拓约 70 亿澳元能源基础设施",
+      "afr_headline": "Apollo, GIC join the bidder pool at Rio’s $7b infrastructure auction",
+      "afr_url": "https://www.afr.com/street-talk/apollo-gic-join-the-bidder-pool-at-rio-s-7b-infrastructure-auction-20261025-p618eq",
+      "afr_section": "Street Talk",
+      "what_zh": "据 AFR Street Talk 报道，美国私募巨头 Apollo 和新加坡主权基金 GIC 已对力拓（Rio Tinto）出售的约 70 亿澳元能源基础设施提交非约束性报价。出售的资产包括力拓在西澳皮尔巴拉和加拿大矿区的电厂、输电线路等配套设施；此前报道的潜在买家还有 Brookfield、KKR 和 Macquarie。力拓尚未公布结果，交易结构也还没定。今天力拓收 146.61 澳元，涨 0.23%。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/street-talk/apollo-gic-join-the-bidder-pool-at-rio-s-7b-infrastructure-auction-20261025-p618eq"
+        },
+        {
+          "name": "Newsquawk",
+          "url": "https://www.newsquawk.com/headlines/pre-market-australian-stocks-news-bluescope-steel-raises-fy27-underlying-ebit-guidance-rio-tinto-rio-at-received-non-binding-indicative-offers-from-apollo-and-singapores-gic-for-aud-7bln-worth-of-energy-infrastratructure-assets-put-up-for-sale"
+        },
+        {
+          "name": "Head Topics",
+          "url": "https://au.headtopics.com/news/apollo-and-gic-join-race-for-rio-tinto-s-7-billion-energy-89176977"
+        }
+      ],
+      "verify": {
+        "checked": 3,
+        "found": [
+          "约 70 亿"
+        ],
+        "derived": [],
+        "market": [
+          "146.61",
+          "0.23%"
+        ],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "Newsquawk",
+          "Head Topics"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "博思格钢铁上调上半财年利润指引至约 11 亿澳元",
+      "afr_headline": "BlueScope Steel rides Trump tariff train to bumper US profits",
+      "afr_url": "https://www.afr.com/companies/manufacturing/bluescope-steel-rides-trump-tariff-train-to-bumper-us-profits-20261026-p618jk",
+      "afr_section": "Companies / Manufacturing",
+      "what_zh": "博思格钢铁（BlueScope）把 2027 财年上半年的基础息税前利润（EBIT，扣利息和税之前的经营利润）指引上调到接近 11 亿澳元，原来的区间是 8.6 亿到 9.6 亿澳元。主要原因是美国 North Star 钢厂受益于更高的美国钢材价差（钢价减原料成本），北美业务利润预计比 2026 财年下半年高约三分之二。AFR 把美国钢价走强和特朗普的钢铁关税联系在一起。今天博思格收 33.31 澳元，涨 2.94%。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/manufacturing/bluescope-steel-rides-trump-tariff-train-to-bumper-us-profits-20261026-p618jk"
+        },
+        {
+          "name": "The Motley Fool",
+          "url": "https://www.fool.com.au/2026/10/26/bluescope-upgrades-first-half-fy2027-earnings-guidance/"
+        },
+        {
+          "name": "Finimize",
+          "url": "https://finimize.com/content/bluescope-doubled-profit-and-raised-its-next-earnings-target"
+        }
+      ],
+      "verify": {
+        "checked": 5,
+        "found": [
+          "接近 11 亿",
+          "8.6 亿",
+          "9.6 亿"
+        ],
+        "derived": [],
+        "market": [
+          "33.31",
+          "2.94%"
+        ],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "The Motley Fool",
+          "Finimize"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "CSL 董事长明年 3 月退休，临时 CEO 接任",
+      "afr_headline": "McNamee bows out at CSL amid boardroom reset",
+      "afr_url": "https://www.afr.com/companies/healthcare-and-fitness/brian-mcnamee-to-retire-after-decades-at-the-very-top-of-csl-20261026-p618iq",
+      "afr_section": "Companies / Healthcare",
+      "what_zh": "血液制品和疫苗巨头 CSL 宣布，董事长 Brian McNamee 将于 2027 年 3 月 31 日退出董事会。他 1990 到 2013 年担任 CSL 的 CEO，2018 年起任董事长。董事会一致选出现任临时 CEO Gordon Naylor 接任董事长；Naylor 会继续做临时 CEO 到 2027 年 2 月 1 日，届时新 CEO Deborah Waterhouse 上任。今天 CSL 收 195.14 澳元，跌 0.79%。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/healthcare-and-fitness/brian-mcnamee-to-retire-after-decades-at-the-very-top-of-csl-20261026-p618iq"
+        },
+        {
+          "name": "Capital Brief",
+          "url": "https://www.capitalbrief.com/briefing/csl-chair-brian-mcnamee-to-retire-gordon-naylor-picked-as-successor-538ef6e5-f027-4608-9fe5-1b39a31142a1/"
+        },
+        {
+          "name": "Grafa",
+          "url": "https://grafa.com/en/news/australia/csl-chairman-to-step-down-in-march-2027"
+        }
+      ],
+      "verify": {
+        "checked": 2,
+        "found": [],
+        "derived": [],
+        "market": [
+          "195.14",
+          "0.79%"
+        ],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "Capital Brief",
+          "Grafa"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "第一生命收购 Challenger：股价已高过 11.80 澳元报价",
+      "afr_headline": "Challenger and suitor Daiichi tango as investors demand higher offer",
+      "afr_url": "https://www.afr.com/companies/financial-services/challenger-and-suitor-daiichi-tango-as-investors-demand-higher-offer-20261026-p618nk",
+      "afr_section": "Companies / Financial services",
+      "what_zh": "日本第一生命（Daiichi Life）旗下的 TAL Daiichi Life Australia 10 月 19 日提出以每股 11.80 澳元收购年金公司 Challenger 其余股份，对公司估值约 79.4 亿澳元。这是非约束性报价，附带尽职调查等条件，Challenger 董事会还没表态推荐。第一生命一方已持有 20.36% 股份。花旗当时维持买入评级、把目标价提到 13.20 澳元，认为现价难获董事会支持。AFR 报道投资者要求提价。今天 Challenger 收 11.85 澳元，跌 0.59%，收盘价已略高于报价。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/financial-services/challenger-and-suitor-daiichi-tango-as-investors-demand-higher-offer-20261026-p618nk"
+        },
+        {
+          "name": "Reuters（经 KFGO 转载）",
+          "url": "https://kfgo.com/2026/10/18/australias-challenger-gets-takeover-bid-from-unit-of-japans-daiichi-life/"
+        },
+        {
+          "name": "Capital.com",
+          "url": "https://capital.com/en-au/news/citi-keeps-buy-on-challenger-says-daiichi-unit-likely-to"
+        }
+      ],
+      "verify": {
+        "checked": 6,
+        "found": [
+          "11.80",
+          "约 79.4 亿",
+          "20.36%",
+          "13.20",
+          "11.85"
+        ],
+        "derived": [],
+        "market": [],
+        "missing": [
+          "0.59%"
+        ],
+        "sources_ok": [
+          "AFR",
+          "Reuters（经 KFGO 转载）",
+          "Capital.com"
+        ],
+        "sources_failed": []
+      }
+    }
+  ],
+  "verify": {
+    "at": "2026-10-26T07:08:08+00:00",
+    "checked": 30,
+    "missing": 1
+  }
+}

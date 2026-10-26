@@ -1,13 +1,18 @@
 {
  "abc.net.au": {
-  "ok": 3,
+  "ok": 4,
   "fail": 0,
-  "last": "2026-10-21"
+  "last": "2026-10-26"
  },
  "afr.com": {
-  "ok": 42,
+  "ok": 49,
   "fail": 0,
-  "last": "2026-10-25"
+  "last": "2026-10-26"
+ },
+ "au.headtopics.com": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-26"
  },
  "au.investing.com": {
   "ok": 0,
@@ -35,14 +40,19 @@
   "last": "2026-10-25"
  },
  "businessnewsaustralia.com": {
+  "ok": 2,
+  "fail": 0,
+  "last": "2026-10-26"
+ },
+ "capital.com": {
   "ok": 1,
   "fail": 0,
-  "last": "2026-10-22"
+  "last": "2026-10-26"
  },
  "capitalbrief.com": {
-  "ok": 7,
+  "ok": 11,
   "fail": 0,
-  "last": "2026-10-25"
+  "last": "2026-10-26"
  },
  "discoveryalert.com": {
   "ok": 0,
@@ -59,6 +69,11 @@
   "fail": 0,
   "last": "2026-10-25"
  },
+ "finimize.com": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-26"
+ },
  "fintechfutures.com": {
   "ok": 0,
   "fail": 1,
@@ -70,9 +85,9 @@
   "last": "2026-10-25"
  },
  "fool.com.au": {
-  "ok": 10,
+  "ok": 11,
   "fail": 0,
-  "last": "2026-10-25"
+  "last": "2026-10-26"
  },
  "freedom969.com": {
   "ok": 1,
@@ -80,9 +95,9 @@
   "last": "2026-10-22"
  },
  "grafa.com": {
-  "ok": 4,
+  "ok": 5,
   "fail": 0,
-  "last": "2026-10-22"
+  "last": "2026-10-26"
  },
  "gvwire.com": {
   "ok": 0,
@@ -128,6 +143,11 @@
   "ok": 3,
   "fail": 0,
   "last": "2026-10-25"
+ },
+ "kfgo.com": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-26"
  },
  "mafinancial.com": {
   "ok": 1,
@@ -178,6 +198,11 @@
   "ok": 1,
   "fail": 0,
   "last": "2026-10-23"
+ },
+ "newsquawk.com": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-26"
  },
  "northernminer.com": {
   "ok": 3,
@@ -240,9 +265,9 @@
   "last": "2026-10-25"
  },
  "thenewdaily.com.au": {
-  "ok": 2,
+  "ok": 3,
   "fail": 0,
-  "last": "2026-10-23"
+  "last": "2026-10-26"
  },
  "thenightly.com.au": {
   "ok": 1,
@@ -250,14 +275,14 @@
   "last": "2026-10-25"
  },
  "theweeklysource.com.au": {
-  "ok": 5,
+  "ok": 6,
   "fail": 0,
-  "last": "2026-10-25"
+  "last": "2026-10-26"
  },
  "tradingview.com": {
-  "ok": 3,
+  "ok": 4,
   "fail": 0,
-  "last": "2026-10-25"
+  "last": "2026-10-26"
  },
  "uk.investing.com": {
   "ok": 0,
