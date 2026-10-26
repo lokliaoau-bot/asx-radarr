@@ -1,7 +1,7 @@
 {
  "schema": "afr-inbox-v1",
  "date": "2026-10-27",
- "collected_at": "2026-10-26T13:25:47+00:00",
+ "collected_at": "2026-10-26T14:34:50+00:00",
  "headlines": [
   {
    "title": "NDIS hostage to outdated pricing and tech, business warns",
@@ -239,48 +239,6 @@
    }
   },
   {
-   "title": "Hancock HQ helicopter noise ‘no greater than boiling kettle’: lawyers",
-   "url": "https://www.afr.com/property/commercial/hancock-hq-helicopter-noise-no-greater-than-boiling-kettle-lawyers-20261026-p618no",
-   "section": "property",
-   "date": "2026-10-26",
-   "published": "2026-10-26T06:24:07+00:00",
-   "codes": [],
-   "hints": {
-    "amounts": [
-     "$10 million"
-    ],
-    "names": [
-     "Lawyers",
-     "Australia",
-     "Gina Rinehart",
-     "Hancock Prospecting",
-     "Ord Street Holdings",
-     "City of Perth",
-     "West Perth",
-     "Rinehart"
-    ]
-   }
-  },
-  {
-   "title": "David Jones is minutes from midnight as directors ponder solvency",
-   "url": "https://www.afr.com/street-talk/david-jones-minutes-from-midnight-as-directors-ponder-solvency-20261026-p617rt",
-   "section": "street-talk",
-   "date": "2026-10-26",
-   "codes": [],
-   "hints": {
-    "amounts": [],
-    "names": [
-     "David Jones",
-     "Already",
-     "British",
-     "Hilco Global",
-     "McGrathNicol and Clifford Chance",
-     "Justin Levis",
-     "Cue and Veronika Maine"
-    ]
-   }
-  },
-  {
    "title": "Ex-league star chased over $1m payments just before his lavish wedding",
    "url": "https://www.afr.com/wealth/tax/ex-league-star-chased-over-1m-payments-just-before-his-lavish-wedding-20261026-p616kv",
    "section": "wealth",
@@ -304,7 +262,7 @@
    }
   },
   {
-   "title": "Why lamb prices are probably going to get much worse",
+   "title": "Lamb prices are probably going to get much worse",
    "url": "https://www.afr.com/companies/agriculture/why-lamb-prices-are-probably-going-to-get-much-worse-20261026-p617ip",
    "section": "companies",
    "date": "2026-10-26",
@@ -335,6 +293,28 @@
      "ASAP",
      "Scroggie",
      "Melbourne"
+    ]
+   }
+  },
+  {
+   "title": "Hancock HQ helicopter noise ‘no greater than boiling kettle’: lawyers",
+   "url": "https://www.afr.com/property/commercial/hancock-hq-helicopter-noise-no-greater-than-boiling-kettle-lawyers-20261026-p618no",
+   "section": "property",
+   "date": "2026-10-26",
+   "codes": [],
+   "hints": {
+    "amounts": [
+     "$10 million"
+    ],
+    "names": [
+     "Lawyers",
+     "Australia",
+     "Gina Rinehart",
+     "Hancock Prospecting",
+     "Ord Street Holdings",
+     "City of Perth",
+     "West Perth",
+     "Rinehart"
     ]
    }
   },
@@ -377,6 +357,25 @@
      "Ferny Hills",
      "Queensland",
      "Sold"
+    ]
+   }
+  },
+  {
+   "title": "David Jones is minutes from midnight as directors ponder solvency",
+   "url": "https://www.afr.com/street-talk/david-jones-minutes-from-midnight-as-directors-ponder-solvency-20261026-p617rt",
+   "section": "street-talk",
+   "date": "2026-10-26",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "David Jones",
+     "Already",
+     "British",
+     "Hilco Global",
+     "McGrathNicol and Clifford Chance",
+     "Justin Levis",
+     "Cue and Veronika Maine"
     ]
    }
   },
