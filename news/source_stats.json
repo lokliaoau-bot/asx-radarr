@@ -1,13 +1,18 @@
 {
  "abc.net.au": {
-  "ok": 4,
+  "ok": 5,
   "fail": 0,
-  "last": "2026-10-26"
+  "last": "2026-10-27"
  },
  "afr.com": {
-  "ok": 49,
+  "ok": 55,
   "fail": 0,
-  "last": "2026-10-26"
+  "last": "2026-10-27"
+ },
+ "arnnet.com.au": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-27"
  },
  "au.headtopics.com": {
   "ok": 1,
@@ -29,6 +34,11 @@
   "fail": 0,
   "last": "2026-10-23"
  },
+ "bloomberg.com": {
+  "ok": 0,
+  "fail": 1,
+  "last": "2026-10-27"
+ },
  "bnnbloomberg.ca": {
   "ok": 1,
   "fail": 0,
@@ -38,6 +48,11 @@
   "ok": 3,
   "fail": 0,
   "last": "2026-10-25"
+ },
+ "businessnews.com.au": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-27"
  },
  "businessnewsaustralia.com": {
   "ok": 2,
@@ -50,9 +65,9 @@
   "last": "2026-10-26"
  },
  "capitalbrief.com": {
-  "ok": 11,
+  "ok": 14,
   "fail": 0,
-  "last": "2026-10-26"
+  "last": "2026-10-27"
  },
  "discoveryalert.com": {
   "ok": 0,
@@ -64,15 +79,25 @@
   "fail": 0,
   "last": "2026-10-25"
  },
+ "en.tatoli.tl": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-27"
+ },
  "engineeringnews.co.za": {
   "ok": 4,
   "fail": 0,
   "last": "2026-10-25"
  },
- "finimize.com": {
+ "financialstandard.com.au": {
   "ok": 1,
   "fail": 0,
-  "last": "2026-10-26"
+  "last": "2026-10-27"
+ },
+ "finimize.com": {
+  "ok": 2,
+  "fail": 0,
+  "last": "2026-10-27"
  },
  "fintechfutures.com": {
   "ok": 0,
@@ -85,9 +110,9 @@
   "last": "2026-10-25"
  },
  "fool.com.au": {
-  "ok": 11,
+  "ok": 13,
   "fail": 0,
-  "last": "2026-10-26"
+  "last": "2026-10-27"
  },
  "freedom969.com": {
   "ok": 1,
@@ -170,9 +195,14 @@
   "last": "2026-10-23"
  },
  "mingtiandi.com": {
+  "ok": 2,
+  "fail": 0,
+  "last": "2026-10-27"
+ },
+ "mining-journal.com": {
   "ok": 1,
   "fail": 0,
-  "last": "2026-10-25"
+  "last": "2026-10-27"
  },
  "mining.com.au": {
   "ok": 0,
@@ -245,9 +275,14 @@
   "last": "2026-10-25"
  },
  "raskmedia.com.au": {
-  "ok": 4,
+  "ok": 5,
   "fail": 0,
-  "last": "2026-10-25"
+  "last": "2026-10-27"
+ },
+ "realestatesource.com.au": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-27"
  },
  "rigzone.com": {
   "ok": 1,
@@ -269,6 +304,11 @@
   "fail": 0,
   "last": "2026-10-26"
  },
+ "thenextweb.com": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-27"
+ },
  "thenightly.com.au": {
   "ok": 1,
   "fail": 0,
@@ -280,9 +320,9 @@
   "last": "2026-10-26"
  },
  "tradingview.com": {
-  "ok": 4,
+  "ok": 6,
   "fail": 0,
-  "last": "2026-10-26"
+  "last": "2026-10-27"
  },
  "uk.investing.com": {
   "ok": 0,

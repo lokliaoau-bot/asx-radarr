@@ -1,0 +1,321 @@
+{
+  "schema": "afr-brief-v1",
+  "date": "2026-10-27",
+  "stage": "headlines",
+  "model": "claude-opus-5-5",
+  "effort": "medium",
+  "generated_at": "2026-10-27T18:07:02+11:00",
+  "generated_by": "Claude (claude-opus-5-5)",
+  "market": {
+    "text_zh": "ASX 200 收 8850.1 点，涨 0.46%。矿业股出力最多：必和必拓涨 4.26%，力拓涨 2.53%。隔夜美股因 Anthropic 提交上市申请、芯片股走强而上涨，带动澳股科技股情绪。",
+    "index_close": 8850.1,
+    "index_pct": 0.46
+  },
+  "items": [
+    {
+      "title_zh": "Anthropic 递交上市申请，联邦银行早年入股的持股备受关注",
+      "afr_headline": "CBA faces $3b Anthropic dilemma ahead of blockbuster listing",
+      "afr_url": "https://www.afr.com/companies/financial-services/cba-faces-3b-anthropic-dilemma-ahead-of-blockbuster-listing-20261027-p618wk",
+      "afr_section": "Companies / Financial services",
+      "what_zh": "人工智能公司 Anthropic 在美国时间 10 月 26 日向美国证监会递交上市申请（S-1 招股书），计划在纳斯达克上市，代码 ANT，由高盛和摩根士丹利牵头；发行股数和价格区间还没定。招股书显示今年上半年收入 163 亿美元，净亏损 807 亿美元，亏损大部分来自可转债等的公允价值变动（非现金）。联邦银行（CBA）在 2025 年 3 月的 E 轮融资中入股，据彭博社估算，这笔持股到今年 6 月底约值 15.3 亿澳元；招股书没有披露 CBA 的持股，CBA 不予置评，会不会在上市时卖出还不清楚。AFR 标题称这笔持股约 30 亿澳元。CBA 今天收 162.02 澳元，跌 0.72%。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/financial-services/cba-faces-3b-anthropic-dilemma-ahead-of-blockbuster-listing-20261027-p618wk"
+        },
+        {
+          "name": "The Next Web",
+          "url": "https://thenextweb.com/news/anthropic-ipo-filing-nasdaq-ant-s-1"
+        },
+        {
+          "name": "Capital Brief",
+          "url": "https://www.capitalbrief.com/newsletter/head-in-the-claude-3ea5c2b0-2339-4f2d-9d6b-e8ef34ad7f64/"
+        },
+        {
+          "name": "Bloomberg",
+          "url": "https://www.bloomberg.com/news/articles/2026-10-27/anthropic-ipo-cba-commonwealth-bank-of-australia-multi-billion-windfall"
+        },
+        {
+          "name": "ABC News",
+          "url": "https://www.abc.net.au/news/2026-10-27/asx-markets-business-live-news-anthropic/107312526"
+        }
+      ],
+      "verify": {
+        "checked": 6,
+        "found": [
+          "163 亿",
+          "807 亿",
+          "约 30 亿",
+          "162.02",
+          "0.72%"
+        ],
+        "derived": [],
+        "market": [],
+        "missing": [
+          "15.3 亿"
+        ],
+        "sources_ok": [
+          "AFR",
+          "The Next Web",
+          "Capital Brief",
+          "ABC News"
+        ],
+        "sources_failed": [
+          "Bloomberg"
+        ]
+      }
+    },
+    {
+      "title_zh": "伍德赛德把 Sunrise 气田权益卖给东帝汶，退出这个搁置二十多年的项目",
+      "afr_headline": "Woodside abandons 25-year Sunrise LNG quest in sale to Timor-Leste",
+      "afr_url": "https://www.afr.com/companies/energy/woodside-abandons-25-year-sunrise-lng-quest-in-sale-to-timor-leste-20261027-p618za",
+      "afr_section": "Companies / Energy",
+      "what_zh": "伍德赛德（Woodside）同意把 Greater Sunrise 气田项目 33.44% 的权益卖给东帝汶国家石油公司 TIMOR GAP，总价最多 2 亿美元，但大部分要看项目进展才付：交割时付 1371 万美元，项目作出最终投资决定（FID）后付 1129 万美元，首船液化天然气装船后 365 天内再付 1.75 亿美元。交割目标是 2027 年上半年，需要政府、监管和合资方批准。大阪燃气也已同意把 10% 权益卖给 TIMOR GAP，完成后 TIMOR GAP 将独占这个项目。CEO Liz Westcott 说，出售让公司资产组合更精简。伍德赛德今天收 33.18 澳元，涨 0.27%。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/energy/woodside-abandons-25-year-sunrise-lng-quest-in-sale-to-timor-leste-20261027-p618za"
+        },
+        {
+          "name": "Rask Media",
+          "url": "https://www.raskmedia.com.au/2026/10/27/woodside-asxwds-shares-rise-after-200-million-asset-sale/"
+        },
+        {
+          "name": "Tatoli",
+          "url": "https://en.tatoli.tl/2026/10/27/timor-gap-to-buy-woodside-energys-33-44-stake-in-sunrise-project/12/"
+        },
+        {
+          "name": "Business News",
+          "url": "https://www.businessnews.com.au/article/Woodside-walks-away-from-Greater-Sunrise"
+        }
+      ],
+      "verify": {
+        "checked": 8,
+        "found": [
+          "33.44%",
+          "2 亿",
+          "1371 万",
+          "1129 万",
+          "1.75 亿",
+          "10%"
+        ],
+        "derived": [],
+        "market": [
+          "33.18",
+          "0.27%"
+        ],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "Rask Media",
+          "Tatoli",
+          "Business News"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "Ingenia 获 AVID 每份 5.35 澳元收购提议，高过华平",
+      "afr_headline": "Avid Property partners with Brookfield for mooted Ingenia take-private",
+      "afr_url": "https://www.afr.com/street-talk/new-suitor-adds-to-ingenia-board-s-warburg-versus-peet-dilemma-20261026-p618iy",
+      "afr_section": "Street Talk",
+      "what_zh": "度假村和养老社区运营商 Ingenia（INA）周一公告，收到 AVID Property Group 主动提出、没有约束力的收购提议：每份证券 5.35 澳元现金，另外允许派发最多 0.05 澳元的半年分派，合计最多 5.40 澳元，对公司估值约 22 亿澳元，也高于华平（Warburg Pincus）上一轮每份 5.25 澳元的报价。Ingenia 给了 AVID 最多六周的「软排他期」（期间不主动找别的买家），并停止了华平的尽职调查资料访问；董事会还没认定这份提议优于它收购 Peet 的现有协议。AFR Street Talk 报道 AVID 与 Brookfield 合作，Mingtiandi 引述知情人士也说 Brookfield 是财务支持方。Ingenia 今天收 5.01 澳元，涨 0.2%，比 5.35 澳元的报价低约 6.4%。",
+      "calcs": [
+        {
+          "value": "约 6.4%",
+          "expr": "(1-5.01/5.35)*100"
+        }
+      ],
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/street-talk/new-suitor-adds-to-ingenia-board-s-warburg-versus-peet-dilemma-20261026-p618iy"
+        },
+        {
+          "name": "Mingtiandi",
+          "url": "https://www.mingtiandi.com/real-estate/finance/brookfield-avid-offer-1-6b-for-ingenia-topping-warburg-bid/"
+        },
+        {
+          "name": "TradingView (Reuters)",
+          "url": "https://www.tradingview.com/news/reuters.com,2026:newsml_L2N46C015:0-avid-property-s-buyout-offer-values-australia-s-ingenia-communities-at-1-5-billion/"
+        },
+        {
+          "name": "Real Estate Source",
+          "url": "https://www.realestatesource.com.au/avid-trumps-warburg-pincus-bid-for-ingenia/"
+        }
+      ],
+      "verify": {
+        "checked": 9,
+        "found": [
+          "5.35",
+          "0.05",
+          "5.40",
+          "约 22 亿",
+          "5.25",
+          "5.01",
+          "5.35"
+        ],
+        "derived": [
+          "约 6.4%"
+        ],
+        "market": [
+          "0.2%"
+        ],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "Mingtiandi",
+          "TradingView (Reuters)",
+          "Real Estate Source"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "NextDC 因墨尔本 M3 供电延误整顿：CEO 放弃明年奖金，董事长将退休",
+      "afr_headline": "NextDC CEO Scroggie’s bonus axed, chairman to step down in M3 fallout",
+      "afr_url": "https://www.afr.com/companies/infrastructure/nextdc-chairman-to-step-down-scroggie-to-lose-bonus-in-m3-fallout-20261026-p618im",
+      "afr_section": "Companies / Infrastructure",
+      "what_zh": "数据中心公司 NextDC（NXT）周一公告：CEO Craig Scroggie 放弃 2027 财年的短期和长期激励，也不拿任何替代奖励；原本请股东批准授予他 145,916 份业绩股权和 145,914 份限制性股权的议案撤回。董事长 Douglas Flynn 重申，新董事长到任并短暂交接后就退休，猎头公司同时在物色一名新增独立董事。现任董事自愿减薪 10%，并撤回提高董事薪酬总额的议案。起因是电网公司 Jemena 的工程延误，墨尔本 M3 数据中心下一次扩大供电要推迟到 2028 财年，公司上周下调指引后股价大跌。年度股东大会定在 11 月 20 日。NextDC 今天收 5.75 澳元，涨 3.79%。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/infrastructure/nextdc-chairman-to-step-down-scroggie-to-lose-bonus-in-m3-fallout-20261026-p618im"
+        },
+        {
+          "name": "Capital Brief",
+          "url": "https://www.capitalbrief.com/briefing/nextdcs-craig-scroggie-to-forgo-fy27-incentives-following-m3-power-delay-7c3d48ca-e6bb-44bc-9aff-7e905c9f64b6/"
+        },
+        {
+          "name": "The Motley Fool",
+          "url": "https://fool.com.au/2026/10/26/nextdc-announces-board-renewal-cost-cuts-ahead-of-agm"
+        },
+        {
+          "name": "ARN",
+          "url": "https://www.arnnet.com.au/article/4240050/nextdc-unveils-board-renewal-measures-following-revised-fy27-guidance.html"
+        }
+      ],
+      "verify": {
+        "checked": 5,
+        "found": [
+          "145,916",
+          "145,914",
+          "10%"
+        ],
+        "derived": [],
+        "market": [
+          "5.75",
+          "3.79%"
+        ],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "Capital Brief",
+          "The Motley Fool",
+          "ARN"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "Challenger 回绝第一生命每股 11.80 澳元收购提议，但愿意继续谈",
+      "afr_headline": "Challenger and suitor Daiichi tango as investors demand higher offer",
+      "afr_url": "https://www.afr.com/companies/financial-services/challenger-and-suitor-daiichi-tango-as-investors-demand-higher-offer-20261026-p618nk",
+      "afr_section": "Companies / Financial services",
+      "what_zh": "年金公司 Challenger（CGF）董事会周一回绝了日本第一生命（Daiichi Life）旗下 TAL Daiichi Life Australia 的收购提议：每股 11.80 澳元现金，收购它还没持有的约 79.5% 股份。这份提议没有约束力。董事会说这个价格达不到能向股东推荐的水平，但打算和对方接触，看能不能谈出可以推荐的方案，目前不保证会有正式报价，股东暂时不用采取行动。AFR 标题说投资者在要求更高的报价。Challenger 周一收 11.85 澳元，跌 0.6%，仍略高于 11.80 澳元的报价。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/financial-services/challenger-and-suitor-daiichi-tango-as-investors-demand-higher-offer-20261026-p618nk"
+        },
+        {
+          "name": "The Motley Fool",
+          "url": "https://www.fool.com.au/2026/10/26/challenger-earnings-board-responds-to-indicative-offer/"
+        },
+        {
+          "name": "Capital Brief",
+          "url": "https://www.capitalbrief.com/briefing/challenger-board-rejects-tal-daiichi-lifes-takeover-bid-727748dc-ed6f-4ce6-abda-b66fdb1ab12c/"
+        },
+        {
+          "name": "Financial Standard",
+          "url": "https://www.financialstandard.com.au/news/challenger-rejects-7-8bn-takeover-offer-179814382"
+        }
+      ],
+      "verify": {
+        "checked": 5,
+        "found": [
+          "11.80",
+          "约 79.5%",
+          "11.85",
+          "11.80"
+        ],
+        "derived": [],
+        "market": [],
+        "missing": [
+          "0.6%"
+        ],
+        "sources_ok": [
+          "AFR",
+          "The Motley Fool",
+          "Capital Brief",
+          "Financial Standard"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "Turaco Gold 买下 Afema 金矿剩余权益，据报筹资 1.05 亿",
+      "afr_headline": "Turaco Gold hunts for $105m to bankroll M&A bet",
+      "afr_url": "https://www.afr.com/street-talk/turaco-gold-hunts-for-105m-to-bankroll-m-and-a-bet-20261027-p618xa",
+      "afr_section": "Street Talk",
+      "what_zh": "据 AFR Street Talk 报道，金矿开发商 Turaco Gold（TCG）正寻求筹资约 1.05 亿澳元，其他媒体暂未证实具体金额。公司已公告：以总值 7900 万美元买下合作方 Sodim 在科特迪瓦 Afema 金矿项目剩下的 20% 权益，对价包括约 3000 万美元现金、5510 万股 Turaco 股票（锁定 12 个月）和 3670 万份非上市期权；完成后 Turaco 将持有项目 100%（国家按规定免费持有的 10% 除外）。公司已申请停牌做股票配售，并计划向现有股东发售新股（SPP），用来支付现金部分；交易需股东批准，股东大会预计在 12 月初。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/street-talk/turaco-gold-hunts-for-105m-to-bankroll-m-and-a-bet-20261027-p618xa"
+        },
+        {
+          "name": "TradingView (Reuters)",
+          "url": "https://www.tradingview.com/news/reuters.com,2026:newsml_FWN46C2FO:0-turaco-gold-executes-agreements-to-acquire-sodim-ltd-s-remaining-20-stake-in-4-65moz-afema-gold-project/"
+        },
+        {
+          "name": "Mining Journal",
+          "url": "https://www.mining-journal.com/exploration-development/news-analysis/4538648/turaco-dresses-afema-consolidation-deal"
+        },
+        {
+          "name": "Finimize",
+          "url": "https://finimize.com/content/turaco-gold-moves-to-take-full-control-of-afema"
+        }
+      ],
+      "verify": {
+        "checked": 8,
+        "found": [
+          "约 1.05 亿",
+          "7900 万",
+          "20%"
+        ],
+        "derived": [],
+        "market": [],
+        "missing": [
+          "约 3000 万",
+          "5510 万",
+          "3670 万",
+          "100%",
+          "10%"
+        ],
+        "sources_ok": [
+          "AFR",
+          "TradingView (Reuters)",
+          "Mining Journal",
+          "Finimize"
+        ],
+        "sources_failed": []
+      }
+    }
+  ],
+  "verify": {
+    "at": "2026-10-27T07:08:26+00:00",
+    "checked": 41,
+    "missing": 7
+  }
+}
