@@ -1,0 +1,349 @@
+{
+  "schema": "afr-brief-v1",
+  "date": "2026-10-28",
+  "stage": "headlines",
+  "model": "claude-opus-5-5",
+  "effort": "medium",
+  "generated_at": "2026-10-28T18:30:00+11:00",
+  "generated_by": "Claude (claude-opus-5-5)",
+  "market": {
+    "text_zh": "ASX 200 收 8847.3 点，跌 0.03%。通胀数据高于预期，西太银行和联邦银行都预计 RBA 下周加息，大盘盘中涨幅收窄后小幅收跌。银行股收涨（西太银行涨 0.97%，联邦银行涨 0.61%），伍德赛德跌 3.16%，NextDC 涨 9.39%。",
+    "index_close": 8847.3,
+    "index_pct": -0.03
+  },
+  "items": [
+    {
+      "title_zh": "9 月通胀升到 4.3%，市场押注 RBA 下周加息",
+      "afr_headline": "Inflation spike pushes RBA on rates, Chalmers on spending cuts",
+      "afr_url": "https://www.afr.com/policy/economy/hotter-than-expected-inflation-piles-pressure-on-rba-to-raise-rates-20261028-p61978",
+      "afr_section": "Policy / Economy",
+      "what_zh": "澳大利亚统计局 10 月 28 日公布：截至 9 月的 12 个月，消费者物价指数（CPI，衡量物价涨幅）上涨 4.3%，高于截至 8 月的 4.0%；9 月季度环比涨 1.3%，高于市场预期。数据公布后，据 ABC 引用彭博数据，市场认为 RBA 下周加息 0.25 个百分点的概率约 85%；RBA 理事会 11 月 2 日至 3 日开会。AFR 报道西太银行和联邦银行都预计 RBA 下周加息，财长查默斯也面临削减开支的压力。今天银行股收涨：西太银行涨 0.97%，联邦银行涨 0.61%。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/policy/economy/hotter-than-expected-inflation-piles-pressure-on-rba-to-raise-rates-20261028-p61978"
+        },
+        {
+          "name": "ABS",
+          "url": "https://www.abs.gov.au/media-centre/media-releases/cpi-rose-43-year-september-2026"
+        },
+        {
+          "name": "ABC News",
+          "url": "https://www.abc.net.au/news/2026-10-28/inflation-september-cpi-ahead-of-november-interest-rate-call/107317382"
+        },
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/markets/equity-markets/asx-steady-wall-street-gains-oil-slips-20261028-p61959"
+        }
+      ],
+      "verify": {
+        "checked": 7,
+        "found": [
+          "4.3%",
+          "4.0%",
+          "1.3%",
+          "0.25 个百分点",
+          "约 85%",
+          "0.97%"
+        ],
+        "derived": [],
+        "market": [],
+        "missing": [
+          "0.61%"
+        ],
+        "sources_ok": [
+          "AFR",
+          "ABS",
+          "ABC News",
+          "AFR"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "星港赌场因违反反洗钱法被判罚 2.6 亿澳元，股票停牌",
+      "afr_headline": "Star chairman says $260m fine won’t be the death of casino operator",
+      "afr_url": "https://www.afr.com/companies/games-and-wagering/star-s-260m-money-laundering-fine-puts-it-on-the-brink-20261028-p6193f",
+      "afr_section": "Companies / Games and wagering",
+      "what_zh": "联邦法院 10 月 28 日判星港娱乐（Star Entertainment，代码 SGR）因违反反洗钱和反恐融资法，向金融情报机构 AUSTRAC 支付 2.6 亿澳元罚款。AUSTRAC 原本要求 4 亿澳元，星港则称超过 1 亿澳元就可能把公司推向清盘。罚款分四期付，悉尼赌场承担 1.95 亿澳元，昆士兰赌场承担 6500 万澳元，最后一期在 2028 年 5 月 25 日。法官认为星港实际上把利润放在合规前面。星港股票已停牌，等公司就判决发公告。AFR 报道星港董事长称这笔罚款不会让公司倒下。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/games-and-wagering/star-s-260m-money-laundering-fine-puts-it-on-the-brink-20261028-p6193f"
+        },
+        {
+          "name": "ABC News",
+          "url": "https://www.abc.net.au/news/2026-10-28/star-entertainment-fined-over-casino-money-laundering-austrac/107317384"
+        },
+        {
+          "name": "Capital Brief",
+          "url": "https://www.capitalbrief.com/briefing/star-entertainment-fined-260m-in-historical-money-laundering-case-fab220cc-bf0e-49ca-ac52-fb577c2f6a67/"
+        },
+        {
+          "name": "The Motley Fool",
+          "url": "https://www.fool.com.au/2026/10/28/star-entertainment-hit-with-260-million-fine-can-it-survive/"
+        }
+      ],
+      "verify": {
+        "checked": 5,
+        "found": [
+          "2.6 亿",
+          "4 亿",
+          "超过 1 亿",
+          "1.95 亿",
+          "6500 万"
+        ],
+        "derived": [],
+        "market": [],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "ABC News",
+          "Capital Brief",
+          "The Motley Fool"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "Ingenia 争夺战升级：华平拉上合作方，报价提到每股 5.50 澳元",
+      "afr_headline": "Warburg Pincus lands billionaire family, super giant for Ingenia bid",
+      "afr_url": "https://www.afr.com/street-talk/warburg-pincus-partners-up-with-art-lederer-family-for-ingenia-20261028-p61972",
+      "afr_section": "Street Talk",
+      "what_zh": "私募基金华平（Warburg Pincus）把收购 Ingenia Communities（代码 INA）的报价提到每股 5.45 澳元现金加最多 5 分分红，合计 5.50 澳元，比对手 AVID Property Group 的 5.40 澳元高 10 分。按方案，华平留下养老社区业务，养老基金澳大利亚退休信托旗下的 Discovery Parks 接手度假营地，Lederer 家族的 LDR Capital 接手 Ingenia Gardens。报价没有约束力，要求尽职调查、债务融资，并要 Ingenia 放弃收购 Peet。AVID 有权在 11 月 1 日前匹配，董事会还没推荐任何一方。Ingenia 今天收 5.26 澳元，涨 4.99%，比 5.50 澳元低约 4.6%。",
+      "calcs": [
+        {
+          "value": "约 4.6%",
+          "expr": "(5.50/5.26-1)*100"
+        }
+      ],
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/street-talk/warburg-pincus-partners-up-with-art-lederer-family-for-ingenia-20261028-p61972"
+        },
+        {
+          "name": "The Motley Fool",
+          "url": "https://www.fool.com.au/2026/10/28/ingenia-communities-receives-improved-5-50-takeover-proposal/"
+        },
+        {
+          "name": "Real Estate Source",
+          "url": "https://www.realestatesource.com.au/warburg-pincus-raises-ingenia-bid-brings-in-lederer-discovery-parks/"
+        },
+        {
+          "name": "Grafa",
+          "url": "https://grafa.com/en/news/australia/warburg-pincus-raises-ingenia-offer-to-match-avid-bid"
+        },
+        {
+          "name": "Grafa",
+          "url": "https://grafa.com/en/news/australia/ingenia-receives-buyout-proposal-worth-5-40-per-security"
+        }
+      ],
+      "verify": {
+        "checked": 8,
+        "found": [
+          "5.45",
+          "5.50",
+          "5.40",
+          "10",
+          "5.26",
+          "5.50"
+        ],
+        "derived": [
+          "约 4.6%"
+        ],
+        "market": [
+          "4.99%"
+        ],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "The Motley Fool",
+          "Real Estate Source",
+          "Grafa",
+          "Grafa"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "伍尔沃斯一季度销售增长 4.7%，澳洲超市业务增 6.9%",
+      "afr_headline": "Woolworths hails price-cutting drive for keeping sales growth on track",
+      "afr_url": "https://www.afr.com/companies/retail/woolworths-piles-pressure-on-coles-with-6-9pc-sales-growth-in-q1-20261028-p6193u",
+      "afr_section": "Companies / Retail",
+      "what_zh": "伍尔沃斯（Woolworths，代码 WOW）公布 2027 财年第一季度（截至 10 月 4 日的 14 周）销售：集团销售涨 4.7%，到 193.5 亿澳元；澳洲超市业务（Australian Food）增长 6.9%，前半段得益于迪士尼 Ooshies 收集玩具促销；网购销售涨 16%，到 31 亿澳元。新西兰超市和 Big W 表现较弱。公司称 10 月到目前，超市销售大致和一季度持平。CEO Amanda Bardwell 把增长归功于降价策略。伍尔沃斯今天收 40.82 澳元，跌 0.46%；竞争对手 Coles 跌 1.21%。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/retail/woolworths-piles-pressure-on-coles-with-6-9pc-sales-growth-in-q1-20261028-p6193u"
+        },
+        {
+          "name": "Capital Brief",
+          "url": "https://www.capitalbrief.com/briefing/woolworths-posts-47-rise-in-q1-sales-9cb0600d-64ee-462f-9317-a07bbbaa9a3b/"
+        },
+        {
+          "name": "Grafa",
+          "url": "https://grafa.com/en/news/australia/woolworths-posts-q1-total-group-sales-of-19-35b"
+        },
+        {
+          "name": "Rask Media",
+          "url": "https://www.raskmedia.com.au/2026/10/28/woolworths-asxwow-share-price-rises-on-strong-sales-in-fy27-q1/"
+        }
+      ],
+      "verify": {
+        "checked": 8,
+        "found": [
+          "4.7%",
+          "193.5 亿",
+          "6.9%",
+          "16%",
+          "31 亿",
+          "40.82"
+        ],
+        "derived": [],
+        "market": [
+          "0.46%",
+          "1.21%"
+        ],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "Capital Brief",
+          "Grafa",
+          "Rask Media"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "伍德赛德把大日出气田股份卖给东帝汶国企，放弃 25 年开发计划",
+      "afr_headline": "Woodside abandons 25-year Sunrise LNG quest in sale to Timor-Leste",
+      "afr_url": "https://www.afr.com/companies/energy/woodside-abandons-25-year-sunrise-lng-quest-in-sale-to-timor-leste-20261027-p618za",
+      "afr_section": "Companies / Energy",
+      "what_zh": "伍德赛德能源（Woodside，代码 WDS）10 月 27 日宣布，把帝汶海大日出（Greater Sunrise）气田 33.44% 的股份卖给东帝汶国有石油公司 Timor GAP，总价最多 2 亿美元（约 2.85 亿澳元）。完成交割时只付 1371 万美元，大头 1.75 亿美元要等项目第一船液化天然气（LNG）装船后 365 天内才付，也就是要看项目能不能建成。交易还需两国政府等批准，目标 2027 年上半年完成。大阪燃气也同意卖出 10% 股份，Timor GAP 将拿到全部权益。伍德赛德今天收 32.13 澳元，跌 3.16%。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/energy/woodside-abandons-25-year-sunrise-lng-quest-in-sale-to-timor-leste-20261027-p618za"
+        },
+        {
+          "name": "ABC News",
+          "url": "https://www.abc.net.au/news/2026-10-27/greater-sunrise-timor-leste-china-woodside/107315832"
+        },
+        {
+          "name": "Petroleum Australia",
+          "url": "https://petroleumaustralia.com.au/projects/woodside-exits-long-gestating-greater-sunrise-lng-project-in-timor-leste/"
+        },
+        {
+          "name": "Oil & Gas Middle East",
+          "url": "https://www.oilandgasmiddleeast.com/news/greater-sunrise-woodside-timor-gap"
+        }
+      ],
+      "verify": {
+        "checked": 8,
+        "found": [
+          "33.44%",
+          "2 亿",
+          "约 2.85 亿",
+          "1371 万",
+          "1.75 亿",
+          "10%"
+        ],
+        "derived": [],
+        "market": [
+          "32.13",
+          "3.16%"
+        ],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "ABC News",
+          "Petroleum Australia"
+        ],
+        "sources_failed": [
+          "Oil & Gas Middle East"
+        ]
+      }
+    },
+    {
+      "title_zh": "NextDC 暴跌后可能被踢出 ASX 50，今天反弹近一成",
+      "afr_headline": "NextDC faces further selling pressure after ASX demotion",
+      "afr_url": "https://www.afr.com/markets/equity-markets/nextdc-faces-further-selling-pressure-after-asx-demotion-20261028-p61982",
+      "afr_section": "Markets / Equity markets",
+      "what_zh": "数据中心公司 NextDC（代码 NXT）10 月 21 日复牌后股价跌了 40% 以上，起因是墨尔本西 Footscray 数据中心项目延期和盈利下调。券商预计它会在 12 月的指数调整中被移出 S&P/ASX 50 指数（澳股市值最大的 50 家），被动基金（跟踪指数的基金）届时可能要卖出。正式名单 12 月 4 日公布，约两周后生效，目前还只是预测。NextDC 今天收 6.29 澳元，涨 9.39%。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/markets/equity-markets/nextdc-faces-further-selling-pressure-after-asx-demotion-20261028-p61982"
+        },
+        {
+          "name": "ABC News",
+          "url": "https://www.abc.net.au/news/2026-10-21/west-footscray-data-centre-delays-nextdc-value-asx-vic/107291744"
+        },
+        {
+          "name": "ShareCafe",
+          "url": "https://www.sharecafe.com.au/2026/10/28/asx-indices-brace-for-major-december-overhaul/"
+        }
+      ],
+      "verify": {
+        "checked": 5,
+        "found": [
+          "40%",
+          "50",
+          "50"
+        ],
+        "derived": [],
+        "market": [
+          "6.29",
+          "9.39%"
+        ],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "ABC News",
+          "ShareCafe"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "惠誉把联盛集团评级展望调为负面，做空者涌入",
+      "afr_headline": "Lendlease’s debt marked with negative outlook as short-sellers rush in",
+      "afr_url": "https://www.afr.com/property/commercial/lendlease-s-debt-marked-with-negative-outlook-as-short-sellers-rush-in-20261027-p6186m",
+      "afr_section": "Property / Commercial",
+      "what_zh": "评级机构惠誉（Fitch）维持联盛集团（Lendlease，代码 LLC）BBB- 的信用评级，但把展望从稳定调为负面，理由是旧资产出售回笼资金比预期慢。负面展望不等于降级，但提示中期内可能下调。联盛 2026 财年（截至 6 月 30 日）净亏损 7.49 亿澳元，主要来自旧资产的非现金减值。AFR 报道做空者在加仓，但其他媒体暂未给出做空数据。联盛今天收 2.29 澳元，跌 4.58%。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/property/commercial/lendlease-s-debt-marked-with-negative-outlook-as-short-sellers-rush-in-20261027-p6186m"
+        },
+        {
+          "name": "Kalkine Media",
+          "url": "https://kalkinemedia.com/au/stocks/value/can-lendlease-asxllc-recycle-capital-fast-enough-to-satisfy-fitch"
+        }
+      ],
+      "verify": {
+        "checked": 3,
+        "found": [
+          "2.29",
+          "4.58%"
+        ],
+        "derived": [],
+        "market": [],
+        "missing": [
+          "7.49 亿"
+        ],
+        "sources_ok": [
+          "AFR",
+          "Kalkine Media"
+        ],
+        "sources_failed": []
+      }
+    }
+  ],
+  "verify": {
+    "at": "2026-10-28T07:07:27+00:00",
+    "checked": 44,
+    "missing": 2
+  }
+}

@@ -1,13 +1,18 @@
 {
  "abc.net.au": {
-  "ok": 5,
+  "ok": 9,
   "fail": 0,
-  "last": "2026-10-27"
+  "last": "2026-10-28"
+ },
+ "abs.gov.au": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-28"
  },
  "afr.com": {
-  "ok": 55,
+  "ok": 63,
   "fail": 0,
-  "last": "2026-10-27"
+  "last": "2026-10-28"
  },
  "arnnet.com.au": {
   "ok": 1,
@@ -65,9 +70,9 @@
   "last": "2026-10-26"
  },
  "capitalbrief.com": {
-  "ok": 14,
+  "ok": 16,
   "fail": 0,
-  "last": "2026-10-27"
+  "last": "2026-10-28"
  },
  "discoveryalert.com": {
   "ok": 0,
@@ -110,9 +115,9 @@
   "last": "2026-10-25"
  },
  "fool.com.au": {
-  "ok": 13,
+  "ok": 15,
   "fail": 0,
-  "last": "2026-10-27"
+  "last": "2026-10-28"
  },
  "freedom969.com": {
   "ok": 1,
@@ -120,9 +125,9 @@
   "last": "2026-10-22"
  },
  "grafa.com": {
-  "ok": 5,
+  "ok": 8,
   "fail": 0,
-  "last": "2026-10-26"
+  "last": "2026-10-28"
  },
  "gvwire.com": {
   "ok": 0,
@@ -165,9 +170,9 @@
   "last": "2026-10-22"
  },
  "kalkinemedia.com": {
-  "ok": 3,
+  "ok": 4,
   "fail": 0,
-  "last": "2026-10-25"
+  "last": "2026-10-28"
  },
  "kfgo.com": {
   "ok": 1,
@@ -249,6 +254,16 @@
   "fail": 0,
   "last": "2026-10-21"
  },
+ "oilandgasmiddleeast.com": {
+  "ok": 0,
+  "fail": 1,
+  "last": "2026-10-28"
+ },
+ "petroleumaustralia.com.au": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-28"
+ },
  "poundsterlinglive.com": {
   "ok": 2,
   "fail": 0,
@@ -275,14 +290,14 @@
   "last": "2026-10-25"
  },
  "raskmedia.com.au": {
-  "ok": 5,
+  "ok": 6,
   "fail": 0,
-  "last": "2026-10-27"
+  "last": "2026-10-28"
  },
  "realestatesource.com.au": {
-  "ok": 1,
+  "ok": 2,
   "fail": 0,
-  "last": "2026-10-27"
+  "last": "2026-10-28"
  },
  "rigzone.com": {
   "ok": 1,
@@ -290,9 +305,9 @@
   "last": "2026-10-21"
  },
  "sharecafe.com.au": {
-  "ok": 1,
+  "ok": 2,
   "fail": 0,
-  "last": "2026-10-25"
+  "last": "2026-10-28"
  },
  "stockhead.com.au": {
   "ok": 3,
