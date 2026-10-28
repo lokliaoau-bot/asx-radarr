@@ -1,7 +1,7 @@
 {
  "schema": "afr-inbox-v1",
  "date": "2026-10-29",
- "collected_at": "2026-10-28T13:20:36+00:00",
+ "collected_at": "2026-10-28T14:32:11+00:00",
  "headlines": [
   {
    "title": "What James did next: Hird drops coaching dream to join AI firm",
@@ -269,26 +269,6 @@
    }
   },
   {
-   "title": "Future of Queensland’s $18b pumped hydro project hangs in the balance",
-   "url": "https://www.afr.com/policy/energy-and-climate/future-of-queensland-s-18b-pumped-hydro-project-hangs-in-the-balance-20261028-p6199a",
-   "section": "policy",
-   "date": "2026-10-28",
-   "published": "2026-10-28T06:08:25+00:00",
-   "codes": [],
-   "hints": {
-    "amounts": [
-     "$18.4 billion"
-    ],
-    "names": [
-     "Contracting",
-     "Borumba",
-     "Queensland",
-     "Queensland Hydro",
-     "Gympie"
-    ]
-   }
-  },
-  {
    "title": "Brisbane power couple list family home as compound nears completion",
    "url": "https://www.afr.com/property/residential/brisbane-power-couple-list-family-home-as-compound-nears-completion-20261028-p618ul",
    "section": "property",
@@ -387,26 +367,6 @@
      "Filings",
      "Sydney",
      "Advent International"
-    ]
-   }
-  },
-  {
-   "title": "Want a better job? Your boss could be standing in the way",
-   "url": "https://www.afr.com/policy/economy/want-a-better-job-your-boss-could-be-standing-in-the-way-20261028-p618ws",
-   "section": "policy",
-   "date": "2026-10-28",
-   "codes": [],
-   "hints": {
-    "amounts": [],
-    "names": [
-     "Want",
-     "Your",
-     "Chalmers",
-     "Last",
-     "Minerals Council of Australia",
-     "Jim Chalmers",
-     "Given",
-     "Joe Biden"
     ]
    }
   },
@@ -711,6 +671,26 @@
      "RBA",
      "Reserve Bank of Australia",
      "Kiwi"
+    ]
+   }
+  },
+  {
+   "title": "Want a better job? Your boss could be standing in the way",
+   "url": "https://www.afr.com/policy/economy/want-a-better-job-your-boss-could-be-standing-in-the-way-20261028-p618ws",
+   "section": "policy",
+   "date": "2026-10-28",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Want",
+     "Your",
+     "Chalmers",
+     "Last",
+     "Minerals Council of Australia",
+     "Jim Chalmers",
+     "Given",
+     "Joe Biden"
     ]
    }
   },
@@ -1687,6 +1667,26 @@
    "codes": [
     "INA"
    ]
+  },
+  {
+   "title": "Future of Queensland’s $18b pumped hydro project hangs in the balance",
+   "url": "https://www.afr.com/policy/energy-and-climate/future-of-queensland-s-18b-pumped-hydro-project-hangs-in-the-balance-20261028-p6199a",
+   "section": "policy",
+   "date": "2026-10-28",
+   "published": "2026-10-28T06:08:25+00:00",
+   "codes": [],
+   "hints": {
+    "amounts": [
+     "$18.4 billion"
+    ],
+    "names": [
+     "Contracting",
+     "Borumba",
+     "Queensland",
+     "Queensland Hydro",
+     "Gympie"
+    ]
+   }
   }
  ],
  "index": null,
