@@ -1,7 +1,7 @@
 {
  "schema": "afr-inbox-v1",
  "date": "2026-10-30",
- "collected_at": "2026-10-29T13:29:21+00:00",
+ "collected_at": "2026-10-29T14:40:16+00:00",
  "headlines": [
   {
    "title": "The Melbourne Cup’s Birdcage has a grand plan to get its groove back",
@@ -124,32 +124,6 @@
      "Perth",
      "Matilda Bay",
      "Royal Perth Yacht Club"
-    ]
-   }
-  },
-  {
-   "title": "Firmus flop puts investment bankers in the firing line",
-   "url": "https://www.afr.com/markets/private-markets/firmus-flop-puts-investment-bankers-in-the-firing-line-20261029-p619hj",
-   "section": "markets",
-   "date": "2026-10-29",
-   "published": "2026-10-29T07:28:27+00:00",
-   "codes": [
-    "BOQ"
-   ],
-   "hints": {
-    "amounts": [
-     "$44 billion",
-     "$11"
-    ],
-    "names": [
-     "Firmus",
-     "ASIC",
-     "IPO",
-     "Morgan Stanley",
-     "JPMorgan",
-     "Bank of America and Morgans Financial",
-     "Nvidia",
-     "Blackstone and Coatue"
     ]
    }
   },
@@ -562,6 +536,31 @@
    "section": "markets",
    "date": "2026-10-27",
    "codes": []
+  },
+  {
+   "title": "Firmus flop puts investment bankers in the firing line",
+   "url": "https://www.afr.com/markets/private-markets/firmus-flop-puts-investment-bankers-in-the-firing-line-20261029-p619hj",
+   "section": "markets",
+   "date": "2026-10-29",
+   "codes": [
+    "BOQ"
+   ],
+   "hints": {
+    "amounts": [
+     "$44 billion",
+     "$11"
+    ],
+    "names": [
+     "Firmus",
+     "ASIC",
+     "IPO",
+     "Morgan Stanley",
+     "JPMorgan",
+     "Bank of America and Morgans Financial",
+     "Nvidia",
+     "Blackstone and Coatue"
+    ]
+   }
   },
   {
    "title": "What Anthropic’s IPO can teach the ASX",
