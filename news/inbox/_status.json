@@ -7,10 +7,10 @@
   "run": "https://github.com/lokliaoau-bot/asx-radarr/actions/runs/40833032578"
  },
  "intake": {
-  "at": "2026-10-28T07:07:27+00:00",
+  "at": "2026-10-29T07:09:36+00:00",
   "ok": true,
-  "info": "并入 news/briefs/2026-10-28.json ",
-  "date": "2026-10-28",
-  "run": "https://github.com/lokliaoau-bot/asx-radarr/actions/runs/40648016376"
+  "info": "并入 news/briefs/2026-10-29.json ",
+  "date": "2026-10-29",
+  "run": "https://github.com/lokliaoau-bot/asx-radarr/actions/runs/40833598559"
  }
 }

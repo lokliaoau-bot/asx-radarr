@@ -1,0 +1,296 @@
+{
+  "schema": "afr-brief-v1",
+  "date": "2026-10-29",
+  "stage": "headlines",
+  "model": "claude-opus-5-5",
+  "effort": "medium",
+  "generated_at": "2026-10-29T18:10:00+11:00",
+  "generated_by": "Claude (claude-opus-5-5)",
+  "market": {
+    "text_zh": "ASX 200 收 8891.8 点，涨 0.50%。银行股领涨：联邦银行涨 2.07%，澳大利亚国民银行涨 2.33%，西太银行涨 1.86%；零售股走弱，威斯法默跌 4.04%，JB Hi-Fi 跌 2.89%；Mesoblast 涨 23.40%，是涨幅最大的股票之一。",
+    "index_close": 8891.8,
+    "index_pct": 0.5
+  },
+  "items": [
+    {
+      "title_zh": "Bunnings、JB Hi-Fi 销售放缓，零售股集体下跌",
+      "afr_headline": "‘Diabolical’: Retailers brace for rate rise blow to Black Friday sales",
+      "afr_url": "https://www.afr.com/companies/retail/bunnings-jb-hi-fi-sound-sales-alarm-as-rates-pain-batters-consumers-20261029-p619ky",
+      "afr_section": "Companies / Retail",
+      "what_zh": "10 月 29 日几家大零售商同时发布最新销售情况。威斯法默（Wesfarmers，代码 WES）在年度股东大会上说，旗下五金连锁 Bunnings 开局不错，但最近季节性商品和商用客户的销售走弱，管理层提到加息和通胀拖累消费；Kmart 和 Officeworks 7 月以来的增速与上个财年下半年大致持平。JB Hi-Fi（JBH）7 月至 9 月澳洲业务总销售下降 0.4%，同店销售下降 1.4%，公司称 10 月销售进一步放缓，顾客在等黑色星期五和圣诞促销。Super Retail（SUL）一季度同店销售只增长 0.2%。收盘时威斯法默跌 4.04%，JB Hi-Fi 跌 2.89%，Super Retail 跌 2.77%。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/retail/bunnings-jb-hi-fi-sound-sales-alarm-as-rates-pain-batters-consumers-20261029-p619ky"
+        },
+        {
+          "name": "Grafa",
+          "url": "https://grafa.com/en/news/australia/wesfarmers-reports-moderating-sales-growth-at-bunnings"
+        },
+        {
+          "name": "The Nightly",
+          "url": "https://thenightly.com.au/business/wesfarmers-retail-giants-bunnings-kmart-and-officeworks-lose-steam-as-households-batten-down-hatches-c-23088242"
+        },
+        {
+          "name": "Rask Media",
+          "url": "https://www.raskmedia.com.au/2026/10/29/jb-hi-fi-asxjbh-share-price-in-focus-on-fy27-first-quarter-update/"
+        },
+        {
+          "name": "Appliance Retailer",
+          "url": "https://www.applianceretailer.com.au/jb-hi-fi-group-issues-sales-update-for-first-quarter-fy27/"
+        },
+        {
+          "name": "Business News Australia",
+          "url": "https://www.businessnewsaustralia.com/articles/jb-hi-fi-and-super-retail-sales-suffer-first-quarter-hit-as-consumers-tighten-belts.html"
+        }
+      ],
+      "verify": {
+        "checked": 6,
+        "found": [
+          "0.4%",
+          "1.4%",
+          "0.2%",
+          "2.77%"
+        ],
+        "derived": [],
+        "market": [
+          "2.89%"
+        ],
+        "missing": [
+          "4.04%"
+        ],
+        "sources_ok": [
+          "AFR",
+          "Grafa",
+          "The Nightly",
+          "Rask Media",
+          "Appliance Retailer",
+          "Business News Australia"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "Mesoblast 季报显示药品销售增长、烧钱大减，股价大涨",
+      "afr_headline": "ASX extends gains on banks; retail giants slump; Mesoblast soars",
+      "afr_url": "https://www.afr.com/markets/equity-markets/markets-wait-on-fed-rates-call-oil-tops-us116-20261029-p619j6",
+      "afr_section": "Markets / Equity markets",
+      "what_zh": "干细胞药企 Mesoblast（代码 MSB）10 月 29 日开盘前发布截至 9 月 30 日的季度报告：儿童用药 Ryoncil 的净收入为 2800 万美元，比去年同期增长 44%，9 月新开始用药的病人数创单月新高；经营现金净流出（烧钱）减少 86%，季末现金约 9900 万美元。公司还说，治疗慢性腰痛的三期临床试验已完成全部 350 名病人的治疗。股价全天走高，收盘涨 23.40%，报 2.32 澳元。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/markets/equity-markets/markets-wait-on-fed-rates-call-oil-tops-us116-20261029-p619j6"
+        },
+        {
+          "name": "Capital Brief",
+          "url": "https://www.capitalbrief.com/briefing/mesoblast-shares-surge-as-q1-ryoncil-revenue-jumps-a40eab71-33c5-41f2-a428-61f829824582/"
+        },
+        {
+          "name": "Grafa",
+          "url": "https://grafa.com/en/news/australia/mesoblast-shares-jump-19-7-on-strong-ryoncil-revenue"
+        },
+        {
+          "name": "The Motley Fool",
+          "url": "https://www.fool.com.au/2026/10/29/why-are-mesoblast-shares-racing-15-higher-today/"
+        },
+        {
+          "name": "Proactive Investors",
+          "url": "https://www.proactiveinvestors.com/companies/news/1100892/inside-biotech-mesoblast-surges-24-as-ryoncil-sales-climb-and-cash-spend-falls-sharply-1100892.html"
+        }
+      ],
+      "verify": {
+        "checked": 7,
+        "found": [
+          "2800 万",
+          "44%",
+          "86%",
+          "约 9900 万",
+          "350",
+          "2.32"
+        ],
+        "derived": [],
+        "market": [
+          "23.40%"
+        ],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "Capital Brief",
+          "Grafa",
+          "The Motley Fool",
+          "Proactive Investors"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "谷歌母公司季报利润不及预期，盘后大跌，拖累 AI 概念",
+      "afr_headline": "In just two hours, investors put a $560b hole in Google and AI trade",
+      "afr_url": "https://www.afr.com/chanticleer/google-delivered-an-ai-stunner-its-shares-crashed-anyway-20261029-p619iv",
+      "afr_section": "Chanticleer",
+      "what_zh": "谷歌母公司 Alphabet 美国时间 10 月 28 日公布三季度业绩：营收增长 25%，达到 1276 亿美元，其中谷歌云收入增长 103%，达到 307 亿美元；但当季资本开支（建数据中心等投入）达到 514 亿美元，利润低于分析师预期。财报公布后股价在盘后交易中一度下跌约 8%。AFR 评论称，投资者在短短两小时内让谷歌和 AI 相关股票蒸发了巨额市值。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/chanticleer/google-delivered-an-ai-stunner-its-shares-crashed-anyway-20261029-p619iv"
+        },
+        {
+          "name": "Alphabet 业绩公告（SEC）",
+          "url": "https://www.sec.gov/Archives/edgar/data/0001652044/000165204426000080/googexhibit991q32026.htm"
+        },
+        {
+          "name": "CNBC",
+          "url": "https://www.cnbc.com/2026/10/28/alphabet-googl-earnings-q3-2026.html"
+        },
+        {
+          "name": "Invezz",
+          "url": "https://invezz.com/uk/news/2026/10/28/alphabet-stock-sinks-8percent-after-earnings-heres-why/"
+        }
+      ],
+      "verify": {
+        "checked": 6,
+        "found": [
+          "25%",
+          "1276 亿",
+          "103%",
+          "307 亿",
+          "514 亿",
+          "约 8%"
+        ],
+        "derived": [],
+        "market": [],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "CNBC",
+          "Invezz"
+        ],
+        "sources_failed": [
+          "Alphabet 业绩公告（SEC）"
+        ]
+      }
+    },
+    {
+      "title_zh": "Firmus 上市失败，证监会向承销投行了解情况",
+      "afr_headline": "ASIC examines conduct of bankers behind the Firmus float failure",
+      "afr_url": "https://www.afr.com/technology/asic-confirms-investigation-into-firmus-bankers-20261029-p619kg",
+      "afr_section": "Technology",
+      "what_zh": "AI 数据中心公司 Firmus 的上市计划 10 月 9 日因投资者认购不足而取消。澳大利亚证券和投资委员会（ASIC，澳洲证监会）主席 Sarah Court 在 10 月 28 日回复参议员 Dave Sharma 的信中说，ASIC 正在对负责这次发行的投行做「有针对性的问询」，关注询价和簿记过程中向机构投资者提供的信息是否准确；ASIC 还没有立案正式调查，也没有认定任何人违规。主承销商是美国银行、摩根大通、摩根士丹利和券商 Morgans。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/technology/asic-confirms-investigation-into-firmus-bankers-20261029-p619kg"
+        },
+        {
+          "name": "Capital Brief",
+          "url": "https://www.capitalbrief.com/briefing/asic-making-targeted-inquiries-into-firmus-ipo-bankers-5566e825-d331-4a6e-816e-f9dfd436833f/"
+        },
+        {
+          "name": "Grafa",
+          "url": "https://grafa.com/en/news/australia/asic-makes-targeted-inquiries-into-firmus-bankers"
+        },
+        {
+          "name": "ABC News",
+          "url": "https://www.abc.net.au/news/2026-10-29/asx-markets-business-live-news-29-october-2026/107321622"
+        }
+      ],
+      "verify": {
+        "checked": 0,
+        "found": [],
+        "derived": [],
+        "market": [],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "Capital Brief",
+          "Grafa",
+          "ABC News"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "越捷航空关联公司 Cherrie 计划在澳开国内航线，挑战澳航和维珍",
+      "afr_headline": "Vietjet’s Cherrie Aviation reveals plan to take on Qantas, Virgin",
+      "afr_url": "https://www.afr.com/companies/transport/cherrie-aviation-says-it-doesn-t-need-vietjet-s-planes-in-australia-20261029-p618px",
+      "afr_section": "Companies / Transport",
+      "what_zh": "越南廉价航空越捷（Vietjet）相关的澳洲公司 Cherrie Aviation 向 AFR 公开了在澳洲飞国内航线、与澳航和维珍竞争的计划。据航空媒体报道，越捷已向澳洲民航安全局（CASA）申请航空运营许可，计划用最多 10 架波音 737 飞东海岸航线；9 月 23 日已有一架波音 737 MAX 8 以 Cherrie Aviation 名义在澳注册。外国航空公司不能直接飞澳洲国内航线，必须通过本地公司运营，项目仍待监管批准。今天澳航跌 0.23%，维珍澳洲跌 2.87%。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/transport/cherrie-aviation-says-it-doesn-t-need-vietjet-s-planes-in-australia-20261029-p618px"
+        },
+        {
+          "name": "Australian Aviation",
+          "url": "https://australianaviation.com.au/2026/09/exclusive-vietjet-registers-first-aircraft-in-australia/"
+        },
+        {
+          "name": "AeroTime",
+          "url": "https://www.aerotime.aero/articles/vietjet-seeks-regulatory-nod-for-australian-domestic-airline-venture-report"
+        },
+        {
+          "name": "Australian Aviation",
+          "url": "https://australianaviation.com.au/2026/10/asset-freeze-puts-question-mark-on-vietjets-australian-plans/"
+        }
+      ],
+      "verify": {
+        "checked": 5,
+        "found": [
+          "10",
+          "737",
+          "737"
+        ],
+        "derived": [],
+        "market": [
+          "0.23%",
+          "2.87%"
+        ],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "Australian Aviation",
+          "AeroTime",
+          "Australian Aviation"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "铜矿商 Cyprium 据报正筹集 8200 万澳元股债资金",
+      "afr_headline": "Tribeca-backed Cyprium Metals hunts $82m in debt and equity",
+      "afr_url": "https://www.afr.com/street-talk/tribeca-backed-cyprium-metals-hunts-82m-in-debt-and-equity-20261029-p619o4",
+      "afr_section": "Street Talk",
+      "what_zh": "据 AFR Street Talk 报道，由基金公司 Tribeca 支持的铜矿公司 Cyprium Metals（代码 CYM）正在寻求通过借款加发新股的方式筹集 8200 万澳元，其他媒体暂未证实。Cyprium 的核心资产是西澳的 Nifty 铜矿，公司过去几年一直在为这座矿的重启筹钱。具体的发行价、借款条件和用途要等公司公告确认。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/street-talk/tribeca-backed-cyprium-metals-hunts-82m-in-debt-and-equity-20261029-p619o4"
+        },
+        {
+          "name": "Proactive Investors",
+          "url": "https://www.proactiveinvestors.com.au/companies/news/1026750/cyprium-metals-completes-31-6-million-equity-raising-to-advance-nifty-copper-mine-restart-strategy-1026750.html"
+        }
+      ],
+      "verify": {
+        "checked": 1,
+        "found": [
+          "8200 万"
+        ],
+        "derived": [],
+        "market": [],
+        "missing": [],
+        "sources_ok": [
+          "AFR"
+        ],
+        "sources_failed": [
+          "Proactive Investors"
+        ]
+      }
+    }
+  ],
+  "verify": {
+    "at": "2026-10-29T07:09:36+00:00",
+    "checked": 25,
+    "missing": 1
+  }
+}

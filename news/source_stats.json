@@ -1,18 +1,28 @@
 {
  "abc.net.au": {
-  "ok": 9,
+  "ok": 10,
   "fail": 0,
-  "last": "2026-10-28"
+  "last": "2026-10-29"
  },
  "abs.gov.au": {
   "ok": 1,
   "fail": 0,
   "last": "2026-10-28"
  },
- "afr.com": {
-  "ok": 63,
+ "aerotime.aero": {
+  "ok": 1,
   "fail": 0,
-  "last": "2026-10-28"
+  "last": "2026-10-29"
+ },
+ "afr.com": {
+  "ok": 69,
+  "fail": 0,
+  "last": "2026-10-29"
+ },
+ "applianceretailer.com.au": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-29"
  },
  "arnnet.com.au": {
   "ok": 1,
@@ -33,6 +43,11 @@
   "ok": 1,
   "fail": 0,
   "last": "2026-10-25"
+ },
+ "australianaviation.com.au": {
+  "ok": 2,
+  "fail": 0,
+  "last": "2026-10-29"
  },
  "australianmining.com.au": {
   "ok": 1,
@@ -60,9 +75,9 @@
   "last": "2026-10-27"
  },
  "businessnewsaustralia.com": {
-  "ok": 2,
+  "ok": 3,
   "fail": 0,
-  "last": "2026-10-26"
+  "last": "2026-10-29"
  },
  "capital.com": {
   "ok": 1,
@@ -70,9 +85,14 @@
   "last": "2026-10-26"
  },
  "capitalbrief.com": {
-  "ok": 16,
+  "ok": 18,
   "fail": 0,
-  "last": "2026-10-28"
+  "last": "2026-10-29"
+ },
+ "cnbc.com": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-29"
  },
  "discoveryalert.com": {
   "ok": 0,
@@ -115,9 +135,9 @@
   "last": "2026-10-25"
  },
  "fool.com.au": {
-  "ok": 15,
+  "ok": 16,
   "fail": 0,
-  "last": "2026-10-28"
+  "last": "2026-10-29"
  },
  "freedom969.com": {
   "ok": 1,
@@ -125,9 +145,9 @@
   "last": "2026-10-22"
  },
  "grafa.com": {
-  "ok": 8,
+  "ok": 11,
   "fail": 0,
-  "last": "2026-10-28"
+  "last": "2026-10-29"
  },
  "gvwire.com": {
   "ok": 0,
@@ -163,6 +183,11 @@
   "ok": 2,
   "fail": 0,
   "last": "2026-10-25"
+ },
+ "invezz.com": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-29"
  },
  "kalkine.com.au": {
   "ok": 0,
@@ -275,14 +300,14 @@
   "last": "2026-10-21"
  },
  "proactiveinvestors.com": {
-  "ok": 2,
+  "ok": 3,
   "fail": 0,
-  "last": "2026-10-22"
+  "last": "2026-10-29"
  },
  "proactiveinvestors.com.au": {
   "ok": 0,
-  "fail": 1,
-  "last": "2026-10-25"
+  "fail": 2,
+  "last": "2026-10-29"
  },
  "profit.pakistantoday.com.pk": {
   "ok": 1,
@@ -290,9 +315,9 @@
   "last": "2026-10-25"
  },
  "raskmedia.com.au": {
-  "ok": 6,
+  "ok": 7,
   "fail": 0,
-  "last": "2026-10-28"
+  "last": "2026-10-29"
  },
  "realestatesource.com.au": {
   "ok": 2,
@@ -303,6 +328,11 @@
   "ok": 1,
   "fail": 0,
   "last": "2026-10-21"
+ },
+ "sec.gov": {
+  "ok": 0,
+  "fail": 1,
+  "last": "2026-10-29"
  },
  "sharecafe.com.au": {
   "ok": 2,
@@ -325,9 +355,9 @@
   "last": "2026-10-27"
  },
  "thenightly.com.au": {
-  "ok": 1,
+  "ok": 2,
   "fail": 0,
-  "last": "2026-10-25"
+  "last": "2026-10-29"
  },
  "theweeklysource.com.au": {
   "ok": 6,
