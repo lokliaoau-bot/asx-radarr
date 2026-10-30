@@ -1,8 +1,8 @@
 {
  "abc.net.au": {
-  "ok": 10,
+  "ok": 11,
   "fail": 0,
-  "last": "2026-10-29"
+  "last": "2026-10-30"
  },
  "abs.gov.au": {
   "ok": 1,
@@ -15,9 +15,9 @@
   "last": "2026-10-29"
  },
  "afr.com": {
-  "ok": 69,
+  "ok": 75,
   "fail": 0,
-  "last": "2026-10-29"
+  "last": "2026-10-30"
  },
  "applianceretailer.com.au": {
   "ok": 1,
@@ -75,9 +75,9 @@
   "last": "2026-10-27"
  },
  "businessnewsaustralia.com": {
-  "ok": 3,
+  "ok": 4,
   "fail": 0,
-  "last": "2026-10-29"
+  "last": "2026-10-30"
  },
  "capital.com": {
   "ok": 1,
@@ -114,6 +114,16 @@
   "fail": 0,
   "last": "2026-10-25"
  },
+ "finance.yahoo.com": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-30"
+ },
+ "financialnewswire.com.au": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-30"
+ },
  "financialstandard.com.au": {
   "ok": 1,
   "fail": 0,
@@ -135,9 +145,19 @@
   "last": "2026-10-25"
  },
  "fool.com.au": {
-  "ok": 16,
+  "ok": 18,
   "fail": 0,
-  "last": "2026-10-29"
+  "last": "2026-10-30"
+ },
+ "forbes.com.au": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-30"
+ },
+ "fortune.com": {
+  "ok": 1,
+  "fail": 0,
+  "last": "2026-10-30"
  },
  "freedom969.com": {
   "ok": 1,
@@ -145,9 +165,9 @@
   "last": "2026-10-22"
  },
  "grafa.com": {
-  "ok": 11,
+  "ok": 14,
   "fail": 0,
-  "last": "2026-10-29"
+  "last": "2026-10-30"
  },
  "gvwire.com": {
   "ok": 0,
@@ -315,9 +335,9 @@
   "last": "2026-10-25"
  },
  "raskmedia.com.au": {
-  "ok": 7,
+  "ok": 8,
   "fail": 0,
-  "last": "2026-10-29"
+  "last": "2026-10-30"
  },
  "realestatesource.com.au": {
   "ok": 2,
@@ -335,9 +355,9 @@
   "last": "2026-10-29"
  },
  "sharecafe.com.au": {
-  "ok": 2,
+  "ok": 3,
   "fail": 0,
-  "last": "2026-10-28"
+  "last": "2026-10-30"
  },
  "stockhead.com.au": {
   "ok": 3,
@@ -355,9 +375,9 @@
   "last": "2026-10-27"
  },
  "thenightly.com.au": {
-  "ok": 2,
+  "ok": 3,
   "fail": 0,
-  "last": "2026-10-29"
+  "last": "2026-10-30"
  },
  "theweeklysource.com.au": {
   "ok": 6,

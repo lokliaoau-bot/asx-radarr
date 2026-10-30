@@ -1,0 +1,284 @@
+{
+  "schema": "afr-brief-v1",
+  "date": "2026-10-30",
+  "stage": "headlines",
+  "model": "claude-opus-5-5",
+  "effort": "medium",
+  "generated_at": "2026-10-30T18:08:20+11:00",
+  "generated_by": "Claude (claude-opus-5-5)",
+  "market": {
+    "text_zh": "ASX 200 收 8908.1 点，涨 0.18%。Coles 发布一季度销售后跌 7.67%，伍尔沃斯涨 1.87%；JB Hi-Fi 涨 6.21%，威斯法默涨 3.61%；稀土股莱纳斯跌 7.14%，Appen 跌 21.27%。",
+    "index_close": 8908.1,
+    "index_pct": 0.18
+  },
+  "items": [
+    {
+      "title_zh": "Coles 一季度销售增速落后伍尔沃斯，下调半年盈利预期，股价大跌",
+      "afr_headline": "Coles pledges price blitz to counter resurgent Woolworths",
+      "afr_url": "https://www.afr.com/companies/retail/coles-boss-vows-to-up-game-after-first-quarter-sales-lag-woolworths-20261030-p619x6",
+      "afr_section": "Companies / Retail",
+      "what_zh": "10 月 30 日 Coles（代码 COL）公布 2027 财年第一季度销售：集团销售收入增长 2.2%，到 112 亿澳元；超市销售增长 3.6%，到 103 亿澳元，同店销售增长 2.7%；酒类销售下降 1.3%，到 8.31 亿澳元；网上销售增长 22.9%，到 16 亿澳元。对手伍尔沃斯一季度增长 4.7%，比 Coles 快一倍多。Coles 还说上半年超市业务的息税前利润（EBIT）预计大致持平，而分析师原本预期增长约 7%。CEO Leah Weckert 表示会加大降价力度应对竞争。Coles 盘中一度跌超 12%，收盘跌 7.67%，报 21.66 澳元；伍尔沃斯收涨 1.87%。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/retail/coles-boss-vows-to-up-game-after-first-quarter-sales-lag-woolworths-20261030-p619x6"
+        },
+        {
+          "name": "Rask Media",
+          "url": "https://www.raskmedia.com.au/2026/10/30/coles-asxcol-share-price-sinks-12-on-weaker-sales-growth-in-fy27-q1-sales/"
+        },
+        {
+          "name": "Grafa",
+          "url": "https://grafa.com/en/news/australia/coles-sales-rise-on-strong-online-growth-in-q1-fy27"
+        },
+        {
+          "name": "The Motley Fool",
+          "url": "https://www.fool.com.au/2026/10/30/coles-share-price-sinks-12-should-i-buy-the-dip/"
+        }
+      ],
+      "verify": {
+        "checked": 15,
+        "found": [
+          "2.2%",
+          "112 亿",
+          "3.6%",
+          "103 亿",
+          "2.7%",
+          "1.3%",
+          "8.31 亿",
+          "22.9%",
+          "约 7%",
+          "12%"
+        ],
+        "derived": [],
+        "market": [
+          "7.67%",
+          "21.66",
+          "1.87%"
+        ],
+        "missing": [
+          "16 亿",
+          "4.7%"
+        ],
+        "sources_ok": [
+          "AFR",
+          "Rask Media",
+          "Grafa",
+          "The Motley Fool"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "铜矿商 Cyprium 为 Nifty 扩产融资，股价跌近 18%",
+      "afr_headline": "Tribeca-backed Cyprium Metals hunts $82m in debt and equity",
+      "afr_url": "https://www.afr.com/street-talk/tribeca-backed-cyprium-metals-hunts-82m-in-debt-and-equity-20261029-p619o4",
+      "afr_section": "Street Talk",
+      "what_zh": "AFR Street Talk 报道，由基金 Tribeca 支持的铜矿商 Cyprium Metals（代码 CYM）正在为西澳 Nifty 铜矿筹集股权加债务资金。公司随后公布分阶段融资方案，总额最多约 8300 万澳元：已获机构投资者约 2100 万澳元的配售承诺，另向散户发售 500 万澳元的股份购买计划（SPP，没有包销）；还与现有贷款方 Nebari 签了 4000 万美元追加贷款的条款书，要等尽职调查和正式文件。资金用于露天矿可行性研究、前期基建，以及把铜产能扩到每年 2 万吨以上。目前只有 2100 万澳元的配售是确定的。CYM 收盘跌 17.81%，报 0.30 澳元。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/street-talk/tribeca-backed-cyprium-metals-hunts-82m-in-debt-and-equity-20261029-p619o4"
+        },
+        {
+          "name": "ShareCafe",
+          "url": "https://www.sharecafe.com.au/2026/10/30/daily-special-clever-culture-systems-cyprium-metals-yandal-resources-mithril-silver-and-gold-pivotal-metals/"
+        }
+      ],
+      "verify": {
+        "checked": 8,
+        "found": [
+          "约 8300 万",
+          "约 2100 万",
+          "500 万",
+          "4000 万",
+          "2 万",
+          "2100 万"
+        ],
+        "derived": [],
+        "market": [
+          "17.81%",
+          "0.30"
+        ],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "ShareCafe"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "Alphabet 三季度广告收入不及预期、现金流转负，股价重挫拖累 AI 板块",
+      "afr_headline": "In just two hours, investors put a $560b hole in Google and AI trade",
+      "afr_url": "https://www.afr.com/chanticleer/google-delivered-an-ai-stunner-its-shares-crashed-anyway-20261029-p619iv",
+      "afr_section": "Chanticleer",
+      "what_zh": "谷歌母公司 Alphabet 10 月 28 日（美国时间）公布三季度业绩。谷歌云收入翻倍多，到 307 亿美元，经营利润 111 亿美元；但广告收入 820.1 亿美元，比市场预期少约 14.1 亿美元。当季资本开支（买服务器、建数据中心的钱）达 514 亿美元，一年前是 240 亿美元；自由现金流变成负 90.7 亿美元。股价随后跌超 10%，拖累全球 AI 相关股票。AFR 标题说投资者两小时内让谷歌和 AI 板块蒸发约 5600 亿（澳元）市值。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/chanticleer/google-delivered-an-ai-stunner-its-shares-crashed-anyway-20261029-p619iv"
+        },
+        {
+          "name": "Fortune",
+          "url": "https://fortune.com/2026/10/28/alphabet-google-stock-drops-cloud-revenue-doubles-free-cash-flow-negative/"
+        },
+        {
+          "name": "Yahoo Finance",
+          "url": "https://finance.yahoo.com/markets/stocks/articles/why-alphabet-shares-falling-more-115645721.html"
+        }
+      ],
+      "verify": {
+        "checked": 9,
+        "found": [
+          "307 亿",
+          "111 亿",
+          "514 亿",
+          "240 亿",
+          "90.7 亿",
+          "10%",
+          "约 5600 亿"
+        ],
+        "derived": [],
+        "market": [],
+        "missing": [
+          "820.1 亿",
+          "约 14.1 亿"
+        ],
+        "sources_ok": [
+          "AFR",
+          "Fortune",
+          "Yahoo Finance"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "汇丰：澳洲衰退概率约五成，市场等下周墨尔本杯日 RBA 加息",
+      "afr_headline": "ASX pares gains as tech declines; HSBC predicts 50pc recession odds",
+      "afr_url": "https://www.afr.com/markets/equity-markets/asx-to-rise-alphabet-plunges-13pc-amazon-to-report-20261030-p619vm",
+      "afr_section": "Markets",
+      "what_zh": "汇丰银行首席经济学家 Paul Bloxham 认为，澳洲陷入衰退的概率约为 50%，经济增长到年底附近可能接近停滞，有可能出现技术性衰退（连续两个季度负增长）。市场普遍预计澳储银（RBA）会在下周二墨尔本杯日的议息会议上再加息一次；Bloxham 预计这次加息之后会暂停。10 月 30 日 ASX 200 早盘上涨后回吐部分涨幅，科技股走弱，收盘涨 0.18%，报 8908.1 点。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/markets/equity-markets/asx-to-rise-alphabet-plunges-13pc-amazon-to-report-20261030-p619vm"
+        },
+        {
+          "name": "The Nightly",
+          "url": "https://thenightly.com.au/business/hsbc-now-rating-an-australian-recession-as-a-5050-chance-c-23093126"
+        },
+        {
+          "name": "The Motley Fool",
+          "url": "https://www.fool.com.au/2026/09/28/australias-recession-risk-hits-50-as-rba-prepares-to-lift-rates/"
+        },
+        {
+          "name": "ABC",
+          "url": "https://www.abc.net.au/news/2026-10-30/asx-markets-business-live-news-oct-30/107326558"
+        }
+      ],
+      "verify": {
+        "checked": 4,
+        "found": [
+          "50%",
+          "200",
+          "0.18%",
+          "8908.1"
+        ],
+        "derived": [],
+        "market": [],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "The Nightly",
+          "The Motley Fool",
+          "ABC"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "ASIC 起诉 6 亿澳元 First Guardian 基金倒闭案的两名前董事",
+      "afr_headline": "ASIC sues directors behind $600m First Guardian failure",
+      "afr_url": "https://www.afr.com/companies/financial-services/asic-sues-directors-behind-600m-first-guardian-failure-20261030-p619xp",
+      "afr_section": "Companies / Financial services",
+      "what_zh": "澳洲证券投资委员会（ASIC）对 First Guardian 基金的管理方 Falcon Capital 的两名前高管提起民事处罚诉讼：前董事总经理兼 CEO David Anderson 和前执行主席兼首席投资官 Simon Selimaj。ASIC 指控他们管理和监督基金时存在严重而广泛的失职，并称至少 5700 万澳元流向了两人控制的实体。ASIC 要求法院作出违法宣告、罚款并禁止两人担任公司董事；同时申请起诉已在清盘的 Falcon Capital，但不会向它追讨罚款，以便把剩余资金留给投资者。这些指控还没有经过法庭裁定。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/companies/financial-services/asic-sues-directors-behind-600m-first-guardian-failure-20261030-p619xp"
+        },
+        {
+          "name": "Business News Australia",
+          "url": "https://www.businessnewsaustralia.com/articles/asic-sues-ex-falcon-capital-bosses-over-600m-first-guardian-fund-collapse.html"
+        },
+        {
+          "name": "Financial Newswire",
+          "url": "https://financialnewswire.com.au/investment/asic-hits-first-guardian-re-directors-with-penalty-proceedings/"
+        }
+      ],
+      "verify": {
+        "checked": 1,
+        "found": [
+          "5700 万"
+        ],
+        "derived": [],
+        "market": [],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "Business News Australia",
+          "Financial Newswire"
+        ],
+        "sources_failed": []
+      }
+    },
+    {
+      "title_zh": "Firmus 上市夭折，ASIC 了解承销投行的做法",
+      "afr_headline": "ASIC examines conduct of bankers behind the Firmus float failure",
+      "afr_url": "https://www.afr.com/technology/asic-confirms-investigation-into-firmus-bankers-20261029-p619kg",
+      "afr_section": "Technology",
+      "what_zh": "AI 数据中心公司 Firmus 撤回了原计划的 ASX 上市（IPO），这本来是一宗估值约 440 亿澳元的大型上市。自由党参议员 Dave Sharma 要求 ASIC 调查这次上市和信息披露，包括承销投行此前称每股 11 澳元价位有意向需求的说法。ASIC 表示目前没有正式立案调查，只是在按常规程序询问。报道称投行最后没能找到足够的机构投资者认购。",
+      "sources": [
+        {
+          "name": "AFR",
+          "url": "https://www.afr.com/technology/asic-confirms-investigation-into-firmus-bankers-20261029-p619kg"
+        },
+        {
+          "name": "Grafa",
+          "url": "https://grafa.com/en/news/australia/asic-scrutinises-collapsed-7-billion-firmus-float"
+        },
+        {
+          "name": "Grafa",
+          "url": "https://grafa.com/en/news/australia/firmus-ipo-collapse-triggers-asic-probe-request"
+        },
+        {
+          "name": "Forbes Australia",
+          "url": "https://www.forbes.com.au/news/investing/explaining-firmus-and-44-billion-ipo-collapse/"
+        }
+      ],
+      "verify": {
+        "checked": 2,
+        "found": [
+          "约 440 亿",
+          "11"
+        ],
+        "derived": [],
+        "market": [],
+        "missing": [],
+        "sources_ok": [
+          "AFR",
+          "Grafa",
+          "Grafa",
+          "Forbes Australia"
+        ],
+        "sources_failed": []
+      }
+    }
+  ],
+  "verify": {
+    "at": "2026-10-30T07:09:35+00:00",
+    "checked": 39,
+    "missing": 4
+  }
+}
