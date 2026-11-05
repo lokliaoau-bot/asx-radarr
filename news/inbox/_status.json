@@ -1,10 +1,10 @@
 {
  "collect": {
-  "at": "2026-11-04T15:46:46+00:00",
+  "at": "2026-11-05T14:52:17+00:00",
   "ok": true,
-  "info": "/home/runner/work/asx-radarr/asx-radarr/news/inbox/2026-11-05.json：AFR 标题 129 条（Street Talk 20 条，带线索 49 条），行情 0 只，ASX 200 None",
-  "date": "2026-11-05",
-  "run": "https://github.com/lokliaoau-bot/asx-radarr/actions/runs/41861117545"
+  "info": "/home/runner/work/asx-radarr/asx-radarr/news/inbox/2026-11-06.json：AFR 标题 130 条（Street Talk 17 条，带线索 49 条），行情 0 只，ASX 200 None",
+  "date": "2026-11-06",
+  "run": "https://github.com/lokliaoau-bot/asx-radarr/actions/runs/42049027522"
  },
  "intake": {
   "at": "2026-10-30T07:09:35+00:00",
