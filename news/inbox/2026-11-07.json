@@ -1,7 +1,7 @@
 {
  "schema": "afr-inbox-v1",
  "date": "2026-11-07",
- "collected_at": "2026-11-06T14:29:26+00:00",
+ "collected_at": "2026-11-06T15:24:42+00:00",
  "headlines": [
   {
    "title": "The truth about energy prices (in 13 charts)",
@@ -1587,6 +1587,24 @@
    "section": "property",
    "date": "2026-11-04",
    "codes": []
+  },
+  {
+   "title": "Queensland overtakes NSW in green energy push",
+   "url": "https://www.afr.com/policy/energy-and-climate/queensland-overtakes-nsw-in-green-energy-push-20261106-p61bln",
+   "section": "policy",
+   "date": "2026-11-06",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "NSW",
+     "Australian",
+     "Minns",
+     "Australia",
+     "Queensland",
+     "Crisafulli"
+    ]
+   }
   }
  ],
  "index": null,
