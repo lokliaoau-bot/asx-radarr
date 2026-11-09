@@ -1,8 +1,31 @@
 {
  "schema": "afr-inbox-v1",
  "date": "2026-11-10",
- "collected_at": "2026-11-09T16:43:51+00:00",
+ "collected_at": "2026-11-09T17:49:16+00:00",
  "headlines": [
+  {
+   "title": "ASX to rise; Wall St rallies; Nvidia dives",
+   "url": "https://www.afr.com/markets/equity-markets/asx-to-rise-wall-st-rallies-nvidia-dives-20261110-p61cqs",
+   "section": "markets",
+   "date": "2026-11-10",
+   "published": "2026-11-09T17:34:37+00:00",
+   "codes": [],
+   "hints": {
+    "amounts": [
+     "0.7 per cent"
+    ],
+    "names": [
+     "AMKKR",
+     "Berkshire",
+     "Nvidia",
+     "Huang",
+     "Australian",
+     "Wall Street",
+     "S&P",
+     "AEDT"
+    ]
+   }
+  },
   {
    "title": "UBS pinches new debt advisory boss from Macquarie",
    "url": "https://www.afr.com/street-talk/ubs-pinches-new-debt-advisory-boss-from-macquarie-20261109-p61cku",
@@ -279,24 +302,6 @@
      "Dennis Barnes",
      "Barnes",
      "Australia"
-    ]
-   }
-  },
-  {
-   "title": "RBA points to early signs that AI use is changing the job market",
-   "url": "https://www.afr.com/policy/economy/ai-to-hit-jobs-but-long-term-inflation-impact-broadly-neutral-rba-20261109-p61c24",
-   "section": "policy",
-   "date": "2026-11-09",
-   "published": "2026-11-09T06:54:11+00:00",
-   "codes": [
-    "BOQ"
-   ],
-   "hints": {
-    "amounts": [],
-    "names": [
-     "Reserve Bank of Australia",
-     "OpenAI",
-     "ChatGPT"
     ]
    }
   },
@@ -1096,6 +1101,23 @@
    "section": "markets",
    "date": "2026-11-07",
    "codes": []
+  },
+  {
+   "title": "RBA points to early signs that AI use is changing the job market",
+   "url": "https://www.afr.com/policy/economy/ai-to-hit-jobs-but-long-term-inflation-impact-broadly-neutral-rba-20261109-p61c24",
+   "section": "policy",
+   "date": "2026-11-09",
+   "codes": [
+    "BOQ"
+   ],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Reserve Bank of Australia",
+     "OpenAI",
+     "ChatGPT"
+    ]
+   }
   },
   {
    "title": "Albanese’s flagship industry policy delivers $0 to business",
