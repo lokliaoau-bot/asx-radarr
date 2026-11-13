@@ -1,7 +1,7 @@
 {
  "schema": "afr-inbox-v1",
  "date": "2026-11-14",
- "collected_at": "2026-11-13T14:46:43+00:00",
+ "collected_at": "2026-11-13T15:41:57+00:00",
  "headlines": [
   {
    "title": "Microsoft struggles to fix global outage for millions",
@@ -581,13 +581,6 @@
    "codes": []
   },
   {
-   "title": "Banks, super funds to face landmark AI stress test",
-   "url": "https://www.afr.com/companies/financial-services/banks-super-funds-to-face-landmark-ai-stress-test-20261112-p61dj6",
-   "section": "companies",
-   "date": "2026-11-12",
-   "codes": []
-  },
-  {
    "title": "Wall Street is dumping bitcoin. Australians reckon ‘she’ll be right’",
    "url": "https://www.afr.com/markets/currencies/wall-street-is-dumping-bitcoin-australians-reckon-she-ll-be-right-20261112-p61cl0",
    "section": "markets",
@@ -937,6 +930,13 @@
   {
    "title": "These founders built an AI tribute to their EY administrator",
    "url": "https://www.afr.com/companies/professional-services/these-founders-built-an-ai-tribute-to-their-ey-administrator-20261112-p61dd8",
+   "section": "companies",
+   "date": "2026-11-12",
+   "codes": []
+  },
+  {
+   "title": "Banks, super funds to face landmark AI stress test",
+   "url": "https://www.afr.com/companies/financial-services/banks-super-funds-to-face-landmark-ai-stress-test-20261112-p61dj6",
    "section": "companies",
    "date": "2026-11-12",
    "codes": []
