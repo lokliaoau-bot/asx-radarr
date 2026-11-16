@@ -1,8 +1,28 @@
 {
  "schema": "afr-inbox-v1",
  "date": "2026-11-17",
- "collected_at": "2026-11-16T16:14:10+00:00",
+ "collected_at": "2026-11-16T17:27:54+00:00",
  "headlines": [
+  {
+   "title": "ASX to fall; Nasdaq hit by fresh selloff; US dollar strengthens",
+   "url": "https://www.afr.com/markets/equity-markets/asx-to-fall-nasdaq-hit-by-fresh-selloff-us-dollar-strengthens-20261117-p61eoj",
+   "section": "markets",
+   "date": "2026-11-17",
+   "published": "2026-11-16T17:23:22+00:00",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "AMDollar",
+     "Fed",
+     "Oil",
+     "Middle East",
+     "Nvidia",
+     "Australian",
+     "Wall Street"
+    ]
+   }
+  },
   {
    "title": "Metrics seizes distressed property assets as defaults pile up",
    "url": "https://www.afr.com/markets/private-markets/metrics-seizes-distressed-property-assets-as-defaults-pile-up-20261116-p61duu",
@@ -264,47 +284,6 @@
    }
   },
   {
-   "title": "Albanese urged to boycott photo with Putin",
-   "url": "https://www.afr.com/policy/foreign-affairs/albanese-urged-to-boycott-photo-with-putin-20261116-p61elf",
-   "section": "policy",
-   "date": "2026-11-16",
-   "published": "2026-11-16T05:23:48+00:00",
-   "codes": [],
-   "hints": {
-    "amounts": [],
-    "names": [
-     "Manila",
-     "Philippines",
-     "Prime Minister Anthony Albanese",
-     "Vladimir Putin",
-     "Australia",
-     "Ukraine",
-     "Russian",
-     "Albanese and Putin"
-    ]
-   }
-  },
-  {
-   "title": "‘Well into tens of millions’: Rich Lister family’s America’s Cup bid",
-   "url": "https://www.afr.com/companies/sport/the-32-year-itch-inside-australia-s-mission-to-win-the-america-s-cup-20261116-p611o0",
-   "section": "companies",
-   "date": "2026-11-16",
-   "codes": [],
-   "hints": {
-    "amounts": [],
-    "names": [
-     "Boats",
-     "Naples",
-     "Italy",
-     "America",
-     "Cup",
-     "Anadolu",
-     "Getty Images Few",
-     "Grant Simmer"
-    ]
-   }
-  },
-  {
    "title": "Bank of mum and dad closes shop as correction cuts house prices",
    "url": "https://www.afr.com/property/residential/bank-of-mum-and-dad-closes-shop-as-correction-cuts-house-prices-20261116-p61czm",
    "section": "property",
@@ -321,6 +300,26 @@
      "Sydney",
      "Tribeca Financial",
      "Robert Devlin"
+    ]
+   }
+  },
+  {
+   "title": "Albanese urged to boycott photo with Putin",
+   "url": "https://www.afr.com/policy/foreign-affairs/albanese-urged-to-boycott-photo-with-putin-20261116-p61elf",
+   "section": "policy",
+   "date": "2026-11-16",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Manila",
+     "Philippines",
+     "Prime Minister Anthony Albanese",
+     "Vladimir Putin",
+     "Australia",
+     "Ukraine",
+     "Russian",
+     "Albanese and Putin"
     ]
    }
   },
@@ -352,6 +351,26 @@
     "amounts": [],
     "names": [
      "Australian"
+    ]
+   }
+  },
+  {
+   "title": "‘Well into tens of millions’: Rich Lister family’s America’s Cup bid",
+   "url": "https://www.afr.com/companies/sport/the-32-year-itch-inside-australia-s-mission-to-win-the-america-s-cup-20261116-p611o0",
+   "section": "companies",
+   "date": "2026-11-16",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Boats",
+     "Naples",
+     "Italy",
+     "America",
+     "Cup",
+     "Anadolu",
+     "Getty Images Few",
+     "Grant Simmer"
     ]
    }
   },
@@ -1100,13 +1119,6 @@
    }
   },
   {
-   "title": "ASX to stall as Nvidia, Anthropic put AI boom to the test",
-   "url": "https://www.afr.com/markets/equity-markets/asx-set-to-stall-as-nvidia-anthropic-put-ai-boom-to-the-test-20261115-p61dvy",
-   "section": "markets",
-   "date": "2026-11-15",
-   "codes": []
-  },
-  {
    "title": "Coles may have missed its moment. How Woolies got ahead in supermarket wars",
    "url": "https://www.afr.com/markets/equity-markets/will-woolworths-ever-win-the-supermarket-war-20261115-p61dx4",
    "section": "markets",
@@ -1124,6 +1136,13 @@
     "NCK",
     "XYZ"
    ]
+  },
+  {
+   "title": "ASX to stall as Nvidia, Anthropic put AI boom to the test",
+   "url": "https://www.afr.com/markets/equity-markets/asx-set-to-stall-as-nvidia-anthropic-put-ai-boom-to-the-test-20261115-p61dvy",
+   "section": "markets",
+   "date": "2026-11-15",
+   "codes": []
   },
   {
    "title": "Stocks sway as Wall Street heads for a winning week despite turbulence",
