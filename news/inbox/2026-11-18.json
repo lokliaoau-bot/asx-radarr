@@ -1,0 +1,1513 @@
+{
+ "schema": "afr-inbox-v1",
+ "date": "2026-11-18",
+ "collected_at": "2026-11-17T16:20:34+00:00",
+ "headlines": [
+  {
+   "title": "Trump and Albanese to counter China with joint military exercise",
+   "url": "https://www.afr.com/policy/foreign-affairs/trump-and-albanese-to-counter-china-with-joint-military-exercise-20261117-p61f20",
+   "section": "policy",
+   "date": "2026-11-17",
+   "published": "2026-11-17T12:23:21+00:00",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Manila",
+     "Philippines",
+     "US President Donald Trump",
+     "AUKUS",
+     "Australia",
+     "Japan and India",
+     "China",
+     "Trump"
+    ]
+   }
+  },
+  {
+   "title": "BHP, Rio chiefs to meet with Chinese premier amid iron ore tensions",
+   "url": "https://www.afr.com/policy/foreign-affairs/bhp-rio-chiefs-to-meet-with-chinese-premier-amid-iron-ore-tensions-20261117-p61evv",
+   "section": "policy",
+   "date": "2026-11-17",
+   "published": "2026-11-17T11:30:00+00:00",
+   "codes": [
+    "BHP",
+    "MIN"
+   ],
+   "hints": {
+    "amounts": [
+     "$123 billion",
+     "80 per cent"
+    ],
+    "names": [
+     "Manila",
+     "Philippines",
+     "Australia",
+     "Chinese Premier Li Qiang",
+     "Beijing",
+     "Iron",
+     "China",
+     "China Mineral Resources Group"
+    ]
+   }
+  },
+  {
+   "title": "Chalmers says superannuation test revamp can unlock $90b for start-ups",
+   "url": "https://www.afr.com/companies/financial-services/chalmers-says-superannuation-test-revamp-can-unlock-90b-for-start-ups-20261117-p61ey1",
+   "section": "companies",
+   "date": "2026-11-17",
+   "published": "2026-11-17T11:30:00+00:00",
+   "codes": [],
+   "hints": {
+    "amounts": [
+     "$90 billion",
+     "$4.8 trillion"
+    ],
+    "names": [
+     "Treasurer Jim Chalmers",
+     "Confirming",
+     "Australian Financial Review",
+     "Chalmers"
+    ]
+   }
+  },
+  {
+   "title": "Underquoting reforms needed before property market picks up: advocates",
+   "url": "https://www.afr.com/property/residential/underquoting-reforms-needed-before-property-market-picks-up-advocates-20261117-p61err",
+   "section": "property",
+   "date": "2026-11-17",
+   "published": "2026-11-17T09:00:00+00:00",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Buyers",
+     "NSW",
+     "NSW Labor",
+     "Paul Mulligan"
+    ]
+   }
+  },
+  {
+   "title": "One Nation boss wanted Sydney Harbour Bridge torn down",
+   "url": "https://www.afr.com/rear-window/one-nation-boss-wanted-sydney-harbour-bridge-torn-down-20261117-p61es8",
+   "section": "rear-window",
+   "date": "2026-11-17",
+   "published": "2026-11-17T09:00:00+00:00",
+   "codes": [
+    "BGE"
+   ],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Nation",
+     "Sydney Harbour Bridge",
+     "Pauline Hanson",
+     "Iago",
+     "James Ashby",
+     "Pauline",
+     "Kelvin Morton",
+     "Morton"
+    ]
+   }
+  },
+  {
+   "title": "The real AI threat isn’t job losses. It’s losing the ability to think",
+   "url": "https://www.afr.com/technology/the-real-ai-threat-isn-t-job-losses-it-s-losing-the-ability-to-think-20261117-p61et5",
+   "section": "technology",
+   "date": "2026-11-17",
+   "published": "2026-11-17T09:00:00+00:00",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Smartphones"
+    ]
+   }
+  },
+  {
+   "title": "‘Heightened redemptions’ have ASIC on private credit high alert",
+   "url": "https://www.afr.com/companies/financial-services/heightened-redemptions-have-asic-on-private-credit-high-alert-20261117-p61exc",
+   "section": "companies",
+   "date": "2026-11-17",
+   "published": "2026-11-17T09:00:00+00:00",
+   "codes": [],
+   "hints": {
+    "amounts": [
+     "$250 billion"
+    ],
+    "names": [
+     "Simone Constant",
+     "Australian Securities and Investments Commission"
+    ]
+   }
+  },
+  {
+   "title": "Gina Rinehart’s $2b gas plan stalls under reservation policy threat",
+   "url": "https://www.afr.com/companies/energy/gina-rinehart-s-2b-gas-plan-stalls-under-reservation-policy-threat-20261117-p61ezf",
+   "section": "companies",
+   "date": "2026-11-17",
+   "published": "2026-11-17T09:00:00+00:00",
+   "codes": [],
+   "hints": {
+    "amounts": [
+     "$2 billion"
+    ],
+    "names": [
+     "Gina Rinehart",
+     "Hancock Energy",
+     "Belisama",
+     "Western Australia",
+     "Albanese",
+     "Contractors",
+     "Perth Basin",
+     "Stuart Johnston"
+    ]
+   }
+  },
+  {
+   "title": "Australia’s capital markets cop reality check",
+   "url": "https://www.afr.com/markets/equity-markets/australia-s-capital-markets-cop-reality-check-20261117-p61euu",
+   "section": "markets",
+   "date": "2026-11-17",
+   "published": "2026-11-17T07:09:21+00:00",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Australia",
+     "Regulators",
+     "Australian",
+     "Australian Securities and Investments Commission",
+     "Rather"
+    ]
+   }
+  },
+  {
+   "title": "Universities are own worst enemies on independent governance",
+   "url": "https://www.afr.com/policy/health-and-education/universities-are-own-worst-enemies-on-independent-governance-20261117-p61ee6",
+   "section": "policy",
+   "date": "2026-11-17",
+   "published": "2026-11-17T06:18:17+00:00",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Universities",
+     "Canberra",
+     "Australian",
+     "Swinburne University of Technology",
+     "Australian Financial Review",
+     "Sumeyya Ilanbey and Maani Truu",
+     "Anthony Mackay",
+     "Pascale Quester"
+    ]
+   }
+  },
+  {
+   "title": "Airservices’ embattled boss is a $1.2m man",
+   "url": "https://www.afr.com/rear-window/airservices-embattled-boss-is-a-1-2m-man-20261117-p61es3",
+   "section": "rear-window",
+   "date": "2026-11-17",
+   "published": "2026-11-17T06:17:59+00:00",
+   "codes": [],
+   "hints": {
+    "amounts": [
+     "$1.2m",
+     "$1.2 million"
+    ],
+    "names": [
+     "Airservices",
+     "Rob Sharp",
+     "Airservices Australia",
+     "BBus",
+     "Mgt",
+     "GAICD",
+     "CompIEAust",
+     "EngExec"
+    ]
+   }
+  },
+  {
+   "title": "ASX posts biggest drop in six weeks; Bunnings slashes 350 tech jobs",
+   "url": "https://www.afr.com/markets/equity-markets/asx-to-fall-nasdaq-hit-by-fresh-selloff-us-dollar-strengthens-20261117-p61eoj",
+   "section": "markets",
+   "date": "2026-11-17",
+   "published": "2026-11-17T05:15:14+00:00",
+   "codes": [],
+   "hints": {
+    "amounts": [
+     "1.8 per cent",
+     "3.9 per cent",
+     "1.7 per cent"
+    ],
+    "names": [
+     "Traders",
+     "BlackRock",
+     "India ETF",
+     "Australian",
+     "S&P",
+     "Index",
+     "AFR Real Economy Index"
+    ]
+   }
+  },
+  {
+   "title": "GQG’s key Goldman Sachs mandate in focus as Magellan echoes grow louder",
+   "url": "https://www.afr.com/markets/equity-markets/gqg-key-goldman-mandate-in-focus-as-magellan-echoes-grow-louder-20261117-p61er0",
+   "section": "markets",
+   "date": "2026-11-17",
+   "published": "2026-11-17T05:13:10+00:00",
+   "codes": [
+    "GQG"
+   ],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Fund",
+     "GQG Partners",
+     "Goldman Sachs",
+     "Magellan Financial",
+     "Goldman Sachs Asset Management",
+     "GQG",
+     "Goldman Sachs GQG Partners International",
+     "Opportunities Fund"
+    ]
+   }
+  },
+  {
+   "title": "ASX dividends to fall just as billions flow into income funds",
+   "url": "https://www.afr.com/markets/equity-markets/asx-dividends-to-fall-just-as-billions-flow-into-income-funds-20261117-p61cmt",
+   "section": "markets",
+   "date": "2026-11-17",
+   "published": "2026-11-17T05:00:00+00:00",
+   "codes": [
+    "BOQ"
+   ],
+   "hints": {
+    "amounts": [
+     "54 per cent",
+     "60 per cent"
+    ],
+    "names": [
+     "Australian",
+     "Morningstar",
+     "Reserve Bank of Australia"
+    ]
+   }
+  },
+  {
+   "title": "Chalmers says cuts will be enough, but he’s got his head in the sand",
+   "url": "https://www.afr.com/chanticleer/chalmers-says-cuts-will-be-enough-but-he-s-got-his-head-in-the-sand-20261117-p61enk",
+   "section": "chanticleer",
+   "date": "2026-11-17",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Chalmers",
+     "Treasurer Jim Chalmers",
+     "Albanese"
+    ]
+   }
+  },
+  {
+   "title": "Ten trends to watch in 2027",
+   "url": "https://www.afr.com/companies/telecommunications/ten-trends-to-watch-in-2027-20261117-p61eun",
+   "section": "companies",
+   "date": "2026-11-17",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Drones",
+     "Taxis",
+     "Artificial",
+     "Modern",
+     "Humanoid",
+     "All"
+    ]
+   }
+  },
+  {
+   "title": "Rare seven-digit number plates up for auction",
+   "url": "https://www.afr.com/wealth/investing/rare-seven-digit-number-plates-up-for-auction-20261117-p61do8",
+   "section": "wealth",
+   "date": "2026-11-17",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Melbourne",
+     "VicRoads",
+     "Property",
+     "Eddie Dilleen",
+     "LNDLRD",
+     "Crypto",
+     "Jeff Yew",
+     "BITCOIN"
+    ]
+   }
+  },
+  {
+   "title": "Hot or not? Rebadged Peter Lee list ranks market’s best-rated boffins",
+   "url": "https://www.afr.com/street-talk/hot-or-not-the-ultimate-list-of-the-market-s-best-rated-boffins-20261117-p61eub",
+   "section": "street-talk",
+   "date": "2026-11-17",
+   "codes": [
+    "PWR",
+    "BJY"
+   ],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Barrenjoey Capital Partners and Macquarie Securities",
+     "ECM",
+     "Peter Lee",
+     "Crisil Coalition Greenwich",
+     "Peter Lee Associates",
+     "John Jovanovic",
+     "US Export-Import Bank",
+     "Australia"
+    ]
+   }
+  },
+  {
+   "title": "Citi taps Barrenjoey for new ECM hire",
+   "url": "https://www.afr.com/street-talk/citi-hires-from-barrenjoey-for-new-ecm-boss-20261117-p61dm5",
+   "section": "street-talk",
+   "date": "2026-11-17",
+   "codes": [
+    "BJY"
+   ],
+   "hints": {
+    "amounts": [
+     "85 per cent"
+    ],
+    "names": [
+     "Citi",
+     "Mark Bellofiore",
+     "Barrenjoey Capital Partners",
+     "Bellofiore",
+     "Barrenjoey",
+     "ECM"
+    ]
+   }
+  },
+  {
+   "title": "Activist shareholders and consortium bids rise as M&A heats up: Corrs",
+   "url": "https://www.afr.com/street-talk/activist-shareholders-and-consortium-bids-rise-as-m-and-a-heats-up-corrs-20261117-p61eu1",
+   "section": "street-talk",
+   "date": "2026-11-17",
+   "codes": [
+    "SDF"
+   ],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Corrs Chambers Westgarth",
+     "M&A",
+     "Corrs",
+     "Sandy Mak",
+     "Healthscope",
+     "Qube and Steadfast",
+     "A-List US",
+     "Weil"
+    ]
+   }
+  },
+  {
+   "title": "Dario Amodei’s anti-hype pitch is set to power history’s biggest IPO",
+   "url": "https://www.afr.com/chanticleer/dario-amodei-s-anti-hype-pitch-is-set-to-power-history-s-biggest-ipo-20261116-p61ej8",
+   "section": "chanticleer",
+   "date": "2026-11-16",
+   "codes": []
+  },
+  {
+   "title": "Firmus joins the prepayment funding dance. But will the music stop?",
+   "url": "https://www.afr.com/chanticleer/firmus-joins-the-pre-payment-funding-dance-but-will-the-music-stop-20261116-p61eb5",
+   "section": "chanticleer",
+   "date": "2026-11-16",
+   "codes": []
+  },
+  {
+   "title": "Kirsha Kaechele’s feud with Bob Brown goes full X-rated",
+   "url": "https://www.afr.com/rear-window/kirsha-kaechele-s-feud-with-bob-brown-goes-full-x-rated-20261117-p61ejs",
+   "section": "rear-window",
+   "date": "2026-11-17",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Kirsha Kaechele",
+     "Bob Brown",
+     "Tasmania",
+     "Museum of Old and New Art",
+     "Mona",
+     "David Walsh"
+    ]
+   }
+  },
+  {
+   "title": "Sharon AI delays Australian sharemarket listing amid global tech rout",
+   "url": "https://www.afr.com/technology/sharon-ai-says-debt-markets-still-open-to-lending-neoclouds-money-20261117-p61el5",
+   "section": "technology",
+   "date": "2026-11-17",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Sharon AI",
+     "Australian",
+     "Firmus Technologies",
+     "James Manning"
+    ]
+   }
+  },
+  {
+   "title": "David Jones owes $460m; recovery uncertain for hundreds of creditors",
+   "url": "https://www.afr.com/companies/retail/david-jones-lender-hilco-injects-more-money-to-buy-stock-20261117-p61ek9",
+   "section": "companies",
+   "date": "2026-11-17",
+   "codes": [],
+   "hints": {
+    "amounts": [
+     "$460 million"
+    ],
+    "names": [
+     "David Jones"
+    ]
+   }
+  },
+  {
+   "title": "Bunnings cuts 350 tech jobs in offshoring push",
+   "url": "https://www.afr.com/companies/retail/bunnings-cuts-350-tech-jobs-in-offshoring-push-20261117-p61ewt",
+   "section": "companies",
+   "date": "2026-11-17",
+   "codes": [
+    "WES"
+   ],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Bunnings",
+     "Tata Consultancy Services",
+     "Wesfarmers",
+     "Tata",
+     "India",
+     "Philippines"
+    ]
+   }
+  },
+  {
+   "title": "Former Chubb insurance boss alleges fraudulent accounting",
+   "url": "https://www.afr.com/companies/financial-services/former-chubb-insurance-boss-alleges-fraudulent-accounting-20261117-p61eqx",
+   "section": "companies",
+   "date": "2026-11-17",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Australian",
+     "New York-listed Chubb",
+     "Ben Howell",
+     "Chubb",
+     "Australia and New Zealand",
+     "Federal Court"
+    ]
+   }
+  },
+  {
+   "title": "Mayne tips $604m takeover bid to pass regulator scrutiny",
+   "url": "https://www.afr.com/companies/healthcare-and-fitness/mayne-pharma-lands-604m-bid-from-hungarian-drugs-group-20261117-p61erf",
+   "section": "companies",
+   "date": "2026-11-17",
+   "codes": [
+    "MYX"
+   ],
+   "hints": {
+    "amounts": [
+     "$604 million",
+     "$6.40",
+     "$3.21",
+     "$7.40"
+    ],
+    "names": [
+     "Mayne Pharma",
+     "Hungarian",
+     "Albanese",
+     "Gedeon Richter",
+     "Mayne",
+     "Cosette"
+    ]
+   }
+  },
+  {
+   "title": "Metrics seizes distressed property assets as defaults pile up",
+   "url": "https://www.afr.com/markets/private-markets/metrics-seizes-distressed-property-assets-as-defaults-pile-up-20261116-p61duu",
+   "section": "markets",
+   "date": "2026-11-16",
+   "codes": []
+  },
+  {
+   "title": "Worley on the hook for misleading investors after class action rout",
+   "url": "https://www.afr.com/companies/infrastructure/worley-on-the-hook-for-misleading-investors-after-class-action-rout-20261117-p61er5",
+   "section": "companies",
+   "date": "2026-11-17",
+   "codes": [
+    "WOR"
+   ],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Global",
+     "Worley",
+     "High Court"
+    ]
+   }
+  },
+  {
+   "title": "RBA minutes reveal rates dissenters’ concern over ‘sharper downturn’",
+   "url": "https://www.afr.com/policy/economy/rba-minutes-reveal-rates-dissenters-concern-over-sharper-downturn-20261117-p61ef8",
+   "section": "policy",
+   "date": "2026-11-17",
+   "codes": [
+    "BOQ"
+   ],
+   "hints": {
+    "amounts": [
+     "4.85 per cent",
+     "4.6 per cent"
+    ],
+    "names": [
+     "Reserve Bank of Australia",
+     "Melbourne Cup Day",
+     "Minutes"
+    ]
+   }
+  },
+  {
+   "title": "The Real Economy’s winners and losers paint a picture of Australia",
+   "url": "https://www.afr.com/policy/economy/the-real-economy-s-winners-and-losers-paint-a-picture-of-australia-20261117-p61eh5",
+   "section": "policy",
+   "date": "2026-11-17",
+   "codes": [],
+   "hints": {
+    "amounts": [
+     "1.86 per cent",
+     "3.6 per cent"
+    ],
+    "names": [
+     "Albanese",
+     "AFR Real Economy Index",
+     "S&P"
+    ]
+   }
+  },
+  {
+   "title": "Australia is in the market for 30-year debt",
+   "url": "https://www.afr.com/markets/debt-markets/australia-is-in-the-market-for-30-year-debt-20261116-p61eik",
+   "section": "markets",
+   "date": "2026-11-16",
+   "codes": []
+  },
+  {
+   "title": "Resources investors flee to cash as AI jitters slam mining stocks",
+   "url": "https://www.afr.com/markets/equity-markets/resources-investors-flee-to-cash-as-ai-jitters-slam-mining-stocks-20261116-p61eey",
+   "section": "markets",
+   "date": "2026-11-16",
+   "codes": []
+  },
+  {
+   "title": "Wall Street cools on Nvidia as Huang’s exit casts doubt over AI boom",
+   "url": "https://www.afr.com/markets/equity-markets/wall-street-cools-on-nvidia-as-huang-s-exit-casts-doubt-over-ai-boom-20261116-p61eae",
+   "section": "markets",
+   "date": "2026-11-16",
+   "codes": []
+  },
+  {
+   "title": "Labor should not cross Jimmy Barnes on AI copyright tune",
+   "url": "https://www.afr.com/technology/labor-should-not-cross-jimmy-barnes-on-ai-copyright-tune-20261117-p61es2",
+   "section": "technology",
+   "date": "2026-11-17",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Labor",
+     "Jimmy Barnes",
+     "Australian",
+     "Barnes"
+    ]
+   }
+  },
+  {
+   "title": "AFR Indices give a wider economic view of ASX opportunities",
+   "url": "https://www.afr.com/markets/equity-markets/afr-indices-give-a-wider-economic-view-of-asx-opportunities-20261116-p61ehf",
+   "section": "markets",
+   "date": "2026-11-16",
+   "codes": []
+  },
+  {
+   "title": "30,000 police escorts and a 278km detour: Inside the wind farm crunch",
+   "url": "https://www.afr.com/policy/energy-and-climate/30-000-police-escorts-and-a-278km-detour-inside-the-wind-farm-crunch-20261117-p61ell",
+   "section": "policy",
+   "date": "2026-11-17",
+   "codes": [],
+   "hints": {
+    "amounts": [
+     "175 tonnes"
+    ],
+    "names": [
+     "Constraints",
+     "Dogwood Creek Bridge",
+     "Miles",
+     "Queensland",
+     "Western Downs",
+     "Australia",
+     "First",
+     "Warrego Highway"
+    ]
+   }
+  },
+  {
+   "title": "Sydney flight delays prompt Airservices to withdraw low-cloud directive",
+   "url": "https://www.afr.com/companies/transport/92-flights-cancelled-347-delayed-after-airservices-safety-directive-20261116-p61elk",
+   "section": "companies",
+   "date": "2026-11-16",
+   "codes": []
+  },
+  {
+   "title": "Bank of mum and dad closes shop as correction cuts house prices",
+   "url": "https://www.afr.com/property/residential/bank-of-mum-and-dad-closes-shop-as-correction-cuts-house-prices-20261116-p61czm",
+   "section": "property",
+   "date": "2026-11-16",
+   "codes": [
+    "BOQ"
+   ]
+  },
+  {
+   "title": "The $400k price fall, the sale and a family reunion",
+   "url": "https://www.afr.com/property/residential/the-400k-price-fall-the-sale-and-a-family-reunion-20261116-p61e29",
+   "section": "property",
+   "date": "2026-11-16",
+   "codes": []
+  },
+  {
+   "title": "Auction clearances plunge to COVID-19 levels as buyers crash out",
+   "url": "https://www.afr.com/property/residential/auction-clearances-plunge-to-covid-19-levels-as-buyers-crash-out-20261115-p61e83",
+   "section": "property",
+   "date": "2026-11-15",
+   "codes": []
+  },
+  {
+   "title": "Data centre builders look to other work as opposition grows",
+   "url": "https://www.afr.com/property/commercial/data-centre-builders-look-to-other-work-as-opposition-grows-20261115-p61cfi",
+   "section": "property",
+   "date": "2026-11-15",
+   "codes": []
+  },
+  {
+   "title": "Double Bay deceased estate on billionaire cul-de-sac offered for $30m",
+   "url": "https://www.afr.com/property/residential/double-bay-deceased-estate-on-billionaire-cul-de-sac-offered-for-30m-20261115-p61e05",
+   "section": "property",
+   "date": "2026-11-15",
+   "codes": []
+  },
+  {
+   "title": "Who takes control of your SMSF when you die?",
+   "url": "https://www.afr.com/wealth/personal-finance/why-your-smsf-needs-a-succession-plan-now-20261117-p61ck2",
+   "section": "wealth",
+   "date": "2026-11-17",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Lack",
+     "SMSF",
+     "Bethany Rae Have",
+     "Australian Financial ReviewThe Daily",
+     "Habit of Successful People"
+    ]
+   }
+  },
+  {
+   "title": "The invisible finance job quietly burning people out",
+   "url": "https://www.afr.com/wealth/personal-finance/the-invisible-finance-job-quietly-burning-people-out-20261116-p61dhr",
+   "section": "wealth",
+   "date": "2026-11-16",
+   "codes": []
+  },
+  {
+   "title": "How Sam Bankman-Fried lost a $52b jackpot from Anthropic",
+   "url": "https://www.afr.com/technology/how-sam-bankman-fried-lost-a-52b-jackpot-from-anthropic-20261117-p61eui",
+   "section": "technology",
+   "date": "2026-11-17",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Sam Bankman-Fried",
+     "FTX",
+     "AP Sam Bankman-Fried",
+     "Lompoc",
+     "California",
+     "Bahamas",
+     "Australian Financial ReviewThe Daily",
+     "Habit of Successful People"
+    ]
+   }
+  },
+  {
+   "title": "The car gadget you hope to never need",
+   "url": "https://www.afr.com/technology/the-car-gadget-you-hope-to-never-need-if-only-it-would-pipe-down-20261117-p61dla",
+   "section": "technology",
+   "date": "2026-11-17",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Navman",
+     "MiVue Smart True",
+     "Surround",
+     "Australian Financial ReviewThe Daily",
+     "Habit of Successful People"
+    ]
+   }
+  },
+  {
+   "title": "Graduate intakes rise at 40 top accounting firms in a three-year first",
+   "url": "https://www.afr.com/companies/professional-services/graduate-intakes-rise-at-40-top-accounting-firms-in-a-three-year-first-20261117-p619ru",
+   "section": "companies",
+   "date": "2026-11-17",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Graduate",
+     "Intakes",
+     "Review Top",
+     "Accounting Firms",
+     "Nine"
+    ]
+   }
+  },
+  {
+   "title": "Leave requests jump 29pc as Australians prepare for GTA VI",
+   "url": "https://www.afr.com/technology/the-young-australians-missing-work-for-a-video-game-20261117-p61eiy",
+   "section": "technology",
+   "date": "2026-11-17",
+   "codes": [],
+   "hints": {
+    "amounts": [
+     "$7.6 billion"
+    ],
+    "names": [
+     "Grand Theft Auto"
+    ]
+   }
+  },
+  {
+   "title": "Grand Theft Auto VI is almost here. Here’s what to know",
+   "url": "https://www.afr.com/technology/grand-theft-auto-vi-is-almost-here-here-s-what-to-know-20261116-p61ehr",
+   "section": "technology",
+   "date": "2026-11-16",
+   "codes": [
+    "GGE"
+   ]
+  },
+  {
+   "title": "‘Well into tens of millions’: Rich Lister family’s America’s Cup bid",
+   "url": "https://www.afr.com/companies/sport/the-32-year-itch-inside-australia-s-mission-to-win-the-america-s-cup-20261116-p611o0",
+   "section": "companies",
+   "date": "2026-11-16",
+   "codes": []
+  },
+  {
+   "title": "Listed gold and copper player Waratah Minerals launches $50m cash call",
+   "url": "https://www.afr.com/street-talk/listed-gold-and-copper-player-waratah-minerals-launches-50m-cash-call-20261117-p61eum",
+   "section": "street-talk",
+   "date": "2026-11-17",
+   "codes": [
+    "WTM"
+   ],
+   "hints": {
+    "amounts": [
+     "$50 million",
+     "$286 million"
+    ],
+    "names": [
+     "Gold",
+     "Waratah Minerals",
+     "NSW",
+     "Bell Potter and BMO Capital Markets"
+    ]
+   }
+  },
+  {
+   "title": "Gilbert + Tobin private equity partner resigns",
+   "url": "https://www.afr.com/street-talk/gilbert-tobin-m-and-a-partner-resigns-to-pursue-other-options-20261117-p61e9a",
+   "section": "street-talk",
+   "date": "2026-11-17",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Gilbert",
+     "Tobin",
+     "David Josselsohn",
+     "Company"
+    ]
+   }
+  },
+  {
+   "title": "The sticky covenant behind Lendlease’s surprising bond move",
+   "url": "https://www.afr.com/street-talk/the-sticky-covenant-behind-lendlease-s-surprising-bond-move-20261116-p61ein",
+   "section": "street-talk",
+   "date": "2026-11-16",
+   "codes": [
+    "LLC"
+   ]
+  },
+  {
+   "title": "Allens fires up M&A team, lures Hamilton Locke senior partner",
+   "url": "https://www.afr.com/street-talk/allens-fires-up-m-and-a-team-lures-hamilton-locke-senior-partner-20261116-p61ej0",
+   "section": "street-talk",
+   "date": "2026-11-16",
+   "codes": []
+  },
+  {
+   "title": "Rebadged Peter Lee survey lights up equities desks, Barrenjoey on top",
+   "url": "https://www.afr.com/street-talk/rebadged-peter-lee-survey-lights-up-equities-desks-barrenjoey-on-top-20261116-p61el3",
+   "section": "street-talk",
+   "date": "2026-11-16",
+   "codes": [
+    "PWR",
+    "BJY"
+   ]
+  },
+  {
+   "title": "Bell Financial keeps Praemium on its radar after merger bid stalls",
+   "url": "https://www.afr.com/street-talk/bell-financial-keeps-praemium-on-its-radar-after-merger-bid-stalls-20261116-p61eiq",
+   "section": "street-talk",
+   "date": "2026-11-16",
+   "codes": [
+    "BFG",
+    "PPS"
+   ]
+  },
+  {
+   "title": "$4.4b coal miner New Hope eyes rare $250m hybrid securities offer",
+   "url": "https://www.afr.com/street-talk/4-4b-coal-miner-new-hope-eyes-rare-250m-hybrid-securities-offer-20261115-p61e9z",
+   "section": "street-talk",
+   "date": "2026-11-15",
+   "codes": [
+    "NHC"
+   ]
+  },
+  {
+   "title": "Ord Minnett rebuilds its ranks for Antony Shaw’s reign",
+   "url": "https://www.afr.com/street-talk/ord-minnett-rebuilds-its-ranks-for-antony-shaw-s-reign-20261115-p61eaq",
+   "section": "street-talk",
+   "date": "2026-11-15",
+   "codes": []
+  },
+  {
+   "title": "Morrison gets set at $5b-plus Telstra-backed Amplitel",
+   "url": "https://www.afr.com/street-talk/morrison-gets-set-at-5b-plus-telstra-backed-amplitel-20261115-p61e9y",
+   "section": "street-talk",
+   "date": "2026-11-15",
+   "codes": []
+  },
+  {
+   "title": "Bad-news bandit Lendlease running out of options",
+   "url": "https://www.afr.com/street-talk/bad-news-bandit-lendlease-running-out-of-options-20261115-p61e9v",
+   "section": "street-talk",
+   "date": "2026-11-15",
+   "codes": [
+    "LLC"
+   ]
+  },
+  {
+   "title": "HSBC’s uphill battle to sell $20b deposit book in a precarious market",
+   "url": "https://www.afr.com/street-talk/hsbc-s-uphill-battle-to-sell-20b-deposit-book-in-a-precarious-market-20261115-p61e9c",
+   "section": "street-talk",
+   "date": "2026-11-15",
+   "codes": []
+  },
+  {
+   "title": "AFR tells a different story with new sharemarket indices",
+   "url": "https://www.afr.com/chanticleer/afr-tells-a-different-story-with-new-sharemarket-indices-20261116-p61e0x",
+   "section": "chanticleer",
+   "date": "2026-11-16",
+   "codes": []
+  },
+  {
+   "title": "Howard Marks just nailed the only question that matters for AI investors",
+   "url": "https://www.afr.com/chanticleer/howard-marks-just-nailed-the-only-question-that-matters-for-ai-investors-20261115-p61dih",
+   "section": "chanticleer",
+   "date": "2026-11-15",
+   "codes": []
+  },
+  {
+   "title": "James Packer splurged on Nvidia before scandal",
+   "url": "https://www.afr.com/rear-window/james-packer-splurged-on-nvidia-before-scandal-20261116-p61egk",
+   "section": "rear-window",
+   "date": "2026-11-16",
+   "codes": [
+    "JHX"
+   ]
+  },
+  {
+   "title": "Matt Comyn has CEO succession on parade",
+   "url": "https://www.afr.com/rear-window/matt-comyn-puts-his-executive-bulls-on-parade-20261116-p61ea5",
+   "section": "rear-window",
+   "date": "2026-11-16",
+   "codes": []
+  },
+  {
+   "title": "Ben Roberts-Smith trademarks a new booze brand",
+   "url": "https://www.afr.com/rear-window/ben-roberts-smith-trademarks-a-new-booze-brand-20261115-p61e2v",
+   "section": "rear-window",
+   "date": "2026-11-15",
+   "codes": []
+  },
+  {
+   "title": "Sam Wood’s emotional prison call played in court",
+   "url": "https://www.afr.com/companies/healthcare-and-fitness/sam-wood-s-emotional-prison-call-played-in-court-20261117-p61ev6",
+   "section": "companies",
+   "date": "2026-11-17",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Supreme Court",
+     "Sam Wood",
+     "During",
+     "Wood",
+     "Snezana Wood"
+    ]
+   }
+  },
+  {
+   "title": "Labor is siding with workers on gas reservation",
+   "url": "https://www.afr.com/companies/energy/labor-is-siding-with-workers-on-gas-reservation-20261116-p61ee3",
+   "section": "companies",
+   "date": "2026-11-16",
+   "codes": []
+  },
+  {
+   "title": "Refuge from violence and uncertainty – the other side of short stays",
+   "url": "https://www.afr.com/companies/infrastructure/refuge-from-violence-and-uncertainty-the-other-side-of-short-stays-20261117-p61cni",
+   "section": "companies",
+   "date": "2026-11-17",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Nine",
+     "Industry Insight",
+     "Airbnb",
+     "New",
+     "Griffith University",
+     "Institute",
+     "Tourism",
+     "Than"
+    ]
+   }
+  },
+  {
+   "title": "Push to cut red tape on fringe benefits tax: Chalmers",
+   "url": "https://www.afr.com/companies/financial-services/push-to-cut-red-tape-on-fringe-benefits-tax-chalmers-20261117-p61eff",
+   "section": "companies",
+   "date": "2026-11-17",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Albanese",
+     "Treasurer Jim Chalmers",
+     "Australian Securities and Investments Commission",
+     "Sydney",
+     "Chalmers",
+     "Finance Minister Katy Gallagher"
+    ]
+   }
+  },
+  {
+   "title": "Beyond the holiday rental",
+   "url": "https://www.afr.com/companies/infrastructure/beyond-the-holiday-rental-20261117-p61d70",
+   "section": "companies",
+   "date": "2026-11-17",
+   "codes": [],
+   "hints": {
+    "amounts": [
+     "40 per cent",
+     "21.9 per cent",
+     "17.8 per cent",
+     "16.3 per cent",
+     "15.4 per cent"
+    ],
+    "names": [
+     "Nine",
+     "Mention",
+     "Australians",
+     "Urbis",
+     "Griffith University",
+     "Than",
+     "Bed",
+     "Airbnb"
+    ]
+   }
+  },
+  {
+   "title": "Another weight-loss pill approved, but price hopes dashed",
+   "url": "https://www.afr.com/companies/healthcare-and-fitness/second-weight-loss-pill-to-be-sold-in-australia-within-days-20261117-p61eps",
+   "section": "companies",
+   "date": "2026-11-17",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Australia",
+     "Eli Lilly",
+     "Danish",
+     "Novo Nordisk",
+     "Therapeutic Goods Administration",
+     "Foundayo"
+    ]
+   }
+  },
+  {
+   "title": "Labor to ease super test for start-ups, renewables",
+   "url": "https://www.afr.com/companies/financial-services/labor-to-ease-super-test-for-start-ups-renewables-20261117-p61ekj",
+   "section": "companies",
+   "date": "2026-11-17",
+   "codes": [],
+   "hints": {
+    "amounts": [
+     "$4.8 trillion"
+    ],
+    "names": [
+     "Labor",
+     "Treasurer Jim Chalmers",
+     "Association of Super Funds of Australia",
+     "Melbourne"
+    ]
+   }
+  },
+  {
+   "title": "Artists, media plot campaign to counter AI firms’ copyright lobbying",
+   "url": "https://www.afr.com/companies/media-and-marketing/artists-media-plot-campaign-to-counter-ai-firms-copyright-lobbying-20261116-p61elv",
+   "section": "companies",
+   "date": "2026-11-16",
+   "codes": []
+  },
+  {
+   "title": "Humm in turmoil as director resigns, activist targets board seat",
+   "url": "https://www.afr.com/companies/financial-services/humm-director-steps-down-for-second-time-in-two-months-20261116-p61ege",
+   "section": "companies",
+   "date": "2026-11-16",
+   "codes": [
+    "HUM"
+   ]
+  },
+  {
+   "title": "Australian dollar debt market comes of age",
+   "url": "https://www.afr.com/companies/financial-services/australian-dollar-debt-market-comes-of-age-20261116-p61dnz",
+   "section": "companies",
+   "date": "2026-11-16",
+   "codes": []
+  },
+  {
+   "title": "Australian families are thinking bigger and looking to invest globally",
+   "url": "https://www.afr.com/companies/financial-services/australian-families-are-thinking-bigger-and-looking-to-invest-globally-20261116-p617rw",
+   "section": "companies",
+   "date": "2026-11-16",
+   "codes": []
+  },
+  {
+   "title": "CBA’s Comyn warns of hollowing out by AI unless skills are boosted",
+   "url": "https://www.afr.com/companies/financial-services/cba-s-comyn-warns-of-hollowing-out-by-ai-unless-skills-are-boosted-20261116-p61e7r",
+   "section": "companies",
+   "date": "2026-11-16",
+   "codes": [
+    "CBA"
+   ]
+  },
+  {
+   "title": "Regulators summon super giants, insurers over disability cover blowout",
+   "url": "https://www.afr.com/companies/financial-services/regulators-summon-super-giants-insurers-over-disability-cover-blowout-20261116-p61dx7",
+   "section": "companies",
+   "date": "2026-11-16",
+   "codes": []
+  },
+  {
+   "title": "Retirement ‘boost’ schemes to punch $480m hole in federal budget",
+   "url": "https://www.afr.com/companies/financial-services/retirement-boost-schemes-to-punch-480m-hole-in-federal-budget-20261115-p61e8g",
+   "section": "companies",
+   "date": "2026-11-15",
+   "codes": []
+  },
+  {
+   "title": "Banks on notice as Australians consult AI to help choose their lender",
+   "url": "https://www.afr.com/companies/financial-services/banks-on-notice-as-australians-consult-ai-to-help-choose-their-lender-20261115-p6183u",
+   "section": "companies",
+   "date": "2026-11-15",
+   "codes": []
+  },
+  {
+   "title": "Madeleine King may intervene as China iron ore deals threaten $10b hit",
+   "url": "https://www.afr.com/companies/mining/federal-government-warns-china-over-tactics-driving-down-iron-ore-prices-20261116-p61doe",
+   "section": "companies",
+   "date": "2026-11-16",
+   "codes": [
+    "KRR"
+   ]
+  },
+  {
+   "title": "Mining companies deploy AI-driven tech for FIFO camp makeovers",
+   "url": "https://www.afr.com/companies/mining/mining-companies-deploy-ai-driven-tech-for-fifo-camp-makeovers-20261115-p614sr",
+   "section": "companies",
+   "date": "2026-11-15",
+   "codes": []
+  },
+  {
+   "title": "Sustained diesel crunch looms for Australia says asset manager PIMCO",
+   "url": "https://www.afr.com/companies/energy/sustained-diesel-crunch-looms-for-australia-says-asset-manager-pimco-20261116-p61efx",
+   "section": "companies",
+   "date": "2026-11-16",
+   "codes": []
+  },
+  {
+   "title": "Firmus plans $4.4b private raise but up-front Nvidia, Meta payments key",
+   "url": "https://www.afr.com/companies/infrastructure/firmus-plans-4-4b-private-raise-but-upfront-nvidia-meta-payments-key-20261115-p61e9b",
+   "section": "companies",
+   "date": "2026-11-15",
+   "codes": []
+  },
+  {
+   "title": "Worley CEO Chris Ashton’s $10m pay packet under fire",
+   "url": "https://www.afr.com/companies/infrastructure/worley-ceo-chris-ashton-s-10m-pay-packet-under-fire-20261115-p61dds",
+   "section": "companies",
+   "date": "2026-11-15",
+   "codes": [
+    "WOR"
+   ]
+  },
+  {
+   "title": "Andrew Forrest-backed biotech in peanut allergy breakthrough",
+   "url": "https://www.afr.com/companies/healthcare-and-fitness/andrew-forrest-backed-biotech-in-peanut-allergy-breakthrough-20261115-p61djl",
+   "section": "companies",
+   "date": "2026-11-15",
+   "codes": []
+  },
+  {
+   "title": "Hard Rated hits $600m in sales as middle-aged drinkers join the party",
+   "url": "https://www.afr.com/companies/retail/hard-rated-hits-600m-in-sales-as-middle-aged-drinkers-join-the-party-20261116-p61bwm",
+   "section": "companies",
+   "date": "2026-11-16",
+   "codes": []
+  },
+  {
+   "title": "Grill’d, Oporto feel the heat in fast-food fight for customers",
+   "url": "https://www.afr.com/companies/retail/grill-d-oporto-feel-the-heat-in-fast-food-fight-for-customers-20261115-p61b7x",
+   "section": "companies",
+   "date": "2026-11-15",
+   "codes": []
+  },
+  {
+   "title": "Rex posts losses as US owner fails to get planes back in the air",
+   "url": "https://www.afr.com/companies/transport/rex-posts-losses-as-us-owner-fails-to-get-planes-back-in-the-air-20261116-p61ei1",
+   "section": "companies",
+   "date": "2026-11-16",
+   "codes": []
+  },
+  {
+   "title": "Former EY partner Peter White promoted illegal tax schemes, court rules",
+   "url": "https://www.afr.com/companies/professional-services/former-ey-partner-promoted-illegal-tax-schemes-court-rules-20261116-p61ef2",
+   "section": "companies",
+   "date": "2026-11-16",
+   "codes": [
+    "PWR"
+   ]
+  },
+  {
+   "title": "How AI is eating the billable hour at Australia’s top accounting firms",
+   "url": "https://www.afr.com/companies/professional-services/how-ai-is-eating-the-billable-hour-at-australia-s-top-accounting-firms-20261116-p61dat",
+   "section": "companies",
+   "date": "2026-11-16",
+   "codes": []
+  },
+  {
+   "title": "Top accounting firms are using AI, shifting to advisory roles",
+   "url": "https://www.afr.com/companies/professional-services/top-accounting-firms-are-using-ai-shifting-to-advisory-roles-20261116-p61d8e",
+   "section": "companies",
+   "date": "2026-11-16",
+   "codes": []
+  },
+  {
+   "title": "HSF’s bosses surprised by law firm’s tepid result, leaked meeting shows",
+   "url": "https://www.afr.com/companies/professional-services/hsf-s-bosses-surprised-by-law-firm-s-tepid-result-leaked-meeting-shows-20261115-p61e8x",
+   "section": "companies",
+   "date": "2026-11-15",
+   "codes": []
+  },
+  {
+   "title": "Mayne Pharma rockets 79pc on takeover bid; Chalmers aims to cut red tape on tax; Gilbert + Tobin private equity partner resigns",
+   "url": "https://www.afr.com/markets/equity-markets/mayne-pharma-rockets-79pc-on-takeover-bid-chalmers-aims-to-cut-red-tape-on-tax-gilbert-tobin-private-equity-partner-resigns-20261117-p61eu8",
+   "section": "markets",
+   "date": "2026-11-17",
+   "codes": [
+    "MYX"
+   ],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Want",
+     "Review",
+     "Brief",
+     "Plus",
+     "Bell",
+     "Market Wrap",
+     "Mayne Pharma",
+     "Jim Chalmers"
+    ]
+   }
+  },
+  {
+   "title": "‘Significant tailwinds’: Here’s where all the megatrends are colliding",
+   "url": "https://www.afr.com/markets/equity-markets/significant-tailwinds-here-s-where-all-the-megatrends-are-colliding-20261116-p61czc",
+   "section": "markets",
+   "date": "2026-11-16",
+   "codes": []
+  },
+  {
+   "title": "ASX wavers on miners as BHP sheds 2pc; $A hits fresh 10-month low",
+   "url": "https://www.afr.com/markets/equity-markets/asx-to-wobble-australian-dollar-hits-10-month-lows-20261116-p61e95",
+   "section": "markets",
+   "date": "2026-11-16",
+   "codes": [
+    "BHP"
+   ]
+  },
+  {
+   "title": "Will the music stop for Firmus?; Australia’s top universities revealed; Matt Comyn has CEO succession on parade",
+   "url": "https://www.afr.com/markets/equity-markets/will-the-music-stop-for-firmus-australia-s-top-universities-revealed-matt-comyn-has-ceo-succession-on-parade-20261116-p61ehn",
+   "section": "markets",
+   "date": "2026-11-16",
+   "codes": []
+  },
+  {
+   "title": "The Financial Review is launching its own indices. Here’s why",
+   "url": "https://www.afr.com/markets/equity-markets/the-financial-review-is-launching-its-own-indices-here-s-why-20261116-p61div",
+   "section": "markets",
+   "date": "2026-11-16",
+   "codes": []
+  },
+  {
+   "title": "Coles may have missed its moment. How Woolies got ahead in supermarket wars",
+   "url": "https://www.afr.com/markets/equity-markets/will-woolworths-ever-win-the-supermarket-war-20261115-p61dx4",
+   "section": "markets",
+   "date": "2026-11-15",
+   "codes": [
+    "COL"
+   ]
+  },
+  {
+   "title": "Afterpay’s co-founder Nick Molnar is leaving Block at the right time",
+   "url": "https://www.afr.com/markets/equity-markets/afterpay-s-co-founder-nick-molnar-is-leaving-block-at-the-right-time-20261115-p61e5u",
+   "section": "markets",
+   "date": "2026-11-15",
+   "codes": [
+    "NCK",
+    "XYZ"
+   ]
+  },
+  {
+   "title": "ASX to stall as Nvidia, Anthropic put AI boom to the test",
+   "url": "https://www.afr.com/markets/equity-markets/asx-set-to-stall-as-nvidia-anthropic-put-ai-boom-to-the-test-20261115-p61dvy",
+   "section": "markets",
+   "date": "2026-11-15",
+   "codes": []
+  },
+  {
+   "title": "Private credit’s illiquidity can’t be engineered away",
+   "url": "https://www.afr.com/markets/debt-markets/private-credit-s-illiquidity-can-t-be-engineered-away-20261115-p61dr3",
+   "section": "markets",
+   "date": "2026-11-15",
+   "codes": []
+  },
+  {
+   "title": "Rate rises won’t reopen the Strait of Hormuz. The RBA needs to stop",
+   "url": "https://www.afr.com/policy/economy/rate-rises-won-t-reopen-the-strait-of-hormuz-the-rba-needs-to-stop-20261116-p61ckq",
+   "section": "policy",
+   "date": "2026-11-16",
+   "codes": []
+  },
+  {
+   "title": "The road to autonomous CRM",
+   "url": "https://www.afr.com/technology/the-road-to-autonomous-crm-20261117-p617ed",
+   "section": "technology",
+   "date": "2026-11-17",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Nine",
+     "Artificial",
+     "CRM",
+     "Connected",
+     "Stock"
+    ]
+   }
+  },
+  {
+   "title": "Personal AI agents are coming. Is business ready to greet them?",
+   "url": "https://www.afr.com/technology/personal-ai-agents-are-coming-is-business-ready-to-greet-them-20261117-p61dkh",
+   "section": "technology",
+   "date": "2026-11-17",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Nine",
+     "Industry Insight",
+     "Salesforce",
+     "School",
+     "Black Friday and Cyber Monday"
+    ]
+   }
+  },
+  {
+   "title": "Customers on board as leaders let AI agents rip",
+   "url": "https://www.afr.com/technology/customers-on-board-as-leaders-let-ai-agents-rip-20261117-p61dfg",
+   "section": "technology",
+   "date": "2026-11-17",
+   "codes": [
+    "KGN",
+    "SUN"
+   ],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Roundtable",
+     "Frank Fillmann",
+     "Salesforce",
+     "Mirko Gropp",
+     "Living Company",
+     "Christelle Young",
+     "Ruslan Kogan",
+     "Kogan"
+    ]
+   }
+  },
+  {
+   "title": "The rules of the game in the AI era are being written on the fly",
+   "url": "https://www.afr.com/technology/the-rules-of-the-game-in-the-ai-era-are-being-written-on-the-fly-20261117-p61dti",
+   "section": "technology",
+   "date": "2026-11-17",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Australian",
+     "Local",
+     "Ruslan Kogan"
+    ]
+   }
+  },
+  {
+   "title": "No more maxxing: How four businesses manage their token spends",
+   "url": "https://www.afr.com/technology/no-more-maxxing-how-four-businesses-manage-their-token-spends-20261117-p61bzv",
+   "section": "technology",
+   "date": "2026-11-17",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Firms"
+    ]
+   }
+  },
+  {
+   "title": "Brandless marketing and keeping art human: CX and EX in the age of AI",
+   "url": "https://www.afr.com/technology/brandless-marketing-and-keeping-art-human-cx-and-ex-in-the-age-of-ai-20261117-p61bzr",
+   "section": "technology",
+   "date": "2026-11-17",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Christmas",
+     "People"
+    ]
+   }
+  },
+  {
+   "title": "Ex-Swyftx CEO sues crypto exchange for $94m over ouster",
+   "url": "https://www.afr.com/technology/ex-swyftx-ceo-sues-crypto-exchange-for-94m-over-ouster-20261116-p61ehl",
+   "section": "technology",
+   "date": "2026-11-16",
+   "codes": []
+  },
+  {
+   "title": "AI has crossed the Mythos line. It should be controlled like the banks",
+   "url": "https://www.afr.com/technology/ai-s-crossed-the-mythos-line-it-should-be-controlled-like-the-banks-20261116-p61ee1",
+   "section": "technology",
+   "date": "2026-11-16",
+   "codes": []
+  },
+  {
+   "title": "Can the AI boom make enough money to sustain itself?",
+   "url": "https://www.afr.com/technology/can-the-ai-boom-make-enough-money-to-sustain-itself-20261116-p61efm",
+   "section": "technology",
+   "date": "2026-11-16",
+   "codes": []
+  },
+  {
+   "title": "Robin Khuda: Data centres must pass a high bar",
+   "url": "https://www.afr.com/technology/robin-khuda-data-centres-must-pass-a-high-bar-20261116-p61e44",
+   "section": "technology",
+   "date": "2026-11-16",
+   "codes": []
+  },
+  {
+   "title": "BrainChip investors gather votes in bid to overhaul AI company’s board",
+   "url": "https://www.afr.com/technology/brainchip-investors-gather-votes-in-bid-to-overhaul-ai-company-s-board-20261116-p61d9t",
+   "section": "technology",
+   "date": "2026-11-16",
+   "codes": [
+    "BRN"
+   ]
+  },
+  {
+   "title": "Australian data centre founder reveals mounting debt ahead of IPO",
+   "url": "https://www.afr.com/technology/australian-data-centre-founder-reveals-mounting-debt-ahead-of-ipo-20261115-p61e6u",
+   "section": "technology",
+   "date": "2026-11-15",
+   "codes": []
+  },
+  {
+   "title": "Mona museum feud with Bob Brown goes full X-rated",
+   "url": "https://www.afr.com/rear-window/mona-museum-feud-with-bob-brown-goes-full-x-rated-20261117-p61ejs",
+   "section": "rear-window",
+   "date": "2026-11-17",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Kirsha Kaechele",
+     "Bob Brown",
+     "Tasmania",
+     "Museum of Old and New Art",
+     "Mona",
+     "David Walsh"
+    ]
+   }
+  }
+ ],
+ "index": null,
+ "moves": {},
+ "top_movers": []
+}
