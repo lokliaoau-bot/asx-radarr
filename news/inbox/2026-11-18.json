@@ -1,8 +1,33 @@
 {
  "schema": "afr-inbox-v1",
  "date": "2026-11-18",
- "collected_at": "2026-11-17T16:20:34+00:00",
+ "collected_at": "2026-11-17T17:04:45+00:00",
  "headlines": [
+  {
+   "title": "ASX to open lower; Jensen Huang says he wants to return to Nvidia",
+   "url": "https://www.afr.com/markets/equity-markets/markets-live-asx-to-open-lower-jensen-huang-says-he-wants-to-return-to-nvidia-20261118-p61f2d",
+   "section": "markets",
+   "date": "2026-11-18",
+   "published": "2026-11-17T17:01:01+00:00",
+   "codes": [],
+   "hints": {
+    "amounts": [
+     "1.1 per cent",
+     "1 per cent",
+     "1.65 per cent"
+    ],
+    "names": [
+     "AMJensen Huang",
+     "Nvidia Share",
+     "Australian",
+     "Wall Street",
+     "Nvidia",
+     "S&P",
+     "Dow and Nasdaq",
+     "AFR Real Economy"
+    ]
+   }
+  },
   {
    "title": "Trump and Albanese to counter China with joint military exercise",
    "url": "https://www.afr.com/policy/foreign-affairs/trump-and-albanese-to-counter-china-with-joint-military-exercise-20261117-p61f20",
@@ -257,7 +282,6 @@
    "url": "https://www.afr.com/markets/equity-markets/gqg-key-goldman-mandate-in-focus-as-magellan-echoes-grow-louder-20261117-p61er0",
    "section": "markets",
    "date": "2026-11-17",
-   "published": "2026-11-17T05:13:10+00:00",
    "codes": [
     "GQG"
    ],
@@ -280,7 +304,6 @@
    "url": "https://www.afr.com/markets/equity-markets/asx-dividends-to-fall-just-as-billions-flow-into-income-funds-20261117-p61cmt",
    "section": "markets",
    "date": "2026-11-17",
-   "published": "2026-11-17T05:00:00+00:00",
    "codes": [
     "BOQ"
    ],
@@ -293,21 +316,6 @@
      "Australian",
      "Morningstar",
      "Reserve Bank of Australia"
-    ]
-   }
-  },
-  {
-   "title": "Chalmers says cuts will be enough, but he’s got his head in the sand",
-   "url": "https://www.afr.com/chanticleer/chalmers-says-cuts-will-be-enough-but-he-s-got-his-head-in-the-sand-20261117-p61enk",
-   "section": "chanticleer",
-   "date": "2026-11-17",
-   "codes": [],
-   "hints": {
-    "amounts": [],
-    "names": [
-     "Chalmers",
-     "Treasurer Jim Chalmers",
-     "Albanese"
     ]
    }
   },
@@ -413,6 +421,21 @@
      "Qube and Steadfast",
      "A-List US",
      "Weil"
+    ]
+   }
+  },
+  {
+   "title": "Chalmers says cuts will be enough, but he’s got his head in the sand",
+   "url": "https://www.afr.com/chanticleer/chalmers-says-cuts-will-be-enough-but-he-s-got-his-head-in-the-sand-20261117-p61enk",
+   "section": "chanticleer",
+   "date": "2026-11-17",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Chalmers",
+     "Treasurer Jim Chalmers",
+     "Albanese"
     ]
    }
   },
