@@ -1,20 +1,21 @@
 {
  "schema": "afr-inbox-v1",
  "date": "2026-11-20",
- "collected_at": "2026-11-19T15:57:21+00:00",
+ "collected_at": "2026-11-19T16:48:17+00:00",
  "headlines": [
   {
-   "title": "Wall Street surges on back of massive Anthropic IPO",
+   "title": "Wall Street loses steam despite massive Anthropic IPO",
    "url": "https://www.afr.com/markets/equity-markets/asx-markets-live-wall-street-surges-on-back-of-massive-anthropic-ipo-20261120-p61ft1",
    "section": "markets",
    "date": "2026-11-20",
-   "published": "2026-11-19T15:48:02+00:00",
+   "published": "2026-11-19T16:41:12+00:00",
    "codes": [],
    "hints": {
     "amounts": [
      "20pc",
-     "1.8 per cent",
-     "1 per cent"
+     "1.3 per cent",
+     "0.3 per cent",
+     "0.1 per cent"
     ],
     "names": [
      "AMAnthropic",
@@ -23,8 +24,8 @@
      "Anthropic",
      "Wall Street",
      "Australian",
-     "Nasdaq",
-     "Dow and S&P"
+     "S&P",
+     "Dow"
     ]
    }
   },
