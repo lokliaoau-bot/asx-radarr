@@ -1,7 +1,7 @@
 {
  "schema": "afr-inbox-v1",
  "date": "2026-11-24",
- "collected_at": "2026-11-23T18:35:06+00:00",
+ "collected_at": "2026-11-23T19:30:06+00:00",
  "headlines": [
   {
    "title": "Samsung wants its $2.9k tablet to replace your laptop – it’s not ready",
@@ -117,7 +117,7 @@
    }
   },
   {
-   "title": "Nvidia soars, sparking massive Wall St rally",
+   "title": "ASX to rise 1.5pc as Nvidia sparks massive Wall Street rally",
    "url": "https://www.afr.com/markets/equity-markets/nvidia-soars-sparking-massive-wall-st-rally-20261124-p61gnb",
    "section": "markets",
    "date": "2026-11-24",
@@ -125,12 +125,11 @@
    "codes": [],
    "hints": {
     "amounts": [
-     "1 per cent",
+     "1.5 per cent",
      "30 per cent",
-     "6.7 per cent",
+     "6.8 per cent",
      "4.8 per cent",
-     "7 per cent",
-     "8 per cent"
+     "1.57 per cent"
     ],
     "names": [
      "Australian",
@@ -140,7 +139,7 @@
      "Nasdaq Composite",
      "S&P",
      "Dow",
-     "Nasdaq"
+     "Each"
     ]
    }
   },
@@ -242,23 +241,6 @@
    }
   },
   {
-   "title": "London-listed Entain’s sports tech spin-out eyes NZ expansion",
-   "url": "https://www.afr.com/street-talk/london-listed-entain-s-sports-tech-spin-out-eyes-nz-expansion-20261123-p61gkv",
-   "section": "street-talk",
-   "date": "2026-11-23",
-   "published": "2026-11-23T07:24:00+00:00",
-   "codes": [],
-   "hints": {
-    "amounts": [],
-    "names": [
-     "Fledgling",
-     "Take",
-     "Adrenalen",
-     "Entain"
-    ]
-   }
-  },
-  {
    "title": "DayOne’s IPO pause sparks debt woes, casts shadow on Firmus campus",
    "url": "https://www.afr.com/chanticleer/dayone-s-ipo-pause-has-knock-on-effects-for-firmus-20261123-p61gix",
    "section": "chanticleer",
@@ -275,6 +257,22 @@
      "Let",
      "DayOne Data Centres",
      "Firmus Technologies"
+    ]
+   }
+  },
+  {
+   "title": "London-listed Entain’s sports tech spin-out eyes NZ expansion",
+   "url": "https://www.afr.com/street-talk/london-listed-entain-s-sports-tech-spin-out-eyes-nz-expansion-20261123-p61gkv",
+   "section": "street-talk",
+   "date": "2026-11-23",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Fledgling",
+     "Take",
+     "Adrenalen",
+     "Entain"
     ]
    }
   },
@@ -473,13 +471,6 @@
   {
    "title": "As the AI trade falters here’s where to find the next ‘winners’",
    "url": "https://www.afr.com/markets/equity-markets/as-the-ai-trade-falters-here-s-where-to-find-the-next-winners-20261122-p61frt",
-   "section": "markets",
-   "date": "2026-11-22",
-   "codes": []
-  },
-  {
-   "title": "ASX to come under pressure as Wall Street tech rout deepens",
-   "url": "https://www.afr.com/markets/equity-markets/asx-to-come-under-pressure-as-wall-street-tech-rout-deepens-20261122-p61g7q",
    "section": "markets",
    "date": "2026-11-22",
    "codes": []
@@ -983,6 +974,13 @@
      "Labor"
     ]
    }
+  },
+  {
+   "title": "ASX to come under pressure as Wall Street tech rout deepens",
+   "url": "https://www.afr.com/markets/equity-markets/asx-to-come-under-pressure-as-wall-street-tech-rout-deepens-20261122-p61g7q",
+   "section": "markets",
+   "date": "2026-11-22",
+   "codes": []
   },
   {
    "title": "Anthropic slides as Wall Street plunges into correction",
