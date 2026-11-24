@@ -1,10 +1,10 @@
 {
  "collect": {
-  "at": "2026-11-24T18:03:32+00:00",
+  "at": "2026-11-24T19:06:43+00:00",
   "ok": true,
   "info": "/home/runner/work/asx-radarr/asx-radarr/news/inbox/2026-11-25.json：AFR 标题 94 条（Street Talk 14 条，带线索 44 条），行情 0 只，ASX 200 None",
   "date": "2026-11-25",
-  "run": "https://github.com/lokliaoau-bot/asx-radarr/actions/runs/45455161028"
+  "run": "https://github.com/lokliaoau-bot/asx-radarr/actions/runs/45466562842"
  },
  "intake": {
   "at": "2026-10-30T07:09:35+00:00",

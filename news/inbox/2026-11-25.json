@@ -1,7 +1,7 @@
 {
  "schema": "afr-inbox-v1",
  "date": "2026-11-25",
- "collected_at": "2026-11-24T18:03:30+00:00",
+ "collected_at": "2026-11-24T19:06:41+00:00",
  "headlines": [
   {
    "title": "One asset escapes Labor’s CGT overhaul totally unscathed",
@@ -35,13 +35,14 @@
    "hints": {
     "amounts": [],
     "names": [
+     "Victorian Premier Ben Carroll",
+     "Jess Wilson",
      "Daniel Andrews",
+     "Bethany Rae",
      "Stay Alert",
      "Stay Alive",
      "Victorian",
-     "Education State",
-     "Australian Financial ReviewThe Daily",
-     "Habit of Successful People"
+     "Education State"
     ]
    }
   },
@@ -184,22 +185,6 @@
      "NAB",
      "Andrew Irvine",
      "Daniela LoCastro"
-    ]
-   }
-  },
-  {
-   "title": "Australia’s sharemarket is one of the three most expensive in the world",
-   "url": "https://www.afr.com/markets/equity-markets/australia-s-sharemarket-is-one-of-the-three-most-expensive-in-the-world-20261124-p61goi",
-   "section": "markets",
-   "date": "2026-11-24",
-   "codes": [],
-   "hints": {
-    "amounts": [],
-    "names": [
-     "Australia",
-     "Wall Street",
-     "Morgan Stanley",
-     "S&P"
     ]
    }
   },
@@ -471,6 +456,22 @@
    }
   },
   {
+   "title": "Australia’s sharemarket is one of the three most expensive in the world",
+   "url": "https://www.afr.com/markets/equity-markets/australia-s-sharemarket-is-one-of-the-three-most-expensive-in-the-world-20261124-p61goi",
+   "section": "markets",
+   "date": "2026-11-24",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Australia",
+     "Wall Street",
+     "Morgan Stanley",
+     "S&P"
+    ]
+   }
+  },
+  {
    "title": "Rate cut calls grow even as inflation tipped for three-year high",
    "url": "https://www.afr.com/policy/economy/rate-cut-calls-grow-even-as-inflation-tipped-for-three-year-high-20261124-p61grl",
    "section": "policy",
@@ -662,6 +663,25 @@
    "codes": []
   },
   {
+   "title": "AI solved the biggest maths problem of all – and created a bigger one",
+   "url": "https://www.afr.com/technology/ai-solved-the-biggest-maths-problem-of-all-and-created-a-bigger-one-20261124-p61gfq",
+   "section": "technology",
+   "date": "2026-11-24",
+   "codes": [],
+   "hints": {
+    "amounts": [],
+    "names": [
+     "Riemann",
+     "Claude",
+     "Bethany Rae If",
+     "Anthropic",
+     "Silicon Valley",
+     "Australian Financial ReviewThe Daily",
+     "Habit of Successful People"
+    ]
+   }
+  },
+  {
    "title": "Samsung wants its $2.9k tablet to replace your laptop – it’s not ready",
    "url": "https://www.afr.com/technology/samsung-wants-its-2-9k-tablet-to-replace-your-laptop-it-s-not-ready-20261124-p61fjw",
    "section": "technology",
@@ -830,13 +850,6 @@
    "url": "https://www.afr.com/rear-window/top-judge-s-wife-behind-lawyers-balinese-extravaganza-20261122-p61frj",
    "section": "rear-window",
    "date": "2026-11-22",
-   "codes": []
-  },
-  {
-   "title": "‘I don’t accept we scare people.’ How the Pharmacy Guild wields power",
-   "url": "https://www.afr.com/companies/healthcare-and-fitness/i-don-t-accept-we-scare-people-how-the-pharmacy-guild-wields-power-20261123-p60kek",
-   "section": "companies",
-   "date": "2026-11-23",
    "codes": []
   },
   {
@@ -1022,6 +1035,13 @@
    "codes": []
   },
   {
+   "title": "‘I don’t accept we scare people.’ How the Pharmacy Guild wields power",
+   "url": "https://www.afr.com/companies/healthcare-and-fitness/i-don-t-accept-we-scare-people-how-the-pharmacy-guild-wields-power-20261123-p60kek",
+   "section": "companies",
+   "date": "2026-11-23",
+   "codes": []
+  },
+  {
    "title": "Dennis Bastas’ ex pharma chief wants to bring new drugs to Australia",
    "url": "https://www.afr.com/companies/healthcare-and-fitness/dennis-bastas-ex-pharma-chief-wants-to-bring-new-drugs-to-australia-20261122-p61ak2",
    "section": "companies",
@@ -1159,25 +1179,6 @@
    "section": "policy",
    "date": "2026-11-22",
    "codes": []
-  },
-  {
-   "title": "AI solved the biggest maths problem of all – and created a bigger one",
-   "url": "https://www.afr.com/technology/ai-solved-the-biggest-maths-problem-of-all-and-created-a-bigger-one-20261124-p61gfq",
-   "section": "technology",
-   "date": "2026-11-24",
-   "codes": [],
-   "hints": {
-    "amounts": [],
-    "names": [
-     "Riemann",
-     "Claude",
-     "Bethany Rae If",
-     "Anthropic",
-     "Silicon Valley",
-     "Australian Financial ReviewThe Daily",
-     "Habit of Successful People"
-    ]
-   }
   },
   {
    "title": "Putting innovation before AI",
