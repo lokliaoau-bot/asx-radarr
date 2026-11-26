@@ -1,7 +1,7 @@
 {
  "schema": "afr-inbox-v1",
  "date": "2026-11-27",
- "collected_at": "2026-11-26T17:11:55+00:00",
+ "collected_at": "2026-11-26T17:54:10+00:00",
  "headlines": [
   {
    "title": "ASX to rise, Spain’s De Cos is poised to take ECB presidency",
@@ -18,14 +18,14 @@
      "0.9 per cent"
     ],
     "names": [
-     "AMASX",
+     "AMAltria",
+     "Japan Tobacco",
+     "Imperial Brands Share",
      "Australian",
      "Europe and Asia",
      "AEDT",
      "S&P",
-     "Nasdaq",
-     "Europe",
-     "Stoxx"
+     "Nasdaq"
     ]
    }
   },
